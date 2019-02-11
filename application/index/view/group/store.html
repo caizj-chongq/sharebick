@@ -1,0 +1,112 @@
+<!-- content start -->
+<div class="admin-content">
+
+    <div class="am-cf am-padding">
+        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">用户管理</strong> /
+            <small>新增</small>
+        </div>
+    </div>
+
+    <div class="am-tabs am-margin" data-am-tabs>
+        <ul class="am-tabs-nav am-nav am-nav-tabs">
+            <li><a href="#tab2">用户组基本信息</a></li>
+            <li><a href="#tab1">权限设置</a></li>
+        </ul>
+
+        <div class="am-tabs-bd">
+            <div class="am-tab-panel am-fade" id="tab2">
+                <form class="am-form" name="storeGroup">
+                    {:token('token')}
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            用户组名
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" name="group_name" id="group_name" maxlength="30"
+                                   required>
+                        </div>
+                        <div class="am-u-sm-6">*必填，不可重复</div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            用户组简介
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" name="desc" id="desc" maxlength="150" required>
+                        </div>
+                        <div class="am-u-sm-6">选填</div>
+                    </div>
+                </form>
+            </div>
+            <div class="am-tab-panel am-fade" id="tab1">
+                <form class="am-form" name="storeGroup">
+                    {:token('token')}
+                    {volist name="navigates" id="navigate"}
+                        <div class="am-g am-margin-top">
+                            <div class="am-u-sm-2 am-text-right">
+                                {$navigate.name}
+                            </div>
+                            <div class="am-u-sm-10">
+                                {volist name="$navigate.children" id="item"}
+                                    <label class="am-btn am-btn-default am-btn-xs">
+                                        <input type="checkbox" value="{$item.id}"  name="navigates"> {$item.name}
+                                    </label>
+                                {/volist}
+                            </div>
+                        </div>
+                    {/volist}
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="am-margin">
+        <button type="button" class="am-btn am-btn-primary am-btn-xs" id="formSubmit">提交保存</button>
+        <button type="button" class="am-btn am-btn-primary am-btn-xs" id="formReset">放弃保存</button>
+    </div>
+</div>
+<!-- content end -->
+
+<script>
+    const form = $("form[name='storeGroup']")[0];
+    const submitUrl = "<?php echo url('index/group/store') ?>";
+    const formReset = function () {
+        form.reset();
+    };
+
+    const formSubmit = function () {
+        var seletedData = [];
+        $.each($("input[name='navigates']:checked"),function(){
+            seletedData.push($(this).val());
+        });
+
+        $.ajax({
+            url: submitUrl,
+            type: 'post',
+            dataType: 'json',
+            timeout: 1000,
+            async: true,   // 是否异步
+            data: {
+                'token': $("input[name='token']").val(),
+                'group_name': $('#group_name').val(),
+                'desc': $('#desc').val(),
+                'navigates': seletedData.join(',')
+            },
+            success: function (data, status) {
+                var responseStatus = data.status;
+                if (!responseStatus) {
+                    alertSuccessMsg(responseStatus, "<?php echo url('index/group/index') ; ?>");
+                } else {
+                    alertErrMsg(responseStatus, data.msg);
+                }
+            },
+            fail: function (err, status) {
+                console.log(err)
+            }
+        })
+    };
+
+    $('#formReset').click(formReset);
+    $('#formSubmit').click(formSubmit);
+</script>
