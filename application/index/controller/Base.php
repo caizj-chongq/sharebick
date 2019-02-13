@@ -29,7 +29,7 @@ class Base extends Controller
      */
     private function validateAjaxToken(Request $request)
     {
-        if ($request->isAjax() && $request->isPost()) {
+        if ($request->isAjax() && !$request->isGet()) {
             $rules = [
                 'token' => [
                     'require',

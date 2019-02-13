@@ -4,27 +4,27 @@ namespace app\index\controller;
 use app\index\model\UserGroup;
 use app\Utils;
 use think\Request;
-use app\index\model\User as UserModel;
+use app\index\model\Client as ClientModel;
 
-class User extends Base
+class Client extends Base
 {
     /**
+     * @param Request $request
      * @return mixed
      * @throws \think\exception\DbException
      */
     public function index(Request $request)
     {
-        $users = UserModel::where('deleted', '=', 0);
+        $clients = ClientModel::where('deleted', '=', 0);
 
         if (strlen($request->param('keywords'))) {
             $keywords = $request->param('keywords');
-            $users->where('username', 'like', "%$keywords%")
-                ->where('nick', 'like', "%$keywords%")
-                ->where('real_name', 'like', "%$keywords%");
+            $clients->where('username', 'like', "%$keywords%")
+                ->where('nick', 'like', "%$keywords%");
             $this->assign(compact('keywords'));
         }
 
-        $users = $users->paginate(10);
+        $users = $clients->paginate(10);
 
         $page = $users->render();
         $this->assign([
@@ -46,20 +46,19 @@ class User extends Base
     {
         if ($request->isAjax() && $request->isPost()) {
             //保存
-            $userExists = UserModel::where('username', '=', $request->param('username'))->find();
-            if ($userExists) {
+            $clientExists = ClientModel::where('username', '=', $request->param('username'))->find();
+            if ($clientExists) {
                 return Utils::ajaxReturn(null, 400, '该用户名已经被别的用户使用了！');
             } else {
-                $user = new UserModel();
-                $user->data(array_merge($request->param(), [
+                $client = new ClientModel();
+                $client->data(array_merge($request->param(), [
                     'secret' => Utils::encodeSha1($request->param('secret'))
                 ]));
-                $user->save();
+                $client->save();
                 return Utils::ajaxReturn();
             }
         }
-        $userGroups = UserGroup::where('deleted', '=', 0)->select();
-        $this->assign(compact('userGroups'));
+
         return $this->fetch();
     }
 
@@ -73,12 +72,11 @@ class User extends Base
      */
     public function show(Request $request, $id)
     {
-        $userInfo = UserModel::where('deleted', '=', 0)
+        $userInfo = ClientModel::where('deleted', '=', 0)
             ->where('id', '=', $id)
             ->find();
         if ($userInfo) {
-            $userGroups = UserGroup::where('deleted', '=', 0)->select();
-            $this->assign(compact('userInfo', 'userGroups'));
+            $this->assign(compact('userInfo'));
             return $this->fetch();
         }
         $this->error('用户不存在！');
@@ -94,7 +92,7 @@ class User extends Base
      */
     public function update(Request $request, $id)
     {
-        $userInfo = UserModel::where('deleted', '=', 0)
+        $userInfo = ClientModel::where('deleted', '=', 0)
             ->where('id', '=', $id)
             ->find();
         if ($request->isAjax() && $request->isPatch()) {
@@ -133,11 +131,11 @@ class User extends Base
      */
     public function destroy(Request $request, $id)
     {
-        if ($request->isAjax() && $request->isDelete()) {
+        if ($request->isAjax() && $request->isPost()) {
             Utils::throw405();
         }
         //删除用户
-        $user = UserModel::where('deleted', '=', 0)
+        $user = ClientModel::where('deleted', '=', 0)
             ->where('id', '=', $id)
             ->find();
         if ($user) {

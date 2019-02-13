@@ -1,7 +1,9 @@
 <?php
 namespace app\index\model;
 
+use think\exception\ValidateException;
 use think\Model;
+use think\Validate;
 use traits\model\SoftDelete;
 
 class Client extends Model
@@ -39,7 +41,10 @@ class Client extends Model
 
 
     protected $field = [
-
+        'username',
+        'secret',
+        'nick',
+        'mobile',
         'created',
         'updated',
         'deleted'
@@ -54,9 +59,6 @@ class Client extends Model
     public function save($data = [], $where = [], $sequence = null)
     {
         $rules = [
-            'group_id' => [
-                'require'
-            ],
             'username' => [
                 'require',
                 'max' => 30
@@ -65,19 +67,19 @@ class Client extends Model
                 'require'
             ],
             'nick' => [
-                'max' => 30
+                'max' => 15
             ],
-            'real_name' => [
-                'max' => 30
-            ]
+            'mobile' => function ($value, $data) {
+                $mobileReg = '/^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/';
+                return (boolean)preg_match($mobileReg, $value);
+            }
         ];
         $message = [
-            'group_id.require' => '所属用户组不能为空！',
             'username.require' => '用户名不能为空！',
             'username.max' => '用户名最多30个字符！',
             'secret.require' => '密码不能为空！',
-            'nick.max' => '昵称最多30个字符！',
-            'real_name.max' => '真实姓名最多30个字符！'
+            'nick.max' => '昵称最多15个字符！',
+            'mobile' => '手机号码不正确！'
         ];
         $validate = Validate::make($rules, $message);
 

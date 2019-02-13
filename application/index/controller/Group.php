@@ -119,7 +119,7 @@ class Group extends Base
             ->where('id', '=', $id)
             ->find();
 
-        if ($request->isAjax() && $request->isPost()) {
+        if ($request->isAjax() && $request->isPatch()) {
             //更新
             $data = $request->param();
             if ($groupInfo) {
@@ -203,7 +203,7 @@ class Group extends Base
      */
     public function destroy(Request $request, $id)
     {
-        if ($request->isAjax() && $request->isPost()) {
+        if ($request->isAjax() && $request->isDelete()) {
             $group = UserGroup::where('deleted', '=', 0)
                 ->where('id', '=', $id)
                 ->find();
