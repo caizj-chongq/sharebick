@@ -7,6 +7,7 @@ use traits\model\SoftDelete;
 class Bicycle extends Model
 {
     use SoftDelete;
+
     /**
      * @var string
      */
@@ -37,7 +38,9 @@ class Bicycle extends Model
      */
     protected $pk = 'id';
 
-
+    /***
+     * @var array
+     */
     protected $field = [
         'created',
         'updated',

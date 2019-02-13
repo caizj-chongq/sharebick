@@ -39,7 +39,9 @@ class Client extends Model
      */
     protected $pk = 'id';
 
-
+    /**
+     * @var array
+     */
     protected $field = [
         'username',
         'secret',

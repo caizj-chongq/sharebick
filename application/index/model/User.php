@@ -40,7 +40,9 @@ class User extends Model
      */
     protected $pk = 'id';
 
-
+    /**
+     * @var array
+     */
     protected $field = [
         'group_id',
         'username',
