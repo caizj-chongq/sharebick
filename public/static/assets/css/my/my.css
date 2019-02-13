@@ -1,0 +1,3 @@
+.admin-content-list li:nth-child(5n) {
+    border-right: none;
+}

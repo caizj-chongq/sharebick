@@ -86,8 +86,7 @@
                 success: function (data, status) {
                     var responseStatus = data.status;
                     if (!responseStatus) {
-                        alertSuccessMsg(responseStatus);
-                        window.location.href = "<?php echo url('index/index/index'); ?>";
+                        alertSuccessMsg(responseStatus, "<?php echo url('index/index/index'); ?>");
                     } else {
                         alertErrMsg(responseStatus, data.msg);
                     }
@@ -98,7 +97,6 @@
             })
         };
         $('#login').click(login);
-
 
     </script>
 
