@@ -2,7 +2,7 @@
 <div class="admin-content">
 
     <div class="am-cf am-padding">
-        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">用户管理</strong> /
+        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">会员管理</strong> /
             <small>列表</small>
         </div>
     </div>
@@ -40,27 +40,27 @@
                         <th class="table-id">ID</th>
                         <th class="table-title">用户名</th>
                         <th class="table-type">昵称</th>
-                        <th class="table-author">姓名</th>
+                        <th class="table-author">手机号</th>
                         <th class="table-date">创建时间</th>
                         <th class="table-set">操作</th>
                     </tr>
                     </thead>
                     <tbody>
-                        {volist name="users" id="user"}
+                        {volist name="clients" id="client"}
                             <tr>
-                                <td>{$user.id}</td>
-                                <td><a href="{:url('index/user/show', ['id' => $user.id])}">{$user.username}</a></td>
-                                <td>{$user.nick}</td>
-                                <td>{$user.real_name}</td>
-                                <td>{$user.created}</td>
+                                <td>{$client.id}</td>
+                                <td><a href="{:url('index/client/show', ['id' => $client.id])}">{$client.username}</a></td>
+                                <td>{$client.nick}</td>
+                                <td>{$client.mobile}</td>
+                                <td>{$client.created}</td>
                                 <td>
                                     <div class="am-btn-toolbar">
                                         <div class="am-btn-group am-btn-group-xs">
                                             <button type="button" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span
                                                     class="am-icon-pencil-square-o"></span>
-                                                <a href="{:url('index/user/update', ['id' => $user.id])}">编辑</a>
+                                                <a href="{:url('index/client/update', ['id' => $client.id])}">编辑</a>
                                             </button>
-                                            <button type="button" class="am-btn am-btn-default am-btn-xs am-text-danger" name="delUser" onclick="del(this)" to="{:url('index/user/destroy', ['id' => $user.id])}"><span
+                                            <button type="button" class="am-btn am-btn-default am-btn-xs am-text-danger" name="delUser" onclick="del(this)" to="{:url('index/client/destroy', ['id' => $client.id])}"><span
                                                     class="am-icon-trash-o"></span> 删除
                                                 {:token('token')}
                                             </button>
@@ -72,7 +72,7 @@
                     </tbody>
                 </table>
                 <div class="am-cf">
-                    共 {$users->total()} 条记录
+                    共 {$clients->total()} 条记录
                     <div class="am-fr">
                         {$page}
                     </div>
@@ -87,7 +87,7 @@
 <script>
     //新增用户 跳转到新增用户页面
     $('#store').click(function () {
-        window.location.href = "<?php echo url('index/user/store'); ?>";
+        window.location.href = "<?php echo url('index/client/store'); ?>";
     });
 
     function delUser(url) {
@@ -103,7 +103,7 @@
             success: function (data, status) {
                 var responseStatus = data.status;
                 if (!responseStatus) {
-                    alertSuccessMsg(responseStatus, "<?php echo url('index/user/index'); ?>");
+                    alertSuccessMsg(responseStatus, "<?php echo url('index/client/index'); ?>");
                 } else {
                     alertErrMsg(responseStatus, data.msg);
                 }
@@ -120,7 +120,7 @@
 
     function searchKeywords() {
         var keyWorkds = $('#keywords').val();
-        window.location.href = "<?php echo url('index/user/index'); ?>" + "?keywords=" + keyWorkds
+        window.location.href = "<?php echo url('index/client/index'); ?>" + "?keywords=" + keyWorkds
     }
 
 </script>

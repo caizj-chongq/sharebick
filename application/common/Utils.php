@@ -1,5 +1,5 @@
 <?php
-namespace app;
+namespace app\common;
 
 class Utils
 {
@@ -81,5 +81,35 @@ class Utils
         }
         return $tree;
     }
+
+    /**
+     * 获取ip
+     * @return array|false|mixed|string
+     */
+    public static function getRealIp()
+    {
+        static $realIp = '';
+
+        if (!$realIp) {
+            $cip = getenv('HTTP_CLIENT_IP');
+            $xip = getenv('HTTP_X_FORWARDED_FOR');
+            $rip = getenv('REMOTE_ADDR');
+            $srip = $_SERVER['REMOTE_ADDR'];
+            if ($cip && strcasecmp($cip, 'unknown')) {
+                $realIp = $cip;
+            } elseif ($xip && strcasecmp($xip, 'unknown')) {
+                $realIp = $xip;
+            } elseif ($rip && strcasecmp($rip, 'unknown')) {
+                $realIp = $rip;
+            } elseif ($srip && strcasecmp($srip, 'unknown')) {
+                $realIp = $srip;
+            }
+            $match = array();
+            preg_match('/[\d\.]{7,15}/', $realIp, $match);
+            $realIp = $match[0] ? $match[0] : '0.0.0.0';
+        }
+        return $realIp;
+    }
+
 
 }

@@ -2,7 +2,8 @@
 
 namespace app\index\controller;
 
-use app\Utils;
+use app\common\CodeMap;
+use app\common\Utils;
 use think\Controller;
 use think\exception\HttpResponseException;
 use think\Request;
@@ -11,14 +12,23 @@ use think\Validate;
 
 class Base extends Controller
 {
+    protected $codeMap;
+
     /**
      * Base constructor.
      * @param Request|null $request
      */
     public function __construct(Request $request = null)
     {
+        Validate::extend('mobile', function ($value) {
+            $mobileReg = '/^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/';
+            return (boolean)preg_match($mobileReg, $value);
+        });
+
+
         $this->validateAjaxToken($request);
         $this->checkLogin($request);
+        $this->codeMap = new CodeMap();
 
         parent::__construct($request);
     }
@@ -30,20 +40,16 @@ class Base extends Controller
     private function validateAjaxToken(Request $request)
     {
         if ($request->isAjax() && !$request->isGet()) {
-            $rules = [
-                'token' => [
-                    'require',
-                    'token:token'
-                ]
-            ];
-            $messages = [
-                'token.require' => 'token不能为空！',
-                'token.token' => 'token不正确！'
-            ];
-            $validate = Validate::make($rules, $messages);
+            $err = '';
+            if (!strlen($request->param('token'))) {
+                $err = 'token不能为空！';
+            }
 
-            if (!$validate->check($request->param())) {
-                $data = Utils::base(null, 400, $validate->getError());
+            if (!strlen($err) && session('token') !== $request->param('token')) {
+                $err = 'token错误！';
+            }
+            if ($err) {
+                $data = Utils::throw400( $err);
                 $type = $this->getResponseType();
                 $response = Response::create($data, $type);
                 throw new HttpResponseException($response);

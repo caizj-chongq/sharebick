@@ -5,11 +5,9 @@ namespace app\index\model;
 use think\exception\ValidateException;
 use think\Model;
 use think\Validate;
-use traits\model\SoftDelete;
 
 class User extends Model
 {
-    use SoftDelete;
     /**
      * @var string
      */
@@ -28,7 +26,7 @@ class User extends Model
     /**
      * @var string
      */
-    protected static $deleteTime = 'deleted';
+    protected $deleteTime = 'deleted';
 
     /**
      * @var bool
@@ -53,6 +51,11 @@ class User extends Model
         'updated',
         'deleted'
     ];
+
+    /**
+     * @var string
+     */
+    public static $userOperation = "userOperation";
 
     /**
      * @param array $data
@@ -95,5 +98,13 @@ class User extends Model
         }
 
         return parent::save($data, $where, $sequence);
+    }
+
+    /**
+     * @return $this|int
+     */
+    public function delete()
+    {
+        return self::where('deleted', '=', 0)->where('id', '=', $this->id)->setField('deleted', time());
     }
 }

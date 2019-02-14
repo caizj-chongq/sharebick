@@ -3,7 +3,7 @@
 namespace app\index\controller;
 
 use app\index\model\UserGroup;
-use app\Utils;
+use app\common\Utils;
 use think\Db;
 use think\Request;
 

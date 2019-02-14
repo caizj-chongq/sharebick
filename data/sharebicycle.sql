@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50719
 File Encoding         : 65001
 
-Date: 2019-02-13 15:49:07
+Date: 2019-02-14 18:12:36
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -124,20 +124,40 @@ CREATE TABLE `admin_users` (
   PRIMARY KEY (`id`) USING BTREE,
   KEY `group` (`group_id`) USING BTREE,
   KEY `username` (`username`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Records of admin_users
 -- ----------------------------
-INSERT INTO `admin_users` VALUES ('1', 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', null, null, null, '0', null, null);
 INSERT INTO `admin_users` VALUES ('2', 'admin1', 'da39a3ee5e6b4b0d3255bfef95601890afd80709', '123456', '123456', '1', '0', '1546759837', '1546761337');
 INSERT INTO `admin_users` VALUES ('3', 'admin2', 'da39a3ee5e6b4b0d3255bfef95601890afd80709', '123456', '123456', '1', '0', '1546759956', '1546759956');
 INSERT INTO `admin_users` VALUES ('4', 'admin2', 'da39a3ee5e6b4b0d3255bfef95601890afd80709', '123456', '123456', '1', '0', '1546759980', '1546759980');
-INSERT INTO `admin_users` VALUES ('5', '123', 'da39a3ee5e6b4b0d3255bfef95601890afd80709', '123456', '123456', '1', '0', '1546759991', '1546759991');
-INSERT INTO `admin_users` VALUES ('6', '12', 'da39a3ee5e6b4b0d3255bfef95601890afd80709', '123456', '123456', '1', '0', '1546760012', '1546760012');
+INSERT INTO `admin_users` VALUES ('5', '123', 'da39a3ee5e6b4b0d3255bfef95601890afd80709', '123456', '123456', '1', '1550137160', '1546759991', '1546759991');
+INSERT INTO `admin_users` VALUES ('6', '12', 'da39a3ee5e6b4b0d3255bfef95601890afd80709', '123456', '123456', '1', '1550137054', '1546760012', '1546760012');
 INSERT INTO `admin_users` VALUES ('7', '1', 'da39a3ee5e6b4b0d3255bfef95601890afd80709', '1', '1', '1', '1546765335', '1546760034', '1546765335');
 INSERT INTO `admin_users` VALUES ('8', 'admin1', '8cb2237d0679ca88db6464eac60da96345513964', '123456', '123456', '1', '1546765315', '1546761117', '1546765315');
 INSERT INTO `admin_users` VALUES ('9', 'admin1', '8cb2237d0679ca88db6464eac60da96345513964', '123456', '123456', '1', '1546765311', '1546761144', '1546765311');
+INSERT INTO `admin_users` VALUES ('11', 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'admin', 'admin', '5', '0', '0', '0');
+
+-- ----------------------------
+-- Table structure for admin_users_operations
+-- ----------------------------
+DROP TABLE IF EXISTS `admin_users_operations`;
+CREATE TABLE `admin_users_operations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) DEFAULT NULL,
+  `time` int(11) DEFAULT NULL,
+  `type` int(11) DEFAULT NULL,
+  `ip` varchar(15) DEFAULT NULL,
+  `created` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of admin_users_operations
+-- ----------------------------
+INSERT INTO `admin_users_operations` VALUES ('1', '1', '1550132838', '1', '192.168.10.1', '1550132838');
+INSERT INTO `admin_users_operations` VALUES ('2', '1', '1550135308', '1', '192.168.10.1', '1550135308');
 
 -- ----------------------------
 -- Table structure for bicycles
@@ -162,15 +182,35 @@ DROP TABLE IF EXISTS `clients`;
 CREATE TABLE `clients` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(30) DEFAULT NULL,
-  `secret` varchar(30) DEFAULT NULL,
+  `secret` varchar(128) DEFAULT NULL,
   `nick` varchar(15) DEFAULT NULL,
   `created` int(11) DEFAULT '0',
   `updated` int(11) DEFAULT '0',
   `deleted` int(11) DEFAULT '0',
   `mobile` varchar(12) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Records of clients
+-- ----------------------------
+INSERT INTO `clients` VALUES ('1', '1', 'da39a3ee5e6b4b0d3255bfef95601890afd80709', '113311', '1550138323', '1550138865', '1550139140', '13311111111');
+INSERT INTO `clients` VALUES ('2', '1123', 'da39a3ee5e6b4b0d3255bfef95601890afd80709', '12134', '1550139128', '1550139135', '1550139137', '13322222222');
+
+-- ----------------------------
+-- Table structure for clients_operations
+-- ----------------------------
+DROP TABLE IF EXISTS `clients_operations`;
+CREATE TABLE `clients_operations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `client_id` int(11) DEFAULT '0',
+  `time` int(11) DEFAULT '0' COMMENT '操作时间',
+  `type` int(11) DEFAULT NULL COMMENT '操作类型',
+  `ip` varchar(15) DEFAULT NULL,
+  `created` int(11) DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of clients_operations
 -- ----------------------------

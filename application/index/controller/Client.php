@@ -1,8 +1,10 @@
 <?php
+
 namespace app\index\controller;
 
 use app\index\model\UserGroup;
-use app\Utils;
+use app\common\Utils;
+use think\exception\ValidateException;
 use think\Request;
 use app\index\model\Client as ClientModel;
 
@@ -24,11 +26,11 @@ class Client extends Base
             $this->assign(compact('keywords'));
         }
 
-        $users = $clients->paginate(10);
+        $clients = $clients->paginate(10);
 
-        $page = $users->render();
+        $page = $clients->render();
         $this->assign([
-            'users' => $users,
+            'clients' => $clients,
             'page' => $page
         ]);
 
@@ -48,13 +50,17 @@ class Client extends Base
             //保存
             $clientExists = ClientModel::where('username', '=', $request->param('username'))->find();
             if ($clientExists) {
-                return Utils::ajaxReturn(null, 400, '该用户名已经被别的用户使用了！');
+                return Utils::throw400('该用户名已经被别的用户使用了！');
             } else {
-                $client = new ClientModel();
-                $client->data(array_merge($request->param(), [
-                    'secret' => Utils::encodeSha1($request->param('secret'))
-                ]));
-                $client->save();
+                try {
+                    $client = new ClientModel();
+                    $client->data(array_merge($request->param(), [
+                        'secret' => Utils::encodeSha1($request->param('secret'))
+                    ]));
+                    $client->save();
+                } catch (\Exception $exception) {
+                    return Utils::throw400($exception->getMessage());
+                }
                 return Utils::ajaxReturn();
             }
         }
@@ -72,11 +78,11 @@ class Client extends Base
      */
     public function show(Request $request, $id)
     {
-        $userInfo = ClientModel::where('deleted', '=', 0)
+        $clientInfo = ClientModel::where('deleted', '=', 0)
             ->where('id', '=', $id)
             ->find();
-        if ($userInfo) {
-            $this->assign(compact('userInfo'));
+        if ($clientInfo) {
+            $this->assign(compact('clientInfo'));
             return $this->fetch();
         }
         $this->error('用户不存在！');
@@ -92,30 +98,33 @@ class Client extends Base
      */
     public function update(Request $request, $id)
     {
-        $userInfo = ClientModel::where('deleted', '=', 0)
+        $clientInfo = ClientModel::where('deleted', '=', 0)
             ->where('id', '=', $id)
             ->find();
         if ($request->isAjax() && $request->isPatch()) {
             //保存
-            if ($userInfo) {
-                $userInfo->data([
-                    'group_id' => $request->param('group_id'),
-                    'username' => $userInfo->username,
-                    'secret' => Utils::encodeSha1($request->param('secret')),
-                    'nick' => $request->param('nick'),
-                    'real_name' => $request->param('real_name')
-                ]);
-                $userInfo->save();
+            if ($clientInfo) {
+                try {
+                    $clientInfo->data([
+                        'username' => $clientInfo->username,
+                        'secret' => Utils::encodeSha1($request->param('secret')),
+                        'nick' => $request->param('nick'),
+                        'mobile' => $request->param('mobile')
+                    ]);
+                    $clientInfo->save();
+                } catch (\Exception $exception) {
+                    return Utils::throw400($exception->getMessage());
+                }
+
                 return Utils::ajaxReturn();
             } else {
-                return Utils::ajaxReturn(null, 400, '用户不存在！');
+                return Utils::throw400('用户不存在！');
             }
         }
 
-        if ($userInfo) {
-            $userGroups = UserGroup::where('deleted', '=', 0)->select();
-            $this->assign(compact('userInfo', 'userGroups', 'id'));
-            return $this->fetch('');
+        if ($clientInfo) {
+            $this->assign(compact('clientInfo', 'id'));
+            return $this->fetch();
         }
 
         $this->error('用户不存在！');
@@ -135,11 +144,11 @@ class Client extends Base
             Utils::throw405();
         }
         //删除用户
-        $user = ClientModel::where('deleted', '=', 0)
+        $client = ClientModel::where('deleted', '=', 0)
             ->where('id', '=', $id)
             ->find();
-        if ($user) {
-            $user->delete();
+        if ($client) {
+            $client->delete();
         }
 
         return Utils::ajaxReturn();

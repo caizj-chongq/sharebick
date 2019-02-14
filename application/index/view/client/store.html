@@ -1,0 +1,110 @@
+<!-- content start -->
+<div class="admin-content">
+
+    <div class="am-cf am-padding">
+        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">会员管理</strong> /
+            <small>新增</small>
+        </div>
+    </div>
+
+    <div class="am-tabs am-margin" data-am-tabs>
+        <ul class="am-tabs-nav am-nav am-nav-tabs">
+            <li><a href="#tab2">请填写会员基本信息</a></li>
+        </ul>
+
+        <div class="am-tabs-bd">
+            <div class="am-tab-panel am-fade" id="tab2">
+                <form class="am-form" name="storeClient">
+                    {:token('token')}
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            会员名（登录账号）
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" name="username" id="username" maxlength="30" required>
+                        </div>
+                        <div class="am-u-sm-6">*必填，不可重复</div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            会员密码（登录密码）
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="password" class="am-input-sm" name="secret" id="secret" required>
+                        </div>
+                        <div class="am-u-sm-6">*必填</div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            昵称
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" maxlength="15" name="nick" id="nick">
+                        </div>
+                        <div class="am-u-sm-6">选填</div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            手机号码
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" maxlength="11" name="mobile" id="mobile">
+                        </div>
+                        <div class="am-u-sm-6">*必填</div>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="am-margin">
+        <button type="button" class="am-btn am-btn-primary am-btn-xs" id="formSubmit">提交保存</button>
+        <button type="button" class="am-btn am-btn-primary am-btn-xs" id="formReset">放弃保存</button>
+    </div>
+</div>
+<!-- content end -->
+
+<script>
+    const form = $("form[name='storeClient']")[0];
+    const submitUrl = "<?php echo url('index/client/store') ?>";
+    const formReset = function () {
+        form.reset();
+    };
+
+    const formSubmit = function () {
+        $.ajax({
+            url: submitUrl,
+            type: 'post',
+            dataType: 'json',
+            timeout: 1000,
+            async: true,   // 是否异步
+            data: {
+                'token': $("input[name='token']").val(),
+                'username': $('#username').val(),
+                'secret': $('#secret').val(),
+                'nick': $('#nick').val(),
+                'mobile': $('#mobile').val()
+            },
+            success: function (data, status) {
+                var responseStatus = data.status;
+                if (!responseStatus) {
+                    alertSuccessMsg(responseStatus, "<?php echo url('index/client/index') ; ?>");
+                } else {
+                    alertErrMsg(responseStatus, data.msg);
+                }
+            },
+            fail: function (err, status) {
+                console.log(err)
+            }
+        })
+    };
+
+    $('#formReset').click(formReset);
+    $('#formSubmit').click(formSubmit);
+</script>

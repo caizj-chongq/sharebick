@@ -2,12 +2,9 @@
 namespace app\index\model;
 
 use think\Model;
-use traits\model\SoftDelete;
 
 class Bicycle extends Model
 {
-    use SoftDelete;
-
     /**
      * @var string
      */
@@ -26,7 +23,7 @@ class Bicycle extends Model
     /**
      * @var string
      */
-    protected static $deleteTime = 'deleted';
+    protected $deleteTime = 'deleted';
 
     /**
      * @var bool
@@ -46,4 +43,12 @@ class Bicycle extends Model
         'updated',
         'deleted'
     ];
+
+    /**
+     * @return $this|int
+     */
+    public function delete()
+    {
+        return self::where('deleted', '=', 0)->where('id', '=', $this->id)->setField('deleted', time());
+    }
 }

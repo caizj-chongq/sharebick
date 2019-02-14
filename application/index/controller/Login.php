@@ -2,9 +2,10 @@
 
 namespace app\index\controller;
 
-use app\Utils;
+use app\common\Utils;
 use think\Request;
 use app\index\model\User;
+use app\index\model\User\Operation as UserOperationModel;
 
 class Login extends Base
 {
@@ -38,6 +39,14 @@ class Login extends Base
             if ($user) {
                 if ($user->secret == Utils::encodeSha1($data['secret']) ?? '') {
                     session(SESSION_TOKEN_KEY, $user->hidden(['secret', 'real_name', 'updated', 'deleted'])->toJson());
+                    $operation = new UserOperationModel();
+                    $operation->data([
+                        'user_id' => $user->id,
+                        'time' => time(),
+                        'type' => $this->codeMap->getCodeValueByCodeAndTag(User::$userOperation, 'login'),
+                        'ip' => Utils::getRealIp(),
+                    ]);
+                    $operation->save();
                     return Utils::ajaxReturn('', 0, "Login Success！");
 
                 }

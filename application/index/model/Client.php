@@ -4,11 +4,9 @@ namespace app\index\model;
 use think\exception\ValidateException;
 use think\Model;
 use think\Validate;
-use traits\model\SoftDelete;
 
 class Client extends Model
 {
-    use SoftDelete;
     /**
      * @var string
      */
@@ -27,7 +25,7 @@ class Client extends Model
     /**
      * @var string
      */
-    protected static $deleteTime = 'deleted';
+    protected $deleteTime = 'deleted';
 
     /**
      * @var bool
@@ -53,6 +51,11 @@ class Client extends Model
     ];
 
     /**
+     * @var string
+     */
+    public static $clientrOperation = "clientOperation";
+
+    /**
      * @param array $data
      * @param array $where
      * @param null $sequence
@@ -71,17 +74,16 @@ class Client extends Model
             'nick' => [
                 'max' => 15
             ],
-            'mobile' => function ($value, $data) {
-                $mobileReg = '/^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/';
-                return (boolean)preg_match($mobileReg, $value);
-            }
+            'mobile' => [
+                'mobile'
+            ]
         ];
         $message = [
             'username.require' => '用户名不能为空！',
             'username.max' => '用户名最多30个字符！',
             'secret.require' => '密码不能为空！',
             'nick.max' => '昵称最多15个字符！',
-            'mobile' => '手机号码不正确！'
+            'mobile.mobile' => '手机号码不正确！',
         ];
         $validate = Validate::make($rules, $message);
 
@@ -90,5 +92,13 @@ class Client extends Model
         }
 
         return parent::save($data, $where, $sequence);
+    }
+
+    /**
+     * @return $this|int
+     */
+    public function delete()
+    {
+        return self::where('deleted', '=', 0)->where('id', '=', $this->id)->setField('deleted', time());
     }
 }

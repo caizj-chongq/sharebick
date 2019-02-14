@@ -3,6 +3,8 @@ namespace app\index\controller;
 
 use think\Request;
 use app\index\model\User as UserModel;
+use app\index\model\Client\Operation as ClientOperationModel;
+use app\index\model\Client as ClientModel;
 
 class Index extends Base
 {
@@ -17,24 +19,34 @@ class Index extends Base
 
     /**
      * @return mixed
+     * @throws \think\Exception
      */
     public function index()
     {
         $userCount = UserModel::where('deleted', '=', 0)->count();   //总用户
 
-        $monthActiveUser = UserModel::where('deleted', '=', 0)
-            ->whereTime('updated', 'month')
+        $monthActiveUser = ClientOperationModel::whereTime('time', 'month')
             ->count();   //当前月活跃用户
 
-        $weekActiveUser = UserModel::where('deleted', '=', 0)
-            ->whereTime('updated', 'week')
+        $weekActiveUser = ClientOperationModel::whereTime('time', 'week')
             ->count();   //当前周活跃用户
 
-        $dayActiveUser = UserModel::where('deleted', '=', 0)
-            ->whereTime('updated', 'today')
+        $dayActiveUser = ClientOperationModel::whereTime('time', 'today')
             ->count();   //当前周活跃用户
 
-        $this->assign(compact('userCount', 'monthActiveUser', 'weekActiveUser', 'dayActiveUser'));
+        $monthAddUser = ClientModel::whereTime('created', 'month')
+            ->where('deleted', '=', 0)
+            ->count();   //当前月新增用户
+
+        $weekAddUser = ClientModel::whereTime('created', 'week')
+            ->where('deleted', '=', 0)
+            ->count();   //当前周新增用户
+
+        $dayAddUser = ClientModel::whereTime('created', 'today')
+            ->where('deleted', '=', 0)
+            ->count();   //当前周新增用户
+
+        $this->assign(compact('userCount', 'monthActiveUser', 'weekActiveUser', 'dayActiveUser', 'weekAddUser', 'monthAddUser', 'dayAddUser'));
         return $this->fetch();
     }
 

@@ -2,7 +2,7 @@
 namespace app\index\controller;
 
 use app\index\model\UserGroup;
-use app\Utils;
+use app\common\Utils;
 use think\Request;
 use app\index\model\User as UserModel;
 
@@ -48,13 +48,18 @@ class User extends Base
             //保存
             $userExists = UserModel::where('username', '=', $request->param('username'))->find();
             if ($userExists) {
-                return Utils::ajaxReturn(null, 400, '该用户名已经被别的用户使用了！');
+                return Utils::throw400('该用户名已经被别的用户使用了！');
             } else {
-                $user = new UserModel();
-                $user->data(array_merge($request->param(), [
-                    'secret' => Utils::encodeSha1($request->param('secret'))
-                ]));
-                $user->save();
+                try {
+                    $user = new UserModel();
+                    $user->data(array_merge($request->param(), [
+                        'secret' => Utils::encodeSha1($request->param('secret'))
+                    ]));
+                    $user->save();
+                } catch (\Exception $exception) {
+                    return Utils::throw400($exception->getMessage());
+                }
+
                 return Utils::ajaxReturn();
             }
         }
@@ -100,17 +105,21 @@ class User extends Base
         if ($request->isAjax() && $request->isPatch()) {
             //保存
             if ($userInfo) {
-                $userInfo->data([
-                    'group_id' => $request->param('group_id'),
-                    'username' => $userInfo->username,
-                    'secret' => Utils::encodeSha1($request->param('secret')),
-                    'nick' => $request->param('nick'),
-                    'real_name' => $request->param('real_name')
-                ]);
-                $userInfo->save();
+                try {
+                    $userInfo->data([
+                        'group_id' => $request->param('group_id'),
+                        'username' => $userInfo->username,
+                        'secret' => Utils::encodeSha1($request->param('secret')),
+                        'nick' => $request->param('nick'),
+                        'real_name' => $request->param('real_name')
+                    ]);
+                    $userInfo->save();
+                } catch (\Exception $exception) {
+                    return Utils::throw400($exception->getMessage());
+                }
                 return Utils::ajaxReturn();
             } else {
-                return Utils::ajaxReturn(null, 400, '用户不存在！');
+                return Utils::throw400('用户不存在！');
             }
         }
 
