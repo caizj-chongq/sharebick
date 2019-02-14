@@ -34,6 +34,7 @@ class Login extends Base
         $data = $request->post();
         if (count($data)) {
             $user = User::where('username', '=', $data['name'] ?? 1)->where('deleted', '=', 0)->find();
+
             if ($user) {
                 if ($user->secret == Utils::encodeSha1($data['secret']) ?? '') {
                     session(SESSION_TOKEN_KEY, $user->hidden(['secret', 'real_name', 'updated', 'deleted'])->toJson());
