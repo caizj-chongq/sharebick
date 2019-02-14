@@ -26,7 +26,7 @@ class Bicycle extends Model
     /**
      * @var string
      */
-    protected $deleteTime = 'deleted';
+    protected static $deleteTime = 'deleted';
 
     /**
      * @var bool
