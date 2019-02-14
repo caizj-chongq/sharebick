@@ -25,7 +25,7 @@ class UserGroup extends Model
     /**
      * @var string
      */
-    protected static $deleteTime = 'deleted';
+    protected $deleteTime = 'deleted';
 
     /**
      * @var bool
