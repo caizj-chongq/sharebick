@@ -1,9 +1,13 @@
 <?php
+
 namespace app\index\model;
 
-use think\Model;
 
-class Bicycle extends Model
+use app\common\CodeMap;
+use think\exception\ValidateException;
+use think\Validate;
+
+class Bicycle extends BaseModel
 {
     /**
      * @var string
@@ -41,14 +45,76 @@ class Bicycle extends Model
     protected $field = [
         'created',
         'updated',
-        'deleted'
+        'deleted',
+        'bicycle_number',
+        'lock_number',
+        'status'
     ];
 
     /**
-     * @return $this|int
+     * @var array
      */
-    public function delete()
+    protected static $statusInfoMap = array();
+
+    /**
+     * @var string
+     */
+    public static $bicycleStatus = "bicycleStatus";
+
+    /**
+     * @param $value
+     * @param $data
+     * @return array
+     */
+    public function getStatusAttr($value, $data)
     {
-        return self::where('deleted', '=', 0)->where('id', '=', $this->id)->setField('deleted', time());
+        $statusInfos = (new CodeMap())->getCodeValuesByCode(self::$bicycleStatus);
+
+        if (!count(self::$statusInfoMap) || !array_key_exists($value, self::$statusInfoMap)) {
+            foreach ($statusInfos as $statusInfo) {
+                if ($statusInfo['value'] == $value) {
+                    self::$statusInfoMap[$value] = $statusInfo['zhDesc'];
+                }
+            }
+        }
+
+        return [
+            'status' => $value,
+            'status_info' => self::$statusInfoMap[$value] ?? ''
+        ];
     }
+
+    /**
+     * @param array $data
+     * @param array $where
+     * @param null $sequence
+     * @return false|int
+     */
+    public function save($data = [], $where = [], $sequence = null)
+    {
+        $rules = [
+            'bicycle_number' => [
+                'require',
+                'max' => 20
+            ],
+            'lock_number' => [
+                'require',
+                'max' => 20
+            ]
+        ];
+        $message = [
+            'bicycle_number.require' => '车号不能为空！',
+            'bicycle_number.max' => '车号最好20个字符！',
+            'lock_number.require' => '锁号不能为空！',
+            'lock_number.max' => '锁号最多15个字符！'
+        ];
+        $validate = Validate::make($rules, $message);
+
+        if (!$validate->check($this->getData())) {
+            throw new ValidateException($validate->getError());
+        }
+
+        return parent::save($data, $where, $sequence);
+    }
+
 }

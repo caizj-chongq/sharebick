@@ -2,10 +2,9 @@
 namespace app\index\model;
 
 use think\exception\ValidateException;
-use think\Model;
 use think\Validate;
 
-class Client extends Model
+class Client extends BaseModel
 {
     /**
      * @var string
@@ -92,13 +91,5 @@ class Client extends Model
         }
 
         return parent::save($data, $where, $sequence);
-    }
-
-    /**
-     * @return $this|int
-     */
-    public function delete()
-    {
-        return self::where('deleted', '=', 0)->where('id', '=', $this->id)->setField('deleted', time());
     }
 }

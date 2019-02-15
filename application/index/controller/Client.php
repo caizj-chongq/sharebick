@@ -2,9 +2,7 @@
 
 namespace app\index\controller;
 
-use app\index\model\UserGroup;
 use app\common\Utils;
-use think\exception\ValidateException;
 use think\Request;
 use app\index\model\Client as ClientModel;
 
@@ -48,7 +46,7 @@ class Client extends Base
     {
         if ($request->isAjax() && $request->isPost()) {
             //保存
-            $clientExists = ClientModel::where('username', '=', $request->param('username'))->find();
+            $clientExists = ClientModel::where('username', '=', $request->param('username'))->where('deleted', '=', 0)->find();
             if ($clientExists) {
                 return Utils::throw400('该用户名已经被别的用户使用了！');
             } else {

@@ -2,46 +2,50 @@
 <div class="admin-content">
 
     <div class="am-cf am-padding">
-        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">会员管理</strong> /
+        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">车辆管理</strong> /
             <small>详情</small>
         </div>
     </div>
 
     <div class="am-tabs am-margin" data-am-tabs>
         <ul class="am-tabs-nav am-nav am-nav-tabs">
-            <li><a href="#tab2">会员基本信息</a></li>
+            <li><a href="#tab2">车辆基本信息</a></li>
         </ul>
 
         <div class="am-tabs-bd">
             <div class="am-tab-panel am-fade" id="tab2">
-                <form class="am-form" name="storeClient">
+                <form class="am-form">
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            用户名（登录账号）
+                            车号
                         </div>
                         <div class="am-u-sm-4">
-                            <input type="text" class="am-input-sm" name="username" id="username" maxlength="30" readonly value="{$clientInfo.username}">
+                            <input type="text" class="am-input-sm" name="bicycle_number" id="bicycle_number" maxlength="20" required value="{$bicycleInfo.bicycle_number}" readonly>
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            昵称
+                            锁号
                         </div>
                         <div class="am-u-sm-4">
-                            <input type="text" class="am-input-sm" maxlength="10" name="nick" id="nick"  value="{$clientInfo.nick}">
+                            <input type="text" class="am-input-sm" name="lock_number" id="lock_number" maxlength="20" required value="{$bicycleInfo.lock_number}" readonly>
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            电话号码
+                            状态
                         </div>
                         <div class="am-u-sm-4">
-                            <input type="text" class="am-input-sm" maxlength="10" name="real_name" id="real_name" value="{$clientInfo.mobile}">
+                            <select name="status" id="status">
+                                {volist name="bicycleStatus" id="status"}
+                                    <option value="{$status.value}" {if condition="$status.value eq $bicycleInfo.status"} selected {/if}>{$status.zhDesc}</option>
+                                {/volist}
+                            </select>
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>

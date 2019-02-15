@@ -2,57 +2,52 @@
 <div class="admin-content">
 
     <div class="am-cf am-padding">
-        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">会员管理</strong> /
-            <small>编辑</small>
+        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">车辆管理</strong> /
+            <small>新增</small>
         </div>
     </div>
 
     <div class="am-tabs am-margin" data-am-tabs>
         <ul class="am-tabs-nav am-nav am-nav-tabs">
-            <li><a href="#tab2">请修改会员基本信息</a></li>
+            <li><a href="#tab2">请填写车辆基本信息</a></li>
         </ul>
 
         <div class="am-tabs-bd">
             <div class="am-tab-panel am-fade" id="tab2">
-                <form class="am-form" name="storeClient">
+                <form class="am-form" name="storeBicycle">
                     {:token('token')}
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            用户名（登录账号）
+                           车号
                         </div>
                         <div class="am-u-sm-4">
-                            <input type="text" class="am-input-sm" name="username" id="username" maxlength="30" readonly value="{$clientInfo.username}">
+                            <input type="text" class="am-input-sm" name="bicycle_number" id="bicycle_number" maxlength="20" required>
                         </div>
                         <div class="am-u-sm-6">*必填，不可重复</div>
                     </div>
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            用户密码（登录密码）
+                            锁号
                         </div>
                         <div class="am-u-sm-4">
-                            <input type="password" class="am-input-sm" name="secret" id="secret" required>
+                            <input type="text" class="am-input-sm" name="lock_number" id="lock_number" maxlength="20" required>
                         </div>
-                        <div class="am-u-sm-6">*必填</div>
+                        <div class="am-u-sm-6">*必填，不可重复</div>
                     </div>
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            昵称
+                            状态
                         </div>
                         <div class="am-u-sm-4">
-                            <input type="text" class="am-input-sm" maxlength="15" name="nick" id="nick"  value="{$clientInfo.nick}">
-                        </div>
-                        <div class="am-u-sm-6">选填</div>
-                    </div>
-
-                    <div class="am-g am-margin-top">
-                        <div class="am-u-sm-2 am-text-right">
-                            电话号码
-                        </div>
-                        <div class="am-u-sm-4">
-                            <input type="text" class="am-input-sm" maxlength="11" name="mobile" id="mobile" value="{$clientInfo.mobile}">
+                            <select name="status" id="status">
+                                <option value="1">请选择车辆状态</option>
+                                {volist name="bicycleStatus" id="status"}
+                                    <option value="{$status.value}">{$status.zhDesc}</option>
+                                {/volist}
+                            </select>
                         </div>
                         <div class="am-u-sm-6">选填</div>
                     </div>
@@ -71,8 +66,8 @@
 <!-- content end -->
 
 <script>
-    const form = $("form[name='storeClient']")[0];
-    const submitUrl = "<?php echo url('index/client/update', ['id' => $id]); ?>";
+    const form = $("form[name='storeBicycle']")[0];
+    const submitUrl = "<?php echo url('index/bicycle/store') ?>";
     const formReset = function () {
         form.reset();
     };
@@ -80,20 +75,20 @@
     const formSubmit = function () {
         $.ajax({
             url: submitUrl,
-            type: 'patch',
+            type: 'post',
             dataType: 'json',
             timeout: 1000,
             async: true,   // 是否异步
             data: {
                 'token': $("input[name='token']").val(),
-                'secret': $('#secret').val(),
-                'nick': $('#nick').val(),
-                'mobile': $('#mobile').val()
+                'bicycle_number': $('#bicycle_number').val(),
+                'lock_number': $('#lock_number').val(),
+                'status': $('#status').val()
             },
             success: function (data, status) {
                 var responseStatus = data.status;
                 if (!responseStatus) {
-                    alertSuccessMsg(responseStatus, "<?php echo url('index/client/index') ; ?>");
+                    alertSuccessMsg(responseStatus, "<?php echo url('index/bicycle/index') ; ?>");
                 } else {
                     alertErrMsg(responseStatus, data.msg);
                 }

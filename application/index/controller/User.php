@@ -46,7 +46,9 @@ class User extends Base
     {
         if ($request->isAjax() && $request->isPost()) {
             //保存
-            $userExists = UserModel::where('username', '=', $request->param('username'))->find();
+            $userExists = UserModel::where('username', '=', $request->param('username'))
+                ->where('deleted', '=', 0)
+                ->find();
             if ($userExists) {
                 return Utils::throw400('该用户名已经被别的用户使用了！');
             } else {
