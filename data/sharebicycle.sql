@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50719
 File Encoding         : 65001
 
-Date: 2019-02-14 18:12:36
+Date: 2019-02-15 16:13:09
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -151,13 +151,35 @@ CREATE TABLE `admin_users_operations` (
   `ip` varchar(15) DEFAULT NULL,
   `created` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of admin_users_operations
 -- ----------------------------
 INSERT INTO `admin_users_operations` VALUES ('1', '1', '1550132838', '1', '192.168.10.1', '1550132838');
 INSERT INTO `admin_users_operations` VALUES ('2', '1', '1550135308', '1', '192.168.10.1', '1550135308');
+INSERT INTO `admin_users_operations` VALUES ('3', '11', '1550199537', '1', '192.168.10.1', '1550199537');
+
+-- ----------------------------
+-- Table structure for bicycle_reports
+-- ----------------------------
+DROP TABLE IF EXISTS `bicycle_reports`;
+CREATE TABLE `bicycle_reports` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `bicycle_id` int(11) DEFAULT '0',
+  `type` int(11) DEFAULT '0' COMMENT '车辆反馈类别 ',
+  `remark` varchar(200) DEFAULT NULL,
+  `images` json DEFAULT NULL,
+  `status` int(11) DEFAULT '0' COMMENT '处理状态',
+  `created` int(11) DEFAULT '0',
+  `updated` int(11) DEFAULT '0',
+  `deleted` int(11) DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of bicycle_reports
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for bicycles
@@ -168,12 +190,17 @@ CREATE TABLE `bicycles` (
   `created` int(11) DEFAULT '0',
   `updated` int(11) DEFAULT '0',
   `deleted` int(11) DEFAULT '0',
+  `lock_number` varchar(20) DEFAULT NULL,
+  `bicycle_number` varchar(20) DEFAULT NULL,
+  `status` int(11) DEFAULT '0' COMMENT '车辆状态',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of bicycles
 -- ----------------------------
+INSERT INTO `bicycles` VALUES ('1', '1550200835', '1550202026', '0', '3', '1', '1');
+INSERT INTO `bicycles` VALUES ('2', '1550201624', '1550202135', '0', '2', '2', '3');
 
 -- ----------------------------
 -- Table structure for clients
