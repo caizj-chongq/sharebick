@@ -33,6 +33,11 @@ class Yingyan
     /**
      * @var mixed
      */
+    private $browerAk;
+
+    /**
+     * @var mixed
+     */
     private $serviceId;
 
     /**
@@ -45,11 +50,28 @@ class Yingyan
     {
         $systemInfo = Db::table('system_info')->find();
         if ($systemInfo) {
-            $this->ak = $systemInfo->yingyanAk;
-            $this->serviceId = $systemInfo->service_id;
+            $this->ak = $systemInfo->yingyanAk ?? $systemInfo['yingyanAk'];
+            $this->serviceId = $systemInfo->service_id ?? $systemInfo['service_id'];
+            $this->browerAk = $systemInfo->browerAk ?? $systemInfo['browerAk'];
         } else {
             return false;
         }
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAk()
+    {
+        return $this->ak;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBrowerAk()
+    {
+        return $this->browerAk;
     }
 
     /**
