@@ -39,6 +39,7 @@
                     <tr>
                         <th class="table-id">ID</th>
                         <th class="table-title">车号</th>
+                        <th class="table-title">车名</th>
                         <th class="table-type">锁号</th>
                         <th class="table-author">状态</th>
                         <th class="table-date">创建时间</th>
@@ -50,9 +51,10 @@
                             <tr>
                                 <td>{$bicycle.id}</td>
                                 <td><a href="{:url('index/bicycle/show', ['id' => $bicycle.id])}">{$bicycle.bicycle_number}</a></td>
+                                <td><a href="{:url('index/bicycle/show', ['id' => $bicycle.id])}">{$bicycle.bicycle_name}</a></td>
                                 <td>{$bicycle.lock_number}</td>
                                 <td>{$bicycle.status.status_info}</td>
-                                <td>{$bicycle.created}</td>
+                                <td>{$bicycle.created|date='Y-m-d H:i', ###}</td>
                                 <td>
                                     <div class="am-btn-toolbar">
                                         <div class="am-btn-group am-btn-group-xs">

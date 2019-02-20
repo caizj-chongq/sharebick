@@ -48,7 +48,8 @@ class Bicycle extends BaseModel
         'deleted',
         'bicycle_number',
         'lock_number',
-        'status'
+        'status',
+        'bicycle_name'
     ];
 
     /**
@@ -97,6 +98,11 @@ class Bicycle extends BaseModel
                 'require',
                 'max' => 20
             ],
+            'bicycle_name' => [
+                'require',
+                'max' => 10,
+                'min' => 5
+            ],
             'lock_number' => [
                 'require',
                 'max' => 20
@@ -104,7 +110,10 @@ class Bicycle extends BaseModel
         ];
         $message = [
             'bicycle_number.require' => '车号不能为空！',
-            'bicycle_number.max' => '车号最好20个字符！',
+            'bicycle_number.max' => '车号最多20个字符！',
+            'bicycle_name.require' => '车名不能为空！',
+            'bicycle_name.max' => '车名最多10个字符！',
+            'bicycle_name.min' => '车号最少5个字符！',
             'lock_number.require' => '锁号不能为空！',
             'lock_number.max' => '锁号最多15个字符！'
         ];

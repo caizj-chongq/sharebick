@@ -1,6 +1,7 @@
 <?php
 namespace app\index\controller;
 
+use app\index\model\LockStatus\Lock;
 use think\Request;
 use app\index\model\User as UserModel;
 use app\index\model\Client\Operation as ClientOperationModel;
@@ -19,7 +20,6 @@ class Index extends Base
 
     /**
      * @return mixed
-     * @throws \think\Exception
      */
     public function index()
     {

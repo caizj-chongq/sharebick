@@ -107,7 +107,8 @@ class Client extends Base
                         'username' => $clientInfo->username,
                         'secret' => Utils::encodeSha1($request->param('secret')),
                         'nick' => $request->param('nick'),
-                        'mobile' => $request->param('mobile')
+                        'mobile' => $request->param('mobile'),
+                        'money' => $request->param('money')
                     ]);
                     $clientInfo->save();
                 } catch (\Exception $exception) {

@@ -41,6 +41,7 @@
                         <th class="table-title">用户名</th>
                         <th class="table-type">昵称</th>
                         <th class="table-author">手机号</th>
+                        <th class="table-author">拥有人民币(元)</th>
                         <th class="table-date">创建时间</th>
                         <th class="table-set">操作</th>
                     </tr>
@@ -52,7 +53,8 @@
                                 <td><a href="{:url('index/client/show', ['id' => $client.id])}">{$client.username}</a></td>
                                 <td>{$client.nick}</td>
                                 <td>{$client.mobile}</td>
-                                <td>{$client.created}</td>
+                                <td>{$client.money}</td>
+                                <td>{$client.created|date='Y-m-d H:i', ###}</td>
                                 <td>
                                     <div class="am-btn-toolbar">
                                         <div class="am-btn-group am-btn-group-xs">

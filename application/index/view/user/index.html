@@ -52,7 +52,7 @@
                                 <td><a href="{:url('index/user/show', ['id' => $user.id])}">{$user.username}</a></td>
                                 <td>{$user.nick}</td>
                                 <td>{$user.real_name}</td>
-                                <td>{$user.created}</td>
+                                <td>{$user.created|date='Y-m-d H:i', ###}</td>
                                 <td>
                                     <div class="am-btn-toolbar">
                                         <div class="am-btn-group am-btn-group-xs">

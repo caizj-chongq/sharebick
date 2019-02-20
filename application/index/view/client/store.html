@@ -57,6 +57,16 @@
                         <div class="am-u-sm-6">*必填</div>
                     </div>
 
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            拥有人民币(元)
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" maxlength="18" name="money" id="money">
+                        </div>
+                        <div class="am-u-sm-6">*必填</div>
+                    </div>
+
                 </form>
             </div>
 
@@ -89,7 +99,8 @@
                 'username': $('#username').val(),
                 'secret': $('#secret').val(),
                 'nick': $('#nick').val(),
-                'mobile': $('#mobile').val()
+                'mobile': $('#mobile').val(),
+                'money': $('#money').val()
             },
             success: function (data, status) {
                 var responseStatus = data.status;

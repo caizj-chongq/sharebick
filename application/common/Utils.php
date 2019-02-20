@@ -111,5 +111,15 @@ class Utils
         return $realIp;
     }
 
+    /**
+     * 创建多层目录
+     * @param $path
+     * @return bool
+     */
+    public static function mkdirs($path)
+    {
+        return is_dir($path) or (self::mkdirs(dirname($path))) and self::mkdirs($path);
+    }
+
 
 }

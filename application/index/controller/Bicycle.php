@@ -3,15 +3,27 @@
 namespace app\index\controller;
 
 use app\common\Utils;
+use app\common\Yingyan;
+use think\Db;
 use think\Request;
 use app\index\model\Bicycle as BicycleModel;
 
 class Bicycle extends Base
 {
+    protected $yingyan;
+
+    /**
+     * Bicycle constructor.
+     * @param Request|null $request
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
     public function __construct(Request $request = null)
     {
         parent::__construct($request);
         $bicycleStatus = $this->codeMap->getCodeValuesByCode(BicycleModel::$bicycleStatus);
+        $this->yingyan = new Yingyan();
         $this->assign(compact('bicycleStatus'));
     }
 
@@ -68,10 +80,17 @@ class Bicycle extends Base
                 return Utils::throw400($errMsg);
             } else {
                 try {
+                    Db::startTrans();
                     $client = new BicycleModel();
                     $client->data($request->param());
                     $client->save();
+                    $response = json_decode($this->yingyan->createEntity($request->param('bicycle_name')), true);
+                    if ($response['status']) {
+                        throw new \Exception($response['message']);
+                    }
+                    Db::commit();
                 } catch (\Exception $exception) {
+                    Db::rollback();
                     return Utils::throw400($exception->getMessage());
                 }
                 return Utils::ajaxReturn();
@@ -132,7 +151,8 @@ class Bicycle extends Base
                     $bicycleInfo->data([
                         'bicycle_number' => $bicycleInfo->bicycle_number,
                         'lock_number' => $request->param('lock_number'),
-                        'status' => $request->param('status')
+                        'status' => $request->param('status'),
+                        'bicycle_name' => $bicycleInfo->bicycle_name
                     ]);
                     $bicycleInfo->save();
                 } catch (\Exception $exception) {
@@ -171,7 +191,19 @@ class Bicycle extends Base
             ->where('id', '=', $id)
             ->find();
         if ($bicycle) {
-            $bicycle->delete();
+            try {
+                Db::startTrans();
+                $bicycle->delete();
+                $response = json_decode($this->yingyan->deleteEntity($bicycle->bicycle_name), true);
+                if ($response['status']) {
+                    throw new \Exception($response['message']);
+                }
+                Db::commit();
+            } catch (\Exception $exception) {
+                Db::rollback();
+                return Utils::throw400($exception->getMessage());
+            }
+            return Utils::ajaxReturn();
         }
 
         return Utils::ajaxReturn();

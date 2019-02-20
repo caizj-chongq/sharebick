@@ -2,7 +2,7 @@
     #allmap {width: 100%; height:500px; overflow: hidden;}
 </style>
 
-<script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=XhyLag9s3zKpfr3t05TuDGVzd91Z5HjC"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak={$ak}"></script>
 <!--加载鼠标绘制工具-->
 <script type="text/javascript" src="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.js"></script>
 <link rel="stylesheet" href="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.css" />
@@ -31,6 +31,20 @@
             <div class="am-tab-panel am-fade" id="tab2">
                 <form class="am-form" name="storeClient">
                     {:token('token')}
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            关联车辆
+                        </div>
+                        <div class="am-u-sm-4">
+                            <select name="person" id="person">
+                                <option value="">--请选择--</option>
+                                {volist name="persons" id="person"}
+                                    <option value="{$person.id}">{$person.bicycle_name}</option>
+                                {/volist}
+                            </select>
+                        </div>
+                        <div class="am-u-sm-6">*必填</div>
+                    </div>
 
                     <div class="am-g am-margin-top">
                         <div id="allmap" style="overflow:hidden;zoom:1;position:relative;">
@@ -119,12 +133,13 @@
             url: submitUrl,
             type: 'post',
             dataType: 'json',
-            timeout: 1000,
+            timeout: 5000,
             async: true,   // 是否异步
             data: {
                 'token': $("input[name='token']").val(),
                 'data': JSON.stringify(pointData),
-                'names': JSON.stringify(fencesNames)
+                'names': JSON.stringify(fencesNames),
+                'person': $("#person").val()
             },
             success: function (data, status) {
                 var responseStatus = data.status;

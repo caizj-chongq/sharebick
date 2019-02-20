@@ -1,15 +1,18 @@
 <?php
+
 namespace app\index\model;
 
+
+use app\common\CodeMap;
 use think\exception\ValidateException;
 use think\Validate;
 
-class Client extends BaseModel
+class Fence extends BaseModel
 {
     /**
      * @var string
      */
-    protected $table = "clients";
+    protected $table = "fences";
 
     /**
      * @var string
@@ -36,24 +39,17 @@ class Client extends BaseModel
      */
     protected $pk = 'id';
 
-    /**
+    /***
      * @var array
      */
     protected $field = [
-        'username',
-        'secret',
-        'nick',
-        'mobile',
-        'money',
         'created',
         'updated',
-        'deleted'
+        'deleted',
+        'name',
+        'points',
+        'fence_id'
     ];
-
-    /**
-     * @var string
-     */
-    public static $clientrOperation = "clientOperation";
 
     /**
      * @param array $data
@@ -64,37 +60,26 @@ class Client extends BaseModel
     public function save($data = [], $where = [], $sequence = null)
     {
         $rules = [
-            'username' => [
+            'name' => [
                 'require',
-                'max' => 30
+                'max' => 20
             ],
-            'secret' => [
+            'points' => [
                 'require'
-            ],
-            'nick' => [
-                'max' => 15
-            ],
-            'mobile' => [
-                'mobile'
-            ],
-            'money' => [
-                'number'
             ]
         ];
         $message = [
-            'username.require' => '用户名不能为空！',
-            'username.max' => '用户名最多30个字符！',
-            'secret.require' => '密码不能为空！',
-            'nick.max' => '昵称最多15个字符！',
-            'mobile.mobile' => '手机号码不正确！',
-            'money.number' => '拥有钱必须是数字！',
+            'name.require' => '电子围栏名称不能为空！',
+            'name.max' => '电子围栏名称最多20个字符！',
+            'points.require' => '电子围栏顶点不能为空！'
         ];
         $validate = Validate::make($rules, $message);
 
-        if (!$validate->check($this->getData())) {
-            throw new ValidateException($validate->getError());
-        }
+//        if (!$validate->check($this->getData())) {
+//            throw new ValidateException($validate->getError());
+//        }
 
         return parent::save($data, $where, $sequence);
     }
+
 }

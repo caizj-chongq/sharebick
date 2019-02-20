@@ -9,7 +9,7 @@ class Yingyan
     /**
      * @var string
      */
-    protected $requestBaseUsl = "http://yingyan.baidu.com/v3";
+    protected $requestBaseUsl = "http://yingyan.baidu.com/api/v3";
 
     /**
      * @var array
@@ -144,7 +144,7 @@ class Yingyan
      * @param $person
      * @return false|string
      */
-    public function createPolygonFence($fenceName, array $vertexes, $person)
+    public function createPolygonFence($fenceName, $vertexes, $person)
     {
         $requestUrl = $this->requestBaseUsl . $this->requestUrl['createPolygonFence'];
         $requestData = [
@@ -153,7 +153,7 @@ class Yingyan
             'dece_name' => $fenceName,
             'coord_type' => 'bd09ll',
             'decoise' => 100,
-            'vertexes' => implode(';', $vertexes),
+            'vertexes' => $vertexes,
             'monitored_person' => $person
         ];
         $requestMethod = 'POST';
@@ -292,7 +292,7 @@ class Yingyan
                     'http' => array(
                         'method' => 'GET',
                         'content' => http_build_query($data),
-                        'timeout' => 20
+                        'timeout' => 500
                     )
                 ));
                 break;
@@ -300,16 +300,28 @@ class Yingyan
                 $context = stream_context_create(array(
                     'http' => array(
                         'method' => 'POST',
+                        'header' => 'Content-type: application/x-www-form-urlencoded',
                         'content' => http_build_query($data),
-                        'timeout' => 20
+                        'timeout' => 500
                     )
                 ));
                 break;
             default :
                 $context = stream_context_create();
         }
-
         $response = file_get_contents($url, false, $context);
+        $this->saveLog($url, $data, $method, $response);
         return $response;
+    }
+
+    private function saveLog($requestUrl, $requestData, $method, $response)
+    {
+        $logFilePath = LOG_PATH . 'yingyan/' . date('Ymd') . '.log';
+
+        if (!is_dir(dirname($logFilePath))) {
+            Utils::mkdirs($logFilePath);
+        }
+
+        file_put_contents($logFilePath, sprintf("[%s]\tmethod: %s\nrequestUrl:%s\nrequestData:%s\nresponse:%s\n", date('Y-m-d H:i:s'), $method, $requestUrl, json_encode($requestData), $response), FILE_APPEND);
     }
 }

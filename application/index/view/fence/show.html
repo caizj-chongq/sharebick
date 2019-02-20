@@ -1,3 +1,15 @@
+<style type="text/css">
+    #allmap {width: 100%; height:500px; overflow: hidden;}
+</style>
+
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak={$ak}"></script>
+<!--加载鼠标绘制工具-->
+<script type="text/javascript" src="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.js"></script>
+<link rel="stylesheet" href="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.css" />
+<!--加载检索信息窗口-->
+<script type="text/javascript" src="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.js"></script>
+<link rel="stylesheet" href="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.css" />
+
 <!-- content start -->
 <div class="admin-content">
 
@@ -21,19 +33,13 @@
                             围栏名称
                         </div>
                         <div class="am-u-sm-4">
-                            <input type="text" class="am-input-sm" name="bicycle_number" id="bicycle_number" maxlength="20" required value="{$fence.name}" readonly>
+                            <input type="text" class="am-input-sm" name="bicycle_number" id="bicycle_number" maxlength="20" required value="{$fenceInfo.name}" readonly>
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
 
-                    <div class="am-g am-margin-top">
-                        <div class="am-u-sm-2 am-text-right">
-                            锁号
-                        </div>
-                        <div class="am-u-sm-4">
-                            <input type="text" class="am-input-sm" name="lock_number" id="lock_number" maxlength="20" required value="" readonly>
-                        </div>
-                        <div class="am-u-sm-6"></div>
+                    <div class="am-g am-margin-top" id="points" points="{$fenceInfo.points}">
+                        <div id="allmap"></div>
                     </div>
 
                 </form>
@@ -43,3 +49,19 @@
     </div>
 </div>
 <!-- content end -->
+
+<script type="text/javascript">
+    // 百度地图API功能
+    var points = {$fenceInfo.points};
+    var mapPoint = [];
+    points.forEach(function (item) {
+        mapPoint.push(new BMap.Point(item.lng, item.lat));
+    });
+
+    var map = new BMap.Map("allmap");
+    map.centerAndZoom(mapPoint[0], 15);
+    map.enableScrollWheelZoom();
+
+    var polygon = new BMap.Polygon(mapPoint, {strokeColor:"blue", strokeWeight:2, strokeOpacity:0.5});  //创建多边形
+    map.addOverlay(polygon);   //增加多边形
+</script>
