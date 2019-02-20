@@ -21,7 +21,7 @@ class Fence extends Base
     public function __construct(Request $request = null)
     {
         parent::__construct($request);
-        $this->yingyan = new Yingyan();
+//        $this->yingyan = new Yingyan();
     }
 
     /**
@@ -29,7 +29,8 @@ class Fence extends Base
      */
     public function index()
     {
-
+        $fences = [];
+        $this->assign('fences');
         return $this->fetch();
     }
 
@@ -50,9 +51,16 @@ class Fence extends Base
     public function store(Request $request)
     {
         if ($request->isPost()) {
-            dd($request->param());
+            $names = json_decode($request->param('names'), true);
+            $points = json_decode($request->param('data'), true);
+            $fences = [];
+            foreach ($points as $key => $point) {
+                $fences[$key]['name'] = $names[$key];
+                $fences[$key]['point'] = $point;
+            }
+
         }
-        $this->assign(['ak' => $this->yingyan->getBrowerAk()]);
+//        $this->assign(['ak' => $this->yingyan->getBrowerAk()]);
         return $this->fetch();
     }
 

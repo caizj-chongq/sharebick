@@ -1,0 +1,116 @@
+<!-- content start -->
+<div class="admin-content">
+
+    <div class="am-cf am-padding">
+        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">电子围栏管理</strong> /
+            <small>列表</small>
+        </div>
+    </div>
+
+    <div class="am-g">
+        <div class="am-u-md-6 am-cf">
+            <div class="am-fl am-cf">
+                <div class="am-btn-toolbar am-fl">
+                    <div class="am-btn-group am-btn-group-xs">
+                        <button type="button" class="am-btn am-btn-default" id="store"><span
+                                class="am-icon-plus"></span> 新增
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="am-u-md-3 am-cf">
+            <div class="am-fr">
+                <div class="am-input-group am-input-group-sm">
+                    <input type="text" class="am-form-field" name="keywords" id="keywords" {if condition="isset($keywords)"} value="{$keywords}" {/if}>
+                    <span class="am-input-group-btn">
+                  <button class="am-btn am-btn-default" type="button" id="search" onclick="searchKeywords()">搜索</button>
+                </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="am-g">
+        <div class="am-u-sm-12">
+            <form class="am-form">
+                <table class="am-table am-table-striped am-table-hover table-main">
+                    <thead>
+                        <tr>
+                            <th class="table-id">ID</th>
+                            <th class="table-title">围栏名称</th>
+                            <th class="table-set">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {volist name="fences" id="fence"}
+                            <tr>
+                                <td>{$bicycle.id}</td>
+                                <td><a href="{:url('index/fence/show', ['id' => $fence.id])}">{$fence.name}</a></td>
+                                <td>
+                                    <div class="am-btn-toolbar">
+                                        <div class="am-btn-group am-btn-group-xs">
+                                            <button type="button" class="am-btn am-btn-default am-btn-xs am-text-danger" name="delUser" onclick="del(this)" to="{:url('index/fence/destroy', ['id' => $fence.id])}"><span
+                                                    class="am-icon-trash-o"></span> 删除
+                                                {:token('token')}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {/volist}
+                    </tbody>
+                </table>
+                <div class="am-cf">
+                    共 {$fences->total()} 条记录
+                    <div class="am-fr">
+                        {$page}
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+<!-- content end -->
+
+<script>
+    //新增用户 跳转到新增用户页面
+    $('#store').click(function () {
+        window.location.href = "<?php echo url('index/fence/store'); ?>";
+    });
+
+    function delUser(url) {
+        $.ajax({
+            url: url,
+            type: 'delete',
+            dataType: 'json',
+            timeout: 1000,
+            async: true,   // 是否异步
+            data: {
+                'token': $("input[name='token']").val()
+            },
+            success: function (data, status) {
+                var responseStatus = data.status;
+                if (!responseStatus) {
+                    alertSuccessMsg(responseStatus, "<?php echo url('index/fence/index'); ?>");
+                } else {
+                    alertErrMsg(responseStatus, data.msg);
+                }
+            },
+            fail: function (err, status) {
+                console.log(err)
+            }
+        })
+    }
+
+    function del(button) {
+        delUser(button.getAttribute('to'))
+    }
+
+    function searchKeywords() {
+        var keyWorkds = $('#keywords').val();
+        window.location.href = "<?php echo url('index/fence/index'); ?>" + "?keywords=" + keyWorkds
+    }
+
+</script>

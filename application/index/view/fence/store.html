@@ -2,7 +2,7 @@
     #allmap {width: 100%; height:500px; overflow: hidden;}
 </style>
 
-<script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak={$ak}"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=XhyLag9s3zKpfr3t05TuDGVzd91Z5HjC"></script>
 <!--加载鼠标绘制工具-->
 <script type="text/javascript" src="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.js"></script>
 <link rel="stylesheet" href="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.css" />
@@ -69,9 +69,16 @@
 
     map.enableScrollWheelZoom();
     var overlays = [];
+    var fencesNames = [];
 
     var overlaycomplete = function(e){
         overlays.push(e.overlay);
+        var name = prompt("请为您刚刚绘制的电子围栏取个名称！");
+        if (!name) {
+            map.removeOverlay(overlays[overlays.length - 1]);   //不输入名字就不保存电子围栏
+        } else {
+            fencesNames.push(name)
+        }
     };
 
     //实例化鼠标绘制工具
@@ -94,6 +101,7 @@
         overlays.length = 0
     }
 
+
     //页面处理逻辑
     const submitUrl = "<?php echo url('index/fence/store') ?>";
     const formReset = function () {
@@ -115,12 +123,13 @@
             async: true,   // 是否异步
             data: {
                 'token': $("input[name='token']").val(),
-                'data': pointData,
+                'data': JSON.stringify(pointData),
+                'names': JSON.stringify(fencesNames)
             },
             success: function (data, status) {
                 var responseStatus = data.status;
                 if (!responseStatus) {
-                    alertSuccessMsg(responseStatus, "<?php echo url('index/client/index') ; ?>");
+                    alertSuccessMsg(responseStatus, "<?php echo url('index/fence/index') ; ?>");
                 } else {
                     alertErrMsg(responseStatus, data.msg);
                 }
