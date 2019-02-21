@@ -11,17 +11,17 @@
 
 return [
     // 数据库类型
-    'type'           => 'mysql',
+    'type'           => \think\Env::get('database2.DATABASE_TYPE', 'mysql'),
     // 服务器地址
-    'hostname'       => '211.149.160.138',
+    'hostname'       => \think\Env::get('database2.HOST', '127.0.0.1'),
     // 数据库名
-    'database'       => 'eachbike_cqjhxc',
+    'database'       => \think\Env::get('database2.DATABASE', 'forget'),
     // 用户名
-    'username'       => 'aiyu',
+    'username'       => \think\Env::get('database2.USERNAME', 'forget'),
     // 密码
-    'password'       => 'aiyu_cqie2015',
+    'password'       => \think\Env::get('database2.PASSWORD', 'forget'),
     // 端口
-    'hostport'       => '20183',
+    'hostport'       => \think\Env::get('database2.PORT', '3306'),
     // 连接dsn
     'dsn'            => '',
     // 数据库连接参数
