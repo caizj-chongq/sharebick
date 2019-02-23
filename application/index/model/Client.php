@@ -45,6 +45,7 @@ class Client extends BaseModel
         'nick',
         'mobile',
         'money',
+        'token',
         'created',
         'updated',
         'deleted'

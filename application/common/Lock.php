@@ -1,6 +1,8 @@
 <?php
 namespace app\common;
 
+use think\Env;
+
 class Lock
 {
     /**
@@ -8,7 +10,7 @@ class Lock
      */
     protected $imei;
 
-    protected $token = "48A91502513526909A5D91A10BB1E39D";
+    protected $token;
 
     protected $requestUrl = "http://lock.eachbike.com:8088/BikeServer/bike";
 
@@ -18,6 +20,7 @@ class Lock
      */
     public function __construct($imei)
     {
+        $this->token = Env::get('LOCK.LOCK_TOKEN', 'forget');
         $this->imei = $imei;
     }
 
