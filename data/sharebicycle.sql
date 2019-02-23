@@ -1,4 +1,3 @@
-
 /*
  Navicat Premium Data Transfer
 
@@ -12,7 +11,7 @@
  Target Server Version : 50725
  File Encoding         : 65001
 
- Date: 21/02/2019 10:57:01
+ Date: 23/02/2019 14:07:17
 */
 
 SET NAMES utf8mb4;
@@ -154,7 +153,7 @@ CREATE TABLE `admin_users_operations`  (
   `ip` varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `created` int(11) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of admin_users_operations
@@ -167,6 +166,8 @@ INSERT INTO `admin_users_operations` VALUES (5, 11, 1550415334, 1, '127.0.0.1', 
 INSERT INTO `admin_users_operations` VALUES (6, 11, 1550589994, 1, '127.0.0.1', 1550589994);
 INSERT INTO `admin_users_operations` VALUES (7, 11, 1550662336, 1, '127.0.0.1', 1550662336);
 INSERT INTO `admin_users_operations` VALUES (8, 11, 1550668601, 1, '127.0.0.1', 1550668601);
+INSERT INTO `admin_users_operations` VALUES (9, 11, 1550835410, 1, '127.0.0.1', 1550835409);
+INSERT INTO `admin_users_operations` VALUES (10, 11, 1550900483, 1, '127.0.0.1', 1550900482);
 
 -- ----------------------------
 -- Table structure for bicycle_reports
@@ -224,15 +225,16 @@ CREATE TABLE `clients`  (
   `updated` int(11) NULL DEFAULT 0,
   `deleted` int(11) NULL DEFAULT 0,
   `mobile` varchar(12) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE
+  `token` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '客户端用户登录token',
+  PRIMARY KEY (`id`, `token`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of clients
 -- ----------------------------
-INSERT INTO `clients` VALUES (1, '1', 'da39a3ee5e6b4b0d3255bfef95601890afd80709', '113311', 0.00, 1550138323, 1550138865, 1550139140, '13311111111');
-INSERT INTO `clients` VALUES (2, '1123', 'da39a3ee5e6b4b0d3255bfef95601890afd80709', '12134', 0.00, 1550139128, 1550139135, 1550139137, '13322222222');
-INSERT INTO `clients` VALUES (3, '123412', 'c129b324aee662b04eccf68babba85851346dff9', 'qwerqwer', 100.00, 1550675695, 1550675695, 0, '13311111111');
+INSERT INTO `clients` VALUES (1, '1', 'da39a3ee5e6b4b0d3255bfef95601890afd80709', '113311', 0.00, 1550138323, 1550138865, 1550139140, '13311111111', '');
+INSERT INTO `clients` VALUES (2, '1123', 'da39a3ee5e6b4b0d3255bfef95601890afd80709', '12134', 0.00, 1550139128, 1550139135, 1550139137, '13322222222', '');
+INSERT INTO `clients` VALUES (3, '123412', 'c129b324aee662b04eccf68babba85851346dff9', 'qwerqwer', 100.00, 1550675695, 1550675695, 0, '13311111111', '');
 
 -- ----------------------------
 -- Table structure for clients_operations
