@@ -1,4 +1,5 @@
 <?php
+
 namespace app\common;
 
 class Utils
@@ -22,7 +23,8 @@ class Utils
      * @param string $msg
      * @return array
      */
-    public static function base($data = [], $status = 0, $msg = '') {
+    public static function base($data = [], $status = 0, $msg = '')
+    {
         if ($data && !is_array($data)) {
             $data = [$data];
         }
@@ -119,6 +121,21 @@ class Utils
     public static function mkdirs($path)
     {
         return is_dir($path) or (self::mkdirs(dirname($path))) and self::mkdirs($path);
+    }
+
+    /**
+     * 产生随机字符串
+     * @param int $length
+     * @return string
+     */
+    public static function str_random($length = 128)
+    {
+        $key = "";
+        $pattern = '1234567890ABCDEFGHIJKLOMNOPQRSTUVWXYZ';
+        for ($i = 0; $i < $length; $i++) {
+            $key .= $pattern{mt_rand(0, 35)};    //生成php随机数
+        }
+        return $key;
     }
 
 

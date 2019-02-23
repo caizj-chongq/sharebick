@@ -11,7 +11,8 @@
 
 use think\Route;
 
+Route::any('/api_v1/session','api_v1/Session/login');
+Route::post('/api_v1/client','api_v1/Session/storeUser');
+Route::patch('/api_v1/client','api_v1/Client/update');
 
-Route::group(['prefix' => 'api/vi'], function () {
-    Route::post('/seesion', 'session/login');
-});
+Route::get('/api_v1/bicycle','api_v1/Bicycle/index');

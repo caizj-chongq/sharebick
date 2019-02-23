@@ -40,15 +40,18 @@ class Client extends BaseModel
      * @var array
      */
     protected $field = [
-        'username',
-        'secret',
         'nick',
         'mobile',
         'money',
+        'openid',
         'token',
         'created',
         'updated',
         'deleted'
+    ];
+
+    protected $hidden = [
+        'secret'
     ];
 
     /**
@@ -66,11 +69,7 @@ class Client extends BaseModel
     {
         $rules = [
             'username' => [
-                'require',
                 'max' => 30
-            ],
-            'secret' => [
-                'require'
             ],
             'nick' => [
                 'max' => 15
@@ -83,9 +82,6 @@ class Client extends BaseModel
             ]
         ];
         $message = [
-            'username.require' => '用户名不能为空！',
-            'username.max' => '用户名最多30个字符！',
-            'secret.require' => '密码不能为空！',
             'nick.max' => '昵称最多15个字符！',
             'mobile.mobile' => '手机号码不正确！',
             'money.number' => '拥有钱必须是数字！',

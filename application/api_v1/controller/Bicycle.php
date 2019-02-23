@@ -1,10 +1,9 @@
 <?php
-namespace app\api\controller;
+namespace app\api_v1\controller;
 
-use think\Controller;
 use think\Request;
 
-class Bicycle extends Controller
+class Bicycle extends Base
 {
     public function unLock(Request $request)
     {

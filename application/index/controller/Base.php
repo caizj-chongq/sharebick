@@ -49,7 +49,7 @@ class Base extends Controller
                 $err = 'token错误！';
             }
             if ($err) {
-                $data = Utils::throw400( $err);
+                $data = Utils::throw400($err);
                 $type = $this->getResponseType();
                 $response = Response::create($data, $type);
                 throw new HttpResponseException($response);
