@@ -5,11 +5,6 @@ use think\Env;
 
 class Lock
 {
-    /**
-     * @var
-     */
-    protected $imei;
-
     protected $token;
 
     protected $requestUrl = "http://lock.eachbike.com:8088/BikeServer/bike";
@@ -18,23 +13,22 @@ class Lock
      * Lock constructor.
      * @param $imei
      */
-    public function __construct($imei)
+    public function __construct()
     {
-        $this->token = Env::get('LOCK.LOCK_TOKEN', 'forget');
-        $this->imei = $imei;
+        $this->token = Env::get('lock.LOCK_TOKEN', 'forget');
     }
 
     /**
      * 开锁
      * @return bool|string
      */
-    public function unLock()
+    public function unLock($imei, $time)
     {
         $requestData = [
             'type' => 1001,
-            'imei' => $this->imei,
+            'imei' => $imei,
             'token' => $this->token,
-            'timestamp' => time()
+            'timestamp' => $time
         ];
         return $this->send($this->requestUrl, $requestData);
     }
@@ -43,13 +37,13 @@ class Lock
      * 定位
      * @return bool|string
      */
-    public function getLocation()
+    public function getLocation($imei, $time)
     {
         $requestData = [
             'type' => 1002,
-            'imei' => $this->imei,
+            'imei' => $imei,
             'token' => $this->token,
-            'timestamp' => time()
+            'timestamp' => $time
         ];
         return $this->send($this->requestUrl, $requestData);
     }
@@ -58,13 +52,13 @@ class Lock
      * 电量获取
      * @return bool|string
      */
-    public function getElectricQuantity()
+    public function getElectricQuantity($imei, $time)
     {
         $requestData = [
             'type' => 1003,
-            'imei' => $this->imei,
+            'imei' => $imei,
             'token' => $this->token,
-            'timestamp' => time()
+            'timestamp' => $time
         ];
         return $this->send($this->requestUrl, $requestData);
     }
@@ -73,13 +67,13 @@ class Lock
      * 找车
      * @return bool|string
      */
-    public function findCar()
+    public function findCar($imei, $time)
     {
         $requestData = [
             'type' => 1005,
-            'imei' => $this->imei,
+            'imei' => $imei,
             'token' => $this->token,
-            'timestamp' => time()
+            'timestamp' => $time
         ];
         return $this->send($this->requestUrl, $requestData);
     }
@@ -88,13 +82,13 @@ class Lock
      * 关机
      * @return bool|string
      */
-    public function off()
+    public function off($imei, $time)
     {
         $requestData = [
             'type' => 1006,
-            'imei' => $this->imei,
+            'imei' => $imei,
             'token' => $this->token,
-            'timestamp' => time()
+            'timestamp' => $time
         ];
         return $this->send($this->requestUrl, $requestData);
     }
@@ -109,13 +103,7 @@ class Lock
     {
         switch ($method) {
             case 'GET':
-                $context = stream_context_create(array(
-                    'http' => array(
-                        'method' => 'GET',
-                        'content' => http_build_query($data),
-                        'timeout' => 500
-                    )
-                ));
+                $response = file_get_contents($url . '?' . http_build_query($data));
                 break;
             case 'POST':
                 $context = stream_context_create(array(
@@ -126,11 +114,11 @@ class Lock
                         'timeout' => 500
                     )
                 ));
+                $response = file_get_contents($url, false, $context);
                 break;
             default :
-                $context = stream_context_create();
+                $response = [];
         }
-        $response = file_get_contents($url, false, $context);
         $this->saveLog($url, $data, $method, $response);
         return $response;
     }

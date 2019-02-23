@@ -7,12 +7,12 @@ use app\common\CodeMap;
 use think\exception\ValidateException;
 use think\Validate;
 
-class Bicycle extends BaseModel
+class Order extends BaseModel
 {
     /**
      * @var string
      */
-    protected $table = "bicycles";
+    protected $table = "orders";
 
     /**
      * @var string
@@ -46,10 +46,16 @@ class Bicycle extends BaseModel
         'created',
         'updated',
         'deleted',
-        'bicycle_number',
-        'lock_number',      //imei
+        'order_number',
+        'bicycle_id',
+        'begin',
+        'end',
+        'price',
         'status',
-        'bicycle_name'
+        'client_opretion',
+        'bicycle_opretion',
+        'remark',
+        'client_id'
     ];
 
     /**

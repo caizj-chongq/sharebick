@@ -3,9 +3,9 @@ namespace app\index\model\LockStatus;
 
 use think\Model;
 
-class Lock extends Model
+class Bicycle extends Model
 {
     protected $connection = 'db_connect_lock_status';
 
-    protected $table = 'zmr_lock';
+    protected $table = 'zmr_bike';
 }
