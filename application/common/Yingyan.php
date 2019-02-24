@@ -261,13 +261,13 @@ class Yingyan
      * @param $person
      * @return false|string
      */
-    public function queryStatusByLocation($longitude, $latitude, $person)
+    public function queryStatusByLocation($longitude, $latitude, $person, $coordType)
     {
         $requestUrl = $this->requestBaseUsl . $this->requestUrl['queryStatusByLocation'];
         $requestData = [
             'ak' => $this->ak,
             'service_id' => $this->serviceId,
-            'coord_type' => 'bd09ll',
+            'coord_type' => $coordType,
             'longitude' => $longitude,
             'latitude' => $latitude,
             'monitored_person' => $person
@@ -288,13 +288,7 @@ class Yingyan
     {
         switch ($method) {
             case 'GET':
-                $context = stream_context_create(array(
-                    'http' => array(
-                        'method' => 'GET',
-                        'content' => http_build_query($data),
-                        'timeout' => 500
-                    )
-                ));
+                $response = file_get_contents($url . '?' . http_build_query($data));
                 break;
             case 'POST':
                 $context = stream_context_create(array(
@@ -305,15 +299,14 @@ class Yingyan
                         'timeout' => 500
                     )
                 ));
+                $response = file_get_contents($url, false, $context);
                 break;
             default :
-                $context = stream_context_create();
+                $response = [];
         }
-        $response = file_get_contents($url, false, $context);
         $this->saveLog($url, $data, $method, $response);
         return $response;
     }
-
     private function saveLog($requestUrl, $requestData, $method, $response)
     {
         $logFilePath = LOG_PATH . 'yingyan/' . date('Ymd') . '.log';

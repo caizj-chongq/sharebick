@@ -5,6 +5,7 @@ namespace app\api_v1\controller;
 use app\common\Lock;
 use app\common\TencentMap;
 use app\common\Utils;
+use app\common\Yingyan;
 use app\index\model\Bicycle as BicycleModel;
 use app\index\model\LockStatus\Lock as LockModel;
 use app\index\model\Order as OrderModel;
@@ -32,7 +33,7 @@ class Bicycle extends Base
         $orders = OrderModel::where('deleted', '=', 0)
             ->where('client_id', '=', $this->user->id)
             ->order('created', 'desc')
-            ->paginate(10);
+            ->paginate(5);
         return Utils::ajaxReturn($orders->toArray());
     }
 
@@ -51,27 +52,29 @@ class Bicycle extends Base
             return Utils::throw400('订单不存在！');
         }
         $locationFile = ORDER_LOCATION_PATH . 'location_' . $order->order_number . '.log';
-        $locationData = [];
-        if (is_file($locationFile)) {
-            $locationData = json_decode(file_get_contents($locationFile), true);
-        }
 
-        $locationDataStr = "";
-        foreach ($locationData as $item) {
-            $locationDataStr .= $item['lat'] . ',' . $item['lng'] . ';';
-        }
-
-        $tencnetMap = new TencentMap();
-        //批量转换坐标为腾讯地图坐标系，并为下面计算距离预计算出坐标串
-        $tencentMapLocationResponse = json_decode($tencnetMap->translateCoord(trim($locationDataStr, ';'), 1), true);
-        if (!$tencentMapLocationResponse['status']) {
-            $needComputedLocationArr = $tencentMapLocationResponse['locations'];
+        if (!is_file($locationFile)) {
+            $needComputedLocationArr = [];
         } else {
-            return Utils::throw400($tencentMapLocationResponse['message']);
+            $locationData = json_decode(file_get_contents($locationFile), true);
+            dd(file_get_contents($locationFile));
+            $locationDataStr = "";
+            foreach ($locationData as $item) {
+                $locationDataStr .= $item['lat'] . ',' . $item['lng'] . ';';
+            }
+
+            $tencnetMap = new TencentMap();
+            //批量转换坐标为腾讯地图坐标系，并为下面计算距离预计算出坐标串
+            $tencentMapLocationResponse = json_decode($tencnetMap->translateCoord(trim($locationDataStr, ';'), 1), true);
+            if (!$tencentMapLocationResponse['status']) {
+                $needComputedLocationArr = $tencentMapLocationResponse['locations'];
+            } else {
+                return Utils::throw400($tencentMapLocationResponse['message']);
+            }
         }
 
         $order->location = $needComputedLocationArr;
-        return Utils::ajaxReturn($order);
+        return Utils::ajaxReturn($order->toArray());
     }
 
     /**
@@ -152,7 +155,7 @@ class Bicycle extends Base
      */
     public function update(Request $request)
     {
-        if ($request->isPatch()) {
+        if ($request->isPut()) {
             $order = OrderModel::where('id', '=', $request->param('id', ''))->where('client_id', '=', $this->user->id)->find();
             if (!$order) {
                 return Utils::throw400('订单不存在！');
@@ -169,15 +172,58 @@ class Bicycle extends Base
                         break;
                     case 3: //3完成订单 扣除用户金额
                         //判断用户金额是否充足
-                        if ($this->user->money >= $order->price) {
-                            $userSaveData = [
-                                'money' => $this->user->money - $order->price
-                            ];
+                        if ($this->user->money < $order->price) {
+                            return Utils::throw400('对不起，您的账户余额不足，请联系管理员充值！');
                         }
+                        $userSaveData = [
+                            'money' => $this->user->money - $order->price
+                        ];
                         $saveData['status'] = 3;
                         break;
                     case 4: //结束用车
                         //判断当前锁位置是否在围栏外,如果在围栏外面，就不允许停车
+
+                        //车辆位置
+                        $locationTime = time();
+                        $carImei = json_decode($order->bicycle_opretion, true)['lock_number'];
+                        $response = json_decode($this->lock->getLocation($carImei, $locationTime), true);
+                        if ($response['code'] != 1) {
+                            return Utils::throw400('定位失败！');
+                        }
+
+                        $lockInfo = null;
+                        for ($i = 0; $i < 20; $i++) {    //轮询查看开锁没有
+                            $lockInfo = LockModel::where('imei', '=', $carImei)
+                                ->where('pos_gtime', '>=', date('Y-m-d H:i:s', $locationTime))
+                                ->find();
+                            if ($lockInfo) {
+                                break;
+                            }
+                            sleep(3);
+                        }
+                        if ($i >= 10) {
+                            return Utils::throw400('定位失败！');
+                        }
+                        //判断当前锁位置是否在围栏外
+                        if ($lockInfo) {
+                            $yingyan = new Yingyan();
+                            $response = json_decode($yingyan->queryStatusByLocation($lockInfo->pos_lng, $lockInfo->pos_lat,  json_decode($order->bicycle_opretion, true)['bicycle_name'], 'wgs84'), true);
+
+                            if (!$response['status']) {
+                                $err = '';
+                                if ($response['size']) {
+                                    foreach ($response['monitored_statuses'] as $monitored_status) {
+                                        if ($monitored_status['monitored_status'] == 'out') {
+                                            $err = '当前车辆已驶出规定范围，请回到规定范围内再试！';
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (strlen($err)) {
+                                    return Utils::ajaxReturn(null, 3, $err);
+                                }
+                            }
+                        }
 
                         //计算保存数据
                         $endTime = time();
@@ -195,10 +241,13 @@ class Bicycle extends Base
                         $saveData['price'] = $price;
                         //计算距离
                         $filename = ORDER_LOCATION_PATH . 'location_' . $order->order_number . '.log';
-                        $locationData = [];
-                        if (is_file($filename)) {
-                            $locationData = json_decode(file_get_contents($filename), true);
+                        if (!is_file($filename)) {
+                            $saveData['meter'] = 0;
+                            break;
                         }
+
+                        $locationData = json_decode(file_get_contents($filename), true);
+
                         $locationDataStr = "";
                         foreach ($locationData as $item) {
                             $locationDataStr .= $item['lat'] . ',' . $item['lng'] . ';';
@@ -308,24 +357,41 @@ class Bicycle extends Base
                         'lat' => $lockInfo->pos_lat,
                         'lng' => $lockInfo->pos_lng
                     ];
-                    file_put_contents($filename, json_encode($oldData), FILE_APPEND);
-                }
+                    file_put_contents($filename, json_encode($oldData));
 
+                    //判断位置是否在电子围栏内
+                    $yingyan = new Yingyan();
+                    $response = json_decode($yingyan->queryStatusByLocation($lockInfo->pos_lng, $lockInfo->pos_lat,  json_decode($order->bicycle_opretion, true)['bicycle_name'], 'wgs84'), true);
+
+                    if (!$response['status']) {
+                        $err = '';
+                        if ($response['size']) {
+                            foreach ($response['monitored_statuses'] as $monitored_status) {
+                                if ($monitored_status['monitored_status'] == 'out') {
+                                    $err = '当前车辆已驶出规定范围，请尽快回到规定范围内！';
+                                    break;
+                                }
+                            }
+                        }
+                        if (strlen($err)) {
+                            return Utils::ajaxReturn(null, 3, $err);
+                        }
+                    }
+                }
             }
 
             try {
                 Db::startTrans();
-
                 if (isset($saveData)) {
                     $order->where('id', '=', $request->param('id', ''))->update($saveData);
                 }
 
                 if (isset($userSaveData)) {
-                    Db::where('id', '=', $this->user->id)->update($userSaveData);
+                    Db::table('clients')->where('id', '=', $this->user->id)->update($userSaveData);
                 }
 
                 Db::commit();
-                return Utils::ajaxReturn();
+                return Utils::ajaxReturn(OrderModel::where('id', '=', $request->param('id', ''))->where('client_id', '=', $this->user->id)->find()->toArray());
             } catch (\Exception $exception) {
                 Db::rollback();
                 return Utils::throw400($exception->getMessage());
