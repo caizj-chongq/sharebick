@@ -15,4 +15,7 @@ Route::any('/api_v1/session','api_v1/Session/login');
 Route::post('/api_v1/client','api_v1/Session/storeUser');
 Route::patch('/api_v1/client','api_v1/Client/update');
 
+Route::get('/api_v1/bicycle','api_v1/Bicycle/index');
+Route::get('/api_v1/bicycle_show','api_v1/Bicycle/show');
 Route::post('/api_v1/bicycle','api_v1/Bicycle/store');
+Route::patch('/api_v1/bicycle','api_v1/Bicycle/update');

@@ -30,6 +30,24 @@ class CodeMap
                 'value' => 3,
                 'zhDesc' => '暂停使用'
             ]
+        ],
+        'orderStatus' => [
+            'ing' => [
+                'value' => 1,
+                'zhDesc' => '进行中'
+            ],
+            'cancle' => [
+                'value' => 2,
+                'zhDesc' => '已取消'
+            ],
+            'success' => [
+                'value' => 3,
+                'zhDesc' => '已完成'
+            ],
+            'noPay' =>[
+                'value' => 4,
+                'zhDesc' => '未支付'
+            ]
         ]
     ];
 

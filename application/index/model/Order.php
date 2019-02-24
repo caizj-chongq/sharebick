@@ -55,7 +55,8 @@ class Order extends BaseModel
         'client_opretion',
         'bicycle_opretion',
         'remark',
-        'client_id'
+        'client_id',
+        'meter'
     ];
 
     /**
@@ -66,7 +67,7 @@ class Order extends BaseModel
     /**
      * @var string
      */
-    public static $bicycleStatus = "bicycleStatus";
+    public static $bicycleStatus = "orderStatus";
 
     /**
      * @param $value
@@ -91,6 +92,32 @@ class Order extends BaseModel
         ];
     }
 
+    public function getBeginAttr($value)
+    {
+        if ($value) {
+            return date('Y-m-d H:i:s', $value);
+        }
+        return $value;
+    }
+
+
+    public function getEndAttr($value)
+    {
+        if ($value) {
+            return date('Y-m-d H:i:s', $value);
+        }
+        return $value;
+    }
+
+
+    public function getMeterAttr($value)
+    {
+        if ($value) {
+            return number_format($value, 0, '.', ',');
+        }
+        return $value;
+    }
+
     /**
      * @param array $data
      * @param array $where
@@ -99,36 +126,6 @@ class Order extends BaseModel
      */
     public function save($data = [], $where = [], $sequence = null)
     {
-        $rules = [
-            'bicycle_number' => [
-                'require',
-                'max' => 20
-            ],
-            'bicycle_name' => [
-                'require',
-                'max' => 10,
-                'min' => 5
-            ],
-            'lock_number' => [
-                'require',
-                'max' => 20
-            ]
-        ];
-        $message = [
-            'bicycle_number.require' => '车号不能为空！',
-            'bicycle_number.max' => '车号最多20个字符！',
-            'bicycle_name.require' => '车名不能为空！',
-            'bicycle_name.max' => '车名最多10个字符！',
-            'bicycle_name.min' => '车号最少5个字符！',
-            'lock_number.require' => '锁号不能为空！',
-            'lock_number.max' => '锁号最多15个字符！'
-        ];
-        $validate = Validate::make($rules, $message);
-
-        if (!$validate->check($this->getData())) {
-            throw new ValidateException($validate->getError());
-        }
-
         return parent::save($data, $where, $sequence);
     }
 
