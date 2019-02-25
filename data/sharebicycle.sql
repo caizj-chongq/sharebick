@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50719
 File Encoding         : 65001
 
-Date: 2019-02-25 21:20:17
+Date: 2019-02-25 21:57:38
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -151,7 +151,7 @@ CREATE TABLE `admin_users_operations` (
   `ip` varchar(15) DEFAULT NULL,
   `created` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Records of admin_users_operations
@@ -177,6 +177,26 @@ INSERT INTO `admin_users_operations` VALUES ('18', '11', '1551098138', '1', '192
 INSERT INTO `admin_users_operations` VALUES ('19', '11', '1551098599', '1', '192.168.10.1', '1551098599');
 INSERT INTO `admin_users_operations` VALUES ('20', '11', '1551098827', '1', '192.168.10.1', '1551098827');
 INSERT INTO `admin_users_operations` VALUES ('21', '11', '1551098934', '1', '192.168.10.1', '1551098934');
+INSERT INTO `admin_users_operations` VALUES ('22', '11', '1551102595', '1', '192.168.10.1', '1551102595');
+
+-- ----------------------------
+-- Table structure for bicycle_report
+-- ----------------------------
+DROP TABLE IF EXISTS `bicycle_report`;
+CREATE TABLE `bicycle_report` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `bicycle_id` int(11) DEFAULT '0',
+  `remark` varchar(200) DEFAULT NULL,
+  `created` int(11) DEFAULT '0',
+  `updated` int(11) DEFAULT '0',
+  `is_ok` tinyint(4) DEFAULT '0' COMMENT '是否查看维修',
+  `operator` json DEFAULT NULL COMMENT '操作人快照',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of bicycle_report
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for bicycle_reports
@@ -260,6 +280,26 @@ CREATE TABLE `clients_operations` (
 
 -- ----------------------------
 -- Records of clients_operations
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for fence_alarm
+-- ----------------------------
+DROP TABLE IF EXISTS `fence_alarm`;
+CREATE TABLE `fence_alarm` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `order_id` int(11) DEFAULT '0',
+  `out_time` int(11) DEFAULT '0',
+  `in_time` int(11) DEFAULT '0',
+  `out_gps` json DEFAULT NULL,
+  `in_gps` json DEFAULT NULL,
+  `created` int(11) DEFAULT '0',
+  `updated` int(11) DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of fence_alarm
 -- ----------------------------
 
 -- ----------------------------
