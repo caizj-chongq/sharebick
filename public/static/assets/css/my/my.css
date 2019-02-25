@@ -5,3 +5,8 @@
 .pagination{
     list-style: none;
 }
+
+.pagination li {
+    float: left;
+    padding: 20px;
+}
