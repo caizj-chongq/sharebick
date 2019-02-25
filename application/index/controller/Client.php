@@ -19,8 +19,7 @@ class Client extends Base
 
         if (strlen($request->param('keywords'))) {
             $keywords = $request->param('keywords');
-            $clients->where('username', 'like', "%$keywords%")
-                ->where('nick', 'like', "%$keywords%");
+            $clients->where('nick', 'like', "%$keywords%");
             $this->assign(compact('keywords'));
         }
 
@@ -31,37 +30,6 @@ class Client extends Base
             'clients' => $clients,
             'page' => $page
         ]);
-
-        return $this->fetch();
-    }
-
-    /**
-     * @param Request $request
-     * @return mixed|\think\response\Json
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     */
-    public function store(Request $request)
-    {
-        if ($request->isAjax() && $request->isPost()) {
-            //保存
-            $clientExists = ClientModel::where('username', '=', $request->param('username'))->where('deleted', '=', 0)->find();
-            if ($clientExists) {
-                return Utils::throw400('该用户名已经被别的用户使用了！');
-            } else {
-                try {
-                    $client = new ClientModel();
-                    $client->data(array_merge($request->param(), [
-                        'secret' => Utils::encodeSha1($request->param('secret'))
-                    ]));
-                    $client->save();
-                } catch (\Exception $exception) {
-                    return Utils::throw400($exception->getMessage());
-                }
-                return Utils::ajaxReturn();
-            }
-        }
 
         return $this->fetch();
     }
@@ -104,9 +72,7 @@ class Client extends Base
             if ($clientInfo) {
                 try {
                     $clientInfo->data([
-                        'username' => $clientInfo->username,
-                        'secret' => Utils::encodeSha1($request->param('secret')),
-                        'nick' => $request->param('nick'),
+                        'nick' => $clientInfo->nick,
                         'mobile' => $request->param('mobile'),
                         'money' => $request->param('money')
                     ]);

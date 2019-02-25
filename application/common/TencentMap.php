@@ -1,4 +1,5 @@
 <?php
+
 namespace app\common;
 
 use think\Env;
@@ -51,6 +52,38 @@ class TencentMap
     }
 
     /**
+     * 转换坐标系
+     * @param $locationData
+     * @return array
+     */
+    public function conversionCoordinates($locationData)
+    {
+        $returnData = [
+            "code" => 0,
+            "msg" => "",
+            "data" => []
+        ];
+        $rounds = ceil(count($locationData) / 80);
+        for ($i = 0; $i < $rounds; $i++) {
+            $locationDataStr = "";
+            $keys = count($locationData) - ($i * 80) >= 80 ? 80 : count($locationData) - ($i * 80);
+            for ($j = 0; $j < $keys; $j++) {
+                $locationDataStr .= $locationData[$j + $i * 80]['lat'] . ',' . $locationData[$j + $i * 80]['lng'] . ';';
+            }
+            //批量转换坐标为腾讯地图坐标系，并为下面计算距离预计算出坐标串
+            $tencentMapLocationResponse = json_decode($this->translateCoord(trim($locationDataStr, ';'), 1), true);
+            if (!$tencentMapLocationResponse['status']) {
+                $returnData['data'] = $tencentMapLocationResponse['locations'];
+            } else {
+                $returnData['code'] = 1;
+                $returnData['msg'] = $tencentMapLocationResponse['message'];
+            }
+        }
+        return $returnData;
+    }
+
+
+    /**
      * @param $url
      * @param $data
      * @param string $method
@@ -61,6 +94,7 @@ class TencentMap
         switch ($method) {
             case 'GET':
                 $response = file_get_contents($url . '?' . http_build_query($data));
+                dd($response);
                 break;
             case 'POST':
                 $context = stream_context_create(array(
