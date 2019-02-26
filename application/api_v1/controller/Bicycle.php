@@ -57,7 +57,6 @@ class Bicycle extends Base
             $needComputedLocationArr = [];
         } else {
             $locationData = json_decode(file_get_contents($locationFile), true);
-            dd(file_get_contents($locationFile));
             $locationDataStr = "";
             foreach ($locationData as $item) {
                 $locationDataStr .= $item['lat'] . ',' . $item['lng'] . ';';
@@ -386,7 +385,7 @@ class Bicycle extends Base
                         if ($response['size']) {
                             foreach ($response['monitored_statuses'] as $monitored_status) {
                                 if ($monitored_status['monitored_status'] == 'out') {
-                                    $err = '当前车辆已驶出规定范围，请尽快回到规定范围内！';
+//                                    $err = '当前车辆已驶出规定范围，请尽快回到规定范围内！';
                                     break;
                                 }
                             }
