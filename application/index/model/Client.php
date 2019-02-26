@@ -68,9 +68,6 @@ class Client extends BaseModel
     public function save($data = [], $where = [], $sequence = null)
     {
         $rules = [
-            'username' => [
-                'max' => 30
-            ],
             'nick' => [
                 'max' => 15
             ],

@@ -307,6 +307,7 @@ class Yingyan
         $this->saveLog($url, $data, $method, $response);
         return $response;
     }
+
     private function saveLog($requestUrl, $requestData, $method, $response)
     {
         $logFilePath = LOG_PATH . 'yingyan/' . date('Ymd') . '.log';

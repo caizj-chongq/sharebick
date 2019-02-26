@@ -1,4 +1,14 @@
 <!-- content start -->
+<style>
+    #allmap {
+        height: 500px;
+        width: 100%;
+    }
+</style>
+
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak={$ak}"></script>
+<!--<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak={$ak}"></script>-->
+
 <div class="admin-content">
 
     <div class="am-cf am-padding">
@@ -51,7 +61,8 @@
                             骑行人
                         </div>
                         <div class="am-u-sm-4">
-                            <input type="text" class="am-input-sm" value="<?php echo json_decode($orderInfo->client_opretion, true)['nick']; ?>">
+                            <input type="text" class="am-input-sm"
+                                   value="<?php echo json_decode($orderInfo->client_opretion, true)['nick']; ?>">
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
@@ -92,7 +103,8 @@
                             车号
                         </div>
                         <div class="am-u-sm-4">
-                            <input type="text" class="am-input-sm" readonly  value="<?php echo json_decode($orderInfo->bicycle_opretion, true)['bicycle_number']; ?>">
+                            <input type="text" class="am-input-sm" readonly
+                                   value="<?php echo json_decode($orderInfo->bicycle_opretion, true)['bicycle_number']; ?>">
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
@@ -102,7 +114,8 @@
                             车名
                         </div>
                         <div class="am-u-sm-4">
-                            <input type="text" class="am-input-sm" readonly value="<?php echo json_decode($orderInfo->bicycle_opretion, true)['bicycle_name']; ?>">
+                            <input type="text" class="am-input-sm" readonly
+                                   value="<?php echo json_decode($orderInfo->bicycle_opretion, true)['bicycle_name']; ?>">
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
@@ -117,6 +130,43 @@
                         <div class="am-u-sm-6"></div>
                     </div>
 
+                    {if condition="$orderInfo.location neq '[]'"}
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            行驶轨迹
+                        </div>
+                        <div class="am-u-sm-10">
+                            <div id="allmap"></div>
+                        </div>
+                    </div>
+                    {/if}
+
+                    {if condition="$fenceAlarms"}
+                        <table class="am-table am-table-striped am-table-hover table-main">
+                            <thead>
+                            <tr>
+                                <th class="table-id">ID</th>
+                                <th class="table-title">驶出围栏时间</th>
+                                <th class="table-type">驶出围栏gps经纬度</th>
+                                <th class="table-author">驶入围栏时间</th>
+                                <th class="table-author">驶入围栏gps经纬度</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {volist name="fenceAlarms" id="fenceAlarm"}
+                                <tr>
+                                    <td>{$fenceAlarm.out_time}</td>
+                                    <td>{$fenceAlarm.out_gps}</td>
+                                    <td>{$fenceAlarm.in_time || ''}</td>
+                                    <td>{$fenceAlarm.in_gps || ''}</td>
+                                </tr>
+                            {/volist}
+
+                            </tbody>
+                        </table>
+                    {/if}
+
+
                 </form>
             </div>
 
@@ -124,3 +174,61 @@
     </div>
 </div>
 <!-- content end -->
+
+<script type="text/javascript">
+    // 百度地图API功能 轨迹
+    var points = {$orderInfo.location};
+    if (points.length) {
+        var map = new BMap.Map("allmap");
+        var mapPoint = [];
+        points.forEach(function (item) {
+            mapPoint.push(new BMap.Point(item.lng, item.lat));
+        });
+        map.centerAndZoom(mapPoint[0], 15);
+        map.enableScrollWheelZoom();
+
+        var polylineArr = [];
+        //坐标转换完之后的回调函数
+        translateCallback = function (data) {
+            if (data.status === 0) {
+                for (var i = 0; i < data.points.length; i++) {
+                    polylineArr.push(data.points[i])
+                }
+            }
+        };
+        var rounds = Math.ceil(mapPoint.length / 10);
+        var a = 0;
+        for (var j = 0; j < rounds; j++) {
+            var ponitsLimit = [];
+            a = j * 10;
+            for (var i = 0; i < (mapPoint.length - a >= 10 ? 10 : mapPoint.length - a); i++) {
+                ponitsLimit.push(mapPoint[j * 10 + i]);
+            }
+            if (ponitsLimit.length) {
+                var convertor = new BMap.Convertor();
+                convertor.translate(ponitsLimit, 1, 5, translateCallback)
+            }
+        }
+
+        setTimeout(function () {
+            var polyline = new BMap.Polyline(polylineArr, {strokeColor: "blue", strokeWeight: 2, strokeOpacity: 0.5});   //创建折线
+            map.addOverlay(polyline);
+
+            map.centerAndZoom(polylineArr[0], 19);
+            map.enableScrollWheelZoom();
+        }, 300);
+        //增加折线
+    }
+
+    //围栏
+    var fencePoint = {$fencePoints};
+    if (fencePoint.length) {
+        var mapFencePoint = [];
+        fencePoint.forEach(function (item) {
+            mapFencePoint.push(new BMap.Point(item.lng, item.lat));
+        });
+        var FencePolygon = new BMap.Polygon(mapFencePoint, {strokeColor:"blue", strokeWeight:2, strokeOpacity:0.5});  //创建多边形
+        map.addOverlay(FencePolygon);   //增加多边形
+    }
+
+</script>

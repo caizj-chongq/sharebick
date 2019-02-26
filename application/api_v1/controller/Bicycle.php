@@ -7,6 +7,7 @@ use app\common\TencentMap;
 use app\common\Utils;
 use app\common\Yingyan;
 use app\index\model\Bicycle as BicycleModel;
+use app\index\model\Fence\Alarm;
 use app\index\model\LockStatus\Lock as LockModel;
 use app\index\model\Order as OrderModel;
 use think\Db;
@@ -53,26 +54,17 @@ class Bicycle extends Base
         }
         $locationFile = ORDER_LOCATION_PATH . 'location_' . $order->order_number . '.log';
 
-        if (!is_file($locationFile)) {
-            $needComputedLocationArr = [];
-        } else {
+        $locations = [];
+        if (is_file($locationFile)) {
             $locationData = json_decode(file_get_contents($locationFile), true);
-            $locationDataStr = "";
-            foreach ($locationData as $item) {
-                $locationDataStr .= $item['lat'] . ',' . $item['lng'] . ';';
+            $tencentLocations = (new TencentMap())->conversionCoordinates($locationData);
+            if ($tencentLocations['code']) {
+                return $tencentLocations['msg'];
             }
-
-            $tencnetMap = new TencentMap();
-            //批量转换坐标为腾讯地图坐标系，并为下面计算距离预计算出坐标串
-            $tencentMapLocationResponse = json_decode($tencnetMap->translateCoord(trim($locationDataStr, ';'), 1), true);
-            if (!$tencentMapLocationResponse['status']) {
-                $needComputedLocationArr = $tencentMapLocationResponse['locations'];
-            } else {
-                return Utils::throw400($tencentMapLocationResponse['message']);
-            }
+            $locations = $tencentLocations['data'];
         }
 
-        $order->location = $needComputedLocationArr;
+        $order->location = $locations;
         return Utils::ajaxReturn($order->toArray());
     }
 
@@ -262,23 +254,14 @@ class Bicycle extends Base
                             $saveData['meter'] = 0;
                             break;
                         }
-
-                        $locationData = json_decode(file_get_contents($filename), true);
-
-                        $locationDataStr = "";
-                        foreach ($locationData as $item) {
-                            $locationDataStr .= $item['lat'] . ',' . $item['lng'] . ';';
-                        }
                         $tencnetMap = new TencentMap();
-
-                        //批量转换坐标为腾讯地图坐标系，并为下面计算距离预计算出坐标串
-                        $tencentMapLocationResponse = json_decode($tencnetMap->translateCoord(trim($locationDataStr, ';'), 1), true);
-                        $needComputedLocationArr = [];
-                        if (!$tencentMapLocationResponse['status']) {
-                            $needComputedLocationArr = $tencentMapLocationResponse['locations'];
-                        } else {
-                            return Utils::throw400($tencentMapLocationResponse['message']);
+                        //转换坐标为腾讯坐标
+                        $locationData = json_decode(file_get_contents($filename), true);
+                        $tencentLocations = $tencnetMap->conversionCoordinates($locationData);
+                        if ($tencentLocations['code']) {
+                            return Utils::throw400($tencentLocations['msg']);
                         }
+                        $needComputedLocationArr = $tencentLocations['data'];
 
                         $startArr = [];
                         $endArr = [];
@@ -302,15 +285,15 @@ class Bicycle extends Base
                         for ($rounds = 0; $rounds < ceil(count($endArr) / 20); $rounds++) {
                             $startStr = '';
                             $endStr = '';
-                            if (count($endArr) >= 20) {
+                            if (count($endArr) - ($rounds * 20) >= 20) {
                                 $eles = 20;
                             } else {
-                                $eles = count($endArr);
+                                $eles = count($endArr) - ($rounds * 20);
                             }
 
                             for ($k = 0; $k < $eles; $k++) {
-                                $startStr .= $startArr[$k]['lat'] . ',' . $startArr[$k]['lng'] . ';';
-                                $endStr .= $endArr[$k]['lat'] . ',' . $endArr[$k]['lng'] . ';';
+                                $startStr .= $startArr[$k + $rounds * 20]['lat'] . ',' . $startArr[$k + $rounds * 20]['lng'] . ';';
+                                $endStr .=  $endArr[$k + $rounds * 20]['lat'] . ',' . $endArr[$k + $rounds * 20]['lng'] . ';';
                             }
                             $response = json_decode($tencnetMap->parametersDistance('bicycling', trim($startStr, ';'), trim($endStr, ';')), true);
                             $result = [];
@@ -385,8 +368,44 @@ class Bicycle extends Base
                         if ($response['size']) {
                             foreach ($response['monitored_statuses'] as $monitored_status) {
                                 if ($monitored_status['monitored_status'] == 'out') {
-//                                    $err = '当前车辆已驶出规定范围，请尽快回到规定范围内！';
+                                    //围栏外,保存数据到围栏报警数据表
+                                    $alarm = Alarm::where('order_id', '=', $order->id)
+                                        ->where('out_time', '!=', 0)
+                                        ->where('in_time', '=', 0)
+                                        ->find();   //存在出去了还没有进来的数据
+                                    if (!$alarm) {
+                                        $alarm = new Alarm();
+                                    }
+                                    $alarm->data([
+                                        'out_gps' => [
+                                            'lng' => $lockInfo->pos_lng,
+                                            'lat' => $lockInfo->pos_lat
+                                        ],
+                                        "out_time" => time(),
+                                        "order_id" => $order->id
+                                    ]);
+                                    $alarm->save();
+
+                                    $err = '当前车辆已驶出规定范围，请尽快回到规定范围内！';
                                     break;
+                                }
+                            }
+
+                            //电子围栏报警更新进入电子围栏信息
+                            if (strlen($err)) {
+                                $alarm = Alarm::where('order_id', '=', $order->id)
+                                    ->where('out_time', '!=', 0)
+                                    ->where('in_time', '=', 0)
+                                    ->find();   //存在出去了还没有进来的数据
+                                if ($alarm) {
+                                    $alarm->data([
+                                        'in_gps' => [
+                                            'lng' => $lockInfo->pos_lng,
+                                            'lat' => $lockInfo->pos_lat
+                                        ],
+                                        "in_time" => time()
+                                    ]);
+                                    $alarm->save();
                                 }
                             }
                         }

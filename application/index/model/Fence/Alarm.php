@@ -1,14 +1,14 @@
 <?php
-namespace app\index\model\Bicycle;
+namespace app\index\model\Fence;
 
 use app\index\model\BaseModel;
 
-class Reports extends BaseModel
+class Alarm extends BaseModel
 {
     /**
      * @var string
      */
-    protected $table = "bicycle_reports";
+    protected $table = "fence_alarm";
 
     /**
      * @var string
@@ -39,13 +39,13 @@ class Reports extends BaseModel
      * @var array
      */
     protected $field = [
-        'bicycle_id',
-        'remark',
-        'status',
-        'is_ok',
-        'operator',
+        'order_id',
+        'out_time',
+        'in_time',
+        'out_gps',
+        'in_gps',
         'created',
         'updated',
-        'deleted'
+        'deleted',
     ];
 }
