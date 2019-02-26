@@ -181,8 +181,24 @@ class Bicycle extends Base
                         $saveData['status'] = 3;
                         break;
                     case 4: //结束用车
-                        //判断当前锁位置是否在围栏外,如果在围栏外面，就不允许停车
+                        $locTime = time();
+                        // 查询关锁状态
+//                        $lockInfo = null;
+//                        for ($i = 0; $i < 10; $i++) {    //轮询查看开锁没有
+//                            $lockInfo = LockModel::where('imei', '=', json_decode($order->bicycle_opretion, true)['bicycle_number'])
+//                                ->where('lock_status', '=', 0)
+//                                ->where('lock_time', '>=', date('Y-m-d H:i:s', $locTime))
+//                                ->find();
+//                            if ($lockInfo) {
+//                                break;
+//                            }
+//                            sleep(1);
+//                        }
+//                        if ($i >= 10) {
+//                            return Utils::throw400('服务器繁忙，请稍后再试！');
+//                        }
 
+                        //判断当前锁位置是否在围栏外,如果在围栏外面，就不允许停车
                         //车辆位置
                         $locationTime = time();
                         $carImei = json_decode($order->bicycle_opretion, true)['lock_number'];
@@ -192,7 +208,7 @@ class Bicycle extends Base
                         }
 
                         $lockInfo = null;
-                        for ($i = 0; $i < 20; $i++) {    //轮询查看开锁没有
+                        for ($i = 0; $i < 20; $i++) {    //轮询获取定位
                             $lockInfo = LockModel::where('imei', '=', $carImei)
                                 ->where('pos_gtime', '>=', date('Y-m-d H:i:s', $locationTime))
                                 ->find();
@@ -204,10 +220,11 @@ class Bicycle extends Base
                         if ($i >= 10) {
                             return Utils::throw400('定位失败！');
                         }
+
                         //判断当前锁位置是否在围栏外
                         if ($lockInfo) {
                             $yingyan = new Yingyan();
-                            $response = json_decode($yingyan->queryStatusByLocation($lockInfo->pos_lng, $lockInfo->pos_lat,  json_decode($order->bicycle_opretion, true)['bicycle_name'], 'wgs84'), true);
+                            $response = json_decode($yingyan->queryStatusByLocation($lockInfo->pos_lng, $lockInfo->pos_lat, json_decode($order->bicycle_opretion, true)['bicycle_name'], 'wgs84'), true);
 
                             if (!$response['status']) {
                                 $err = '';
@@ -239,6 +256,7 @@ class Bicycle extends Base
                         $bicycle_opretion = json_decode($order->bicycle_opretion, true);
                         $price = ($days * $bicycle_opretion['dailyPrice']) + ($minutes * $bicycle_opretion['hourlyPrice'] / 60); //除去天的剩下的按照小时计算（小时换算成分钟）
                         $saveData['price'] = $price;
+
                         //计算距离
                         $filename = ORDER_LOCATION_PATH . 'location_' . $order->order_number . '.log';
                         if (!is_file($filename)) {
@@ -293,7 +311,7 @@ class Bicycle extends Base
 
                             for ($k = 0; $k < $eles; $k++) {
                                 $startStr .= $startArr[$k]['lat'] . ',' . $startArr[$k]['lng'] . ';';
-                                $endStr .=  $endArr[$k]['lat'] . ',' . $endArr[$k]['lng'] . ';';
+                                $endStr .= $endArr[$k]['lat'] . ',' . $endArr[$k]['lng'] . ';';
                             }
                             $response = json_decode($tencnetMap->parametersDistance('bicycling', trim($startStr, ';'), trim($endStr, ';')), true);
                             $result = [];
@@ -361,7 +379,7 @@ class Bicycle extends Base
 
                     //判断位置是否在电子围栏内
                     $yingyan = new Yingyan();
-                    $response = json_decode($yingyan->queryStatusByLocation($lockInfo->pos_lng, $lockInfo->pos_lat,  json_decode($order->bicycle_opretion, true)['bicycle_name'], 'wgs84'), true);
+                    $response = json_decode($yingyan->queryStatusByLocation($lockInfo->pos_lng, $lockInfo->pos_lat, json_decode($order->bicycle_opretion, true)['bicycle_name'], 'wgs84'), true);
 
                     if (!$response['status']) {
                         $err = '';
