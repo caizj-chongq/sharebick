@@ -175,7 +175,7 @@ class Bicycle extends Base
                         $locTime = time();
                         // 查询关锁状态
 //                        $lockInfo = null;
-//                        for ($i = 0; $i < 10; $i++) {    //轮询查看开锁没有
+//                        for ($i = 0; $i < 10; $i++) {    //轮询查看关锁没有
 //                            $lockInfo = LockModel::where('imei', '=', json_decode($order->bicycle_opretion, true)['bicycle_number'])
 //                                ->where('lock_status', '=', 0)
 //                                ->where('lock_time', '>=', date('Y-m-d H:i:s', $locTime))
@@ -222,7 +222,7 @@ class Bicycle extends Base
                                 if ($response['size']) {
                                     foreach ($response['monitored_statuses'] as $monitored_status) {
                                         if ($monitored_status['monitored_status'] == 'out') {
-                                            $err = '当前车辆已驶出规定范围，请回到规定范围内再试！';
+//                                            $err = '当前车辆已驶出规定范围，请回到规定范围内再试！';
                                             break;
                                         }
                                     }
@@ -386,7 +386,7 @@ class Bicycle extends Base
                                     ]);
                                     $alarm->save();
 
-                                    $err = '当前车辆已驶出规定范围，请尽快回到规定范围内！';
+//                                    $err = '当前车辆已驶出规定范围，请尽快回到规定范围内！';
                                     break;
                                 }
                             }
