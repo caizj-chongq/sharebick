@@ -65,6 +65,7 @@ class User extends Base
                 return Utils::ajaxReturn();
             }
         }
+
         $userGroups = UserGroup::where('deleted', '=', 0)->select();
         $this->assign(compact('userGroups'));
         return $this->fetch();

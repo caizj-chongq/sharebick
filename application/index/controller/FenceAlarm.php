@@ -10,7 +10,6 @@ class FenceAlarm extends Base
     {
 
         $fenceAlarms = Alarm::join('orders', 'orders.id = fence_alarm.order_id')
-            ->where('fence_alarm.deleted', '=', 0)
             ->field('orders.order_number,fence_alarm.*');
 
 

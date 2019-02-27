@@ -63,12 +63,12 @@ class TencentMap
             "msg" => "",
             "data" => []
         ];
-        $rounds = ceil(count($locationData) / 80);
+        $rounds = ceil(count($locationData) / 30);
         for ($i = 0; $i < $rounds; $i++) {
             $locationDataStr = "";
-            $keys = count($locationData) - ($i * 80) >= 80 ? 80 : count($locationData) - ($i * 80);
+            $keys = count($locationData) - ($i * 30) >= 30 ? 30 : count($locationData) - ($i * 30);
             for ($j = 0; $j < $keys; $j++) {
-                $locationDataStr .= $locationData[$j + $i * 80]['lat'] . ',' . $locationData[$j + $i * 80]['lng'] . ';';
+                $locationDataStr .= $locationData[$j + $i * 30]['lat'] . ',' . $locationData[$j + $i * 30]['lng'] . ';';
             }
             //批量转换坐标为腾讯地图坐标系，并为下面计算距离预计算出坐标串
             $tencentMapLocationResponse = json_decode($this->translateCoord(trim($locationDataStr, ';'), 1), true);
@@ -94,7 +94,6 @@ class TencentMap
         switch ($method) {
             case 'GET':
                 $response = file_get_contents($url . '?' . http_build_query($data));
-                dd($response);
                 break;
             case 'POST':
                 $context = stream_context_create(array(

@@ -27,7 +27,7 @@ class Base extends Controller
 
 
         $this->validateAjaxToken($request);
-        $this->checkLogin($request);
+        $this->checkLogin($request);       //检测权限
         $this->codeMap = new CodeMap();
 
         parent::__construct($request);

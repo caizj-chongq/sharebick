@@ -163,6 +163,8 @@ class Fence extends Base
             try {
                 Db::startTrans();
                 $response = json_decode($this->yingyan->deletePolygonFence(null, [$fence->fence_id]), true);
+
+                $fence->delete();
                 if ($response['status']) {
                     throw new \Exception($response['message']);
                 }
@@ -171,7 +173,6 @@ class Fence extends Base
                 Db::rollback();
                 return Utils::throw400($exception->getMessage());
             }
-            $fence->delete();
         }
 
         return Utils::ajaxReturn();

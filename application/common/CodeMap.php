@@ -6,10 +6,10 @@ class CodeMap
 {
     protected $mapArray = [
         'clientOperation' => [      //code
-            'login' => [
+            'login' => [ // tag => value
                 'value' => 1,
                 'zhDesc' => '登入'
-            ]     // tag => value
+            ]
         ],
         'userOperation' => [
             'login' => [

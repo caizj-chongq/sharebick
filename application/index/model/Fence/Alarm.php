@@ -20,10 +20,6 @@ class Alarm extends BaseModel
      */
     protected $createTime = 'created';
 
-    /**
-     * @var string
-     */
-    protected $deleteTime = 'deleted';
 
     /**
      * @var bool

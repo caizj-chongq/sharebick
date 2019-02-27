@@ -45,7 +45,6 @@ class Index extends Base
         $dayAddUser = ClientModel::whereTime('created', 'today')
             ->where('deleted', '=', 0)
             ->count();   //当前周新增用户
-
         $this->assign(compact('userCount', 'monthActiveUser', 'weekActiveUser', 'dayActiveUser', 'weekAddUser', 'monthAddUser', 'dayAddUser'));
         return $this->fetch();
     }

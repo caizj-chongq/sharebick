@@ -155,10 +155,11 @@
                             <tbody>
                             {volist name="fenceAlarms" id="fenceAlarm"}
                                 <tr>
+                                    <td>{$fenceAlarm.id}</td>
                                     <td>{$fenceAlarm.out_time}</td>
                                     <td>{$fenceAlarm.out_gps}</td>
-                                    <td>{$fenceAlarm.in_time || ''}</td>
-                                    <td>{$fenceAlarm.in_gps || ''}</td>
+                                    <td>{$fenceAlarm.in_time}</td>
+                                    <td>{$fenceAlarm.in_gps}</td>
                                 </tr>
                             {/volist}
 

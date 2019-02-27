@@ -48,11 +48,12 @@
                     <tbody>
                         {volist name="fenceAlarms" id="fenceAlarm"}
                             <tr>
+                                <td>{$fenceAlarm.id}</td>
                                 <td><a href="{:url('index/order/show', ['id' => $fenceAlarm.order_id])}">{$fenceAlarm.order_number}</a></td>
                                 <td>{$fenceAlarm.out_time}</td>
                                 <td>{$fenceAlarm.out_gps}</td>
-                                <td>{$fenceAlarm.in_time || ''}</td>
-                                <td>{$fenceAlarm.in_gps || ''}</td>
+                                <td>{$fenceAlarm.in_time}</td>
+                                <td>{$fenceAlarm.in_gps}</td>
                             </tr>
                         {/volist}
                     </tbody>

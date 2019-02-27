@@ -59,7 +59,7 @@ class Bicycle extends Base
             $locationData = json_decode(file_get_contents($locationFile), true);
             $tencentLocations = (new TencentMap())->conversionCoordinates($locationData);
             if ($tencentLocations['code']) {
-                return $tencentLocations['msg'];
+                return Utils::throw400($tencentLocations['msg']);
             }
             $locations = $tencentLocations['data'];
         }
@@ -158,6 +158,23 @@ class Bicycle extends Base
                         if (ceil(($startTime - time()) / 60) > 3) {    //前3分钟可以取消订单
                             return Utils::throw400('骑行时间已超过3分钟，不允许再取消订单！');
                         }
+                        $locTime = time();
+                        // 查询关锁状态
+//                        $lockInfo = null;
+//                        for ($i = 0; $i < 10; $i++) {    //轮询查看关锁没有
+//                            $lockInfo = LockModel::where('imei', '=', json_decode($order->bicycle_opretion, true)['bicycle_number'])
+//                                ->where('lock_status', '=', 0)
+//                                ->where('lock_time', '>=', date('Y-m-d H:i:s', $locTime))
+//                                ->find();
+//                            if ($lockInfo) {
+//                                break;
+//                            }
+//                            sleep(1);
+//                        }
+//                        if ($i >= 10) {
+//                            return Utils::throw400('服务器繁忙，请稍后再试！');
+//                        }
+
                         $saveData['status'] = 2;
                         $saveData['end'] = time();
                         break;
@@ -279,7 +296,6 @@ class Bicycle extends Base
                             break;
                         }
 
-
                         //计算距离核心
                         $realResult = [];
                         for ($rounds = 0; $rounds < ceil(count($endArr) / 20); $rounds++) {
@@ -370,21 +386,21 @@ class Bicycle extends Base
                                 if ($monitored_status['monitored_status'] == 'out') {
                                     //围栏外,保存数据到围栏报警数据表
                                     $alarm = Alarm::where('order_id', '=', $order->id)
-                                        ->where('out_time', '!=', 0)
+                                        ->where('out_time', '<>', 0)
                                         ->where('in_time', '=', 0)
                                         ->find();   //存在出去了还没有进来的数据
                                     if (!$alarm) {
                                         $alarm = new Alarm();
+                                        $alarm->data([
+                                            'out_gps' => json_encode([
+                                                'lng' => $lockInfo->pos_lng,
+                                                'lat' => $lockInfo->pos_lat
+                                            ]),
+                                            "out_time" => time(),
+                                            "order_id" => $order->id
+                                        ]);
+                                        $alarm->save();
                                     }
-                                    $alarm->data([
-                                        'out_gps' => [
-                                            'lng' => $lockInfo->pos_lng,
-                                            'lat' => $lockInfo->pos_lat
-                                        ],
-                                        "out_time" => time(),
-                                        "order_id" => $order->id
-                                    ]);
-                                    $alarm->save();
 
 //                                    $err = '当前车辆已驶出规定范围，请尽快回到规定范围内！';
                                     break;
@@ -392,17 +408,17 @@ class Bicycle extends Base
                             }
 
                             //电子围栏报警更新进入电子围栏信息
-                            if (strlen($err)) {
+                            if (!strlen($err)) {
                                 $alarm = Alarm::where('order_id', '=', $order->id)
-                                    ->where('out_time', '!=', 0)
+                                    ->where('out_time', '<>', 0)
                                     ->where('in_time', '=', 0)
                                     ->find();   //存在出去了还没有进来的数据
                                 if ($alarm) {
                                     $alarm->data([
-                                        'in_gps' => [
+                                        'in_gps' => json_encode([
                                             'lng' => $lockInfo->pos_lng,
                                             'lat' => $lockInfo->pos_lat
-                                        ],
+                                        ]),
                                         "in_time" => time()
                                     ]);
                                     $alarm->save();

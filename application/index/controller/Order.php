@@ -82,7 +82,6 @@ class Order extends Base
 
             //查看电子围栏报警记录
             $fenceAlarms = FenceModel\Alarm::where('order_id', '=', $orderInfo->id)
-                ->where('deleted', '=', 0)
                 ->select();
             $this->assign(compact('fenceAlarms'));
             return $this->fetch();
