@@ -288,7 +288,149 @@ class Group extends Base
                         'desc' => ''
                     ]
                 ]
+            ],
+            [
+                'name' => '会员管理',
+                'route' => 'index/client',
+                'desc' => '小程序端会员管理',
+                'children' => [
+                    [
+                        'name' => '列表',
+                        'route' => 'index',
+                        'desc' => ''
+                    ],
+                    [
+                        'name' => '详情',
+                        'route' => 'show',
+                        'desc' => ''
+                    ],
+                    [
+                        'name' => '更新',
+                        'route' => 'update',
+                        'desc' => ''
+                    ],
+                    [
+                        'name' => '删除',
+                        'route' => 'destroy',
+                        'desc' => ''
+                    ]
+                ]
+            ],
+            [
+                'name' => '车辆管理',
+                'route' => 'index/bicycle',
+                'desc' => '后台车辆管理',
+                'children' => [
+                    [
+                        'name' => '列表',
+                        'route' => 'index',
+                        'desc' => ''
+                    ],
+                    [
+                        'name' => '新增',
+                        'route' => 'store',
+                        'desc' => ''
+                    ],
+                    [
+                        'name' => '详情',
+                        'route' => 'show',
+                        'desc' => ''
+                    ],
+                    [
+                        'name' => '更新',
+                        'route' => 'update',
+                        'desc' => ''
+                    ],
+                    [
+                        'name' => '删除',
+                        'route' => 'destroy',
+                        'desc' => ''
+                    ]
+                ]
+            ],
+            [
+                'name' => '订单管理',
+                'route' => 'index/order',
+                'desc' => '订单管理',
+                'children' => [
+                    [
+                        'name' => '列表',
+                        'route' => 'index',
+                        'desc' => ''
+                    ],
+                    [
+                        'name' => '详情',
+                        'route' => 'show',
+                        'desc' => ''
+                    ]
+                ]
+            ],
+            [
+            'name' => '车辆反馈管理',
+            'route' => 'index/bicycle_report',
+            'desc' => '车辆反馈管理',
+            'children' => [
+                [
+                    'name' => '列表',
+                    'route' => 'index',
+                    'desc' => ''
+                ],
+                [
+                    'name' => '详情',
+                    'route' => 'show',
+                    'desc' => ''
+                ],
+                [
+                    'name' => '更新',
+                    'route' => 'update',
+                    'desc' => ''
+                ],
+                [
+                    'name' => '删除',
+                    'route' => 'destroy',
+                    'desc' => ''
+                ]
             ]
+        ],
+            [
+                'name' => '电子围栏管理',
+                'route' => 'index/bicycle',
+                'desc' => '电子围栏管理',
+                'children' => [
+                    [
+                        'name' => '列表',
+                        'route' => 'fence',
+                        'desc' => ''
+                    ],
+                    [
+                        'name' => '新增',
+                        'route' => 'store',
+                        'desc' => ''
+                    ],
+                    [
+                        'name' => '详情',
+                        'route' => 'show',
+                        'desc' => ''
+                    ],
+                    [
+                        'name' => '删除',
+                        'route' => 'destroy',
+                        'desc' => ''
+                    ]
+                ]
+            ],
+            [
+                'name' => '电子围栏报警管理',
+                'route' => 'index/fence_alarm',
+                'desc' => '电子围栏报警管理',
+                'children' => [
+                    [
+                        'name' => '列表',
+                        'route' => 'index',
+                        'desc' => ''
+                    ]
+                ]
+            ],
         ];
 
         //保存数据

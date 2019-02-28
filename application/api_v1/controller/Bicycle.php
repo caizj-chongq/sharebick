@@ -434,11 +434,17 @@ class Bicycle extends Base
 
             try {
                 Db::startTrans();
-                if (isset($saveData)) {
+                if (isset($saveData)) { //是否存在订单需要保存的数据
                     $order->where('id', '=', $request->param('id', ''))->update($saveData);
+                    if (isset($saveData['remark'])) {   //是否存在车辆反馈的相关信息
+                        BicycleModel\Reports::create([  //保存车辆反馈信息
+                            'bicycle_id' => json_decode($order->bicycle_opretion, true)['id'],
+                            'remark' => $saveData['remark']
+                        ]);
+                    }
                 }
 
-                if (isset($userSaveData)) {
+                if (isset($userSaveData)) { //是否存在需要保存在用户表中的数据
                     Db::table('clients')->where('id', '=', $this->user->id)->update($userSaveData);
                 }
 

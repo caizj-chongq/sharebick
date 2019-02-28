@@ -41,7 +41,6 @@ class Reports extends BaseModel
     protected $field = [
         'bicycle_id',
         'remark',
-        'status',
         'is_ok',
         'operator',
         'created',
