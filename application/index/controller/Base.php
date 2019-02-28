@@ -83,8 +83,8 @@ class Base extends Controller
 
         if (!isset($exceptActions[$requestController]) || (isset($exceptActions[$requestController]) && !in_array($requestAction, $exceptActions[$requestController]))) {
             //用户登录后把用户登录信息放入session中，并且以_token_作为键
-            $this->user = $request->session(SESSION_TOKEN_KEY);
-            if (!$this->user) {
+            $this->user = json_decode($request->session(SESSION_TOKEN_KEY), true);
+            if (!count($this->user)) {
                 $this->redirect('index/login/index');
             }
         }
@@ -99,30 +99,35 @@ class Base extends Controller
      */
     private function checkPermission(Request $request)
     {
-        if ($this->user->id == 1) { //系统预制超级管理员
-            return ;
-        }
-
         $except = [ //不需要验证权限的路由
-            'index/login/index'
+            'index/login/index',
+            'index/login/login',
+            'index/error/index',
+            'index/error/empty',
         ];
-        $requestRoute = $request->module() . '/' . $request->controller() . '/' . $request->action();
+        $requestRoute = strtolower($request->module() . '/' . $request->controller() . '/' . $request->action());
 
         if (in_array($requestRoute, $except)) {
             return ;
         }
 
+        if ($this->user['id'] == 1) { //系统预制超级管理员
+            return ;
+        }
+
         $hasPermission = Db::table('admin_group_navigate')
             ->join('admin_navigates', 'admin_navigates.id = admin_group_navigate.navigate_id')
-            ->where('admin_group_navigate.group_id', '=', $this->user->group_id)
+            ->where('admin_group_navigate.group_id', '=', $this->user['group_id'])
             ->where('admin_navigates.route', '=', $requestRoute)
             ->find();
         if (!$hasPermission) {
-            $data = Utils::throw401();
-            $type = $this->getResponseType();
-            $response = Response::create($data, $type);
-            throw new HttpResponseException($response);
+            $this->redirect('index/Error/index');
         }
 
+    }
+
+    public function _empty()    //空操作
+    {
+        return $this->redirect('index/Error/index');
     }
 }
