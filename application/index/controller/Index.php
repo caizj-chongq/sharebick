@@ -49,13 +49,6 @@ class Index extends Base
         //当日骑行单数
         $dayCyclingOrderNumber = OrderModel::whereTime('created', 'today')->where('deleted', '=', 0)->count();
 
-        //当月应收金额
-        $monthReceivableMoney = OrderModel::whereTime('created', 'month')->where('status', '=', 3)->whereOr('status', '=', 4)->where('deleted', '=', 0)->sum('price');
-        //当周应收金额
-        $weekReceivableMoney = OrderModel::whereTime('created', 'week')->where('status', '=', 3)->whereOr('status', '=', 4)->where('deleted', '=', 0)->sum('price');
-        //当天应收金额
-        $dayReceivableMoney = OrderModel::whereTime('created', 'today')->where('status', '=', 3)->whereOr('status', '=', 4)->where('deleted', '=', 0)->sum('price');
-
         //当月已支付单数
         $monthPayOrderNumber = OrderModel::whereTime('created', 'month')->where('status', '=', 3)->where('deleted', '=', 0)->count();
         //当周已支付单数
@@ -63,19 +56,27 @@ class Index extends Base
         //当天已支付单数
         $dayPayOrderNumber = OrderModel::whereTime('created', 'today')->where('status', '=', 3)->where('deleted', '=', 0)->count();
 
-        //当月实收金额
-        $monthPaidAmount = OrderModel::whereTime('created', 'month')->where('status', '=', 3)->where('deleted', '=', 0)->sum('price');
-        //当周实收金额
-        $weekPaidAmount = OrderModel::whereTime('created', 'week')->where('status', '=', 3)->where('deleted', '=', 0)->sum('price');
-        //当天实收金额
-        $dayPaidAmount = OrderModel::whereTime('created', 'today')->where('status', '=', 3)->where('deleted', '=', 0)->sum('price');
-
         //当月未支付单数
         $monthNoPayOrderNumber = OrderModel::whereTime('created', 'month')->where('status', '=', 4)->where('deleted', '=', 0)->count();
         //当周未支付单数
         $weekNoPayOrderNumber = OrderModel::whereTime('created', 'week')->where('status', '=', 4)->where('deleted', '=', 0)->count();
         //当天未支付单数
         $dayNoPayOrderNumber = OrderModel::whereTime('created', 'today')->where('status', '=', 4)->where('deleted', '=', 0)->count();
+
+
+        //当月应收金额
+        $monthReceivableMoney = OrderModel::whereTime('created', 'month')->where('status', '=', 3)->whereOr('status', '=', 4)->where('deleted', '=', 0)->sum('price');
+        //当周应收金额
+        $weekReceivableMoney = OrderModel::whereTime('created', 'week')->where('status', '=', 3)->whereOr('status', '=', 4)->where('deleted', '=', 0)->sum('price');
+        //当天应收金额
+        $dayReceivableMoney = OrderModel::whereTime('created', 'today')->where('status', '=', 3)->whereOr('status', '=', 4)->where('deleted', '=', 0)->sum('price');
+
+        //当月实收金额
+        $monthPaidAmount = OrderModel::whereTime('created', 'month')->where('status', '=', 3)->where('deleted', '=', 0)->sum('price');
+        //当周实收金额
+        $weekPaidAmount = OrderModel::whereTime('created', 'week')->where('status', '=', 3)->where('deleted', '=', 0)->sum('price');
+        //当天实收金额
+        $dayPaidAmount = OrderModel::whereTime('created', 'today')->where('status', '=', 3)->where('deleted', '=', 0)->sum('price');
 
         //当月待收金额
         $monthAmountToBeReceived = OrderModel::whereTime('created', 'month')->where('status', '=', 4)->where('deleted', '=', 0)->sum('price');
