@@ -439,7 +439,9 @@ class Bicycle extends Base
                     if (isset($saveData['remark'])) {   //是否存在车辆反馈的相关信息
                         BicycleModel\Reports::create([  //保存车辆反馈信息
                             'bicycle_id' => json_decode($order->bicycle_opretion, true)['id'],
-                            'remark' => $saveData['remark']
+                            'remark' => $saveData['remark'],
+                            'order_id' => $order->id,
+                            'client_id' => $order->client_id
                         ]);
                     }
                 }

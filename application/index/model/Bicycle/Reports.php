@@ -45,6 +45,8 @@ class Reports extends BaseModel
         'operator',
         'created',
         'updated',
-        'deleted'
+        'deleted',
+        'client_id',
+        'order_id'
     ];
 }

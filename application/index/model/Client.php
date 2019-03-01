@@ -67,28 +67,6 @@ class Client extends BaseModel
      */
     public function save($data = [], $where = [], $sequence = null)
     {
-        $rules = [
-            'nick' => [
-                'max' => 15
-            ],
-            'mobile' => [
-                'mobile'
-            ],
-            'money' => [
-                'number'
-            ]
-        ];
-        $message = [
-            'nick.max' => '昵称最多15个字符！',
-            'mobile.mobile' => '手机号码不正确！',
-            'money.number' => '拥有钱必须是数字！',
-        ];
-        $validate = Validate::make($rules, $message);
-
-        if (!$validate->check($this->getData())) {
-            throw new ValidateException($validate->getError());
-        }
-
         return parent::save($data, $where, $sequence);
     }
 }
