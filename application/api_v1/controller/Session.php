@@ -51,6 +51,12 @@ class Session extends Controller
                 ]);
                 $client->save();
             }
+            ClientModel\Operation::create([
+                'client_id' => $client->id,
+                'time' => time(),
+                'type' => 1,
+                'ip' => Utils::getRealIp(),
+            ]);
             return Utils::ajaxReturn($client->toArray());
         }
         return Utils::throw405();
