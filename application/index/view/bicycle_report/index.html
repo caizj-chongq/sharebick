@@ -48,6 +48,7 @@
                     <tbody>
                         {volist name="reports" id="report"}
                             <tr>
+                                <td>{$report.id}</td>
                                 <td><a href="{:url('index/bicycle/show', ['id' => $report.bicycle_id])}">{$report.bicycle_number}</a></td>
                                 <td>{$report.remark}</td>
                                 <td>{if condition="$report.is_ok eq 0"} 否 {else /} 是 {/if}</td>
