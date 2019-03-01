@@ -57,9 +57,8 @@
                                     <div class="am-btn-toolbar">
                                         <div class="am-btn-group am-btn-group-xs">
                                             {if condition="$report.is_ok eq 0"}
-
                                             <button type="button" class="am-btn am-btn-default am-btn-xs am-text-danger" name="解决" onclick="update(this)" to="{:url('index/bicycleReport/update', ['id' => $report.id])}"><span
-                                                    class="am-icon-trash-o"></span> 解决
+                                                    class="am-icon-check"></span> 解决
                                                 {:token('token')}
                                             </button>
 
