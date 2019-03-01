@@ -84,7 +84,7 @@ class Base extends Controller
         if (!isset($exceptActions[$requestController]) || (isset($exceptActions[$requestController]) && !in_array($requestAction, $exceptActions[$requestController]))) {
             //用户登录后把用户登录信息放入session中，并且以_token_作为键
             $this->user = json_decode($request->session(SESSION_TOKEN_KEY), true);
-            if (!count($this->user)) {
+            if (!($this->user && count($this->user))) {
                 $this->redirect('index/login/index');
             }
         }
