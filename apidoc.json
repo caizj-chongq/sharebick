@@ -1,0 +1,7 @@
+{
+  "name": "共享单车",
+  "version": "0.0.1",
+  "description": "共享单车api",
+  "title": "sharebicycle api",
+  "url" : "http://localhost/api_v1"
+}

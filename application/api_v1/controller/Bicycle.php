@@ -14,6 +14,236 @@ use think\Db;
 use think\Paginator;
 use think\Request;
 
+/**
+ * @apiDefine Page
+ * @apiParam    {Integer}    [page=1]    页码
+ */
+
+/**
+ * @apiDefine Token
+ * @apiParam    {String}    token    接口调用凭证
+ */
+
+/**
+ * @api {get} /bicycle 订单列表
+ * @apiVersion 0.0.1
+ * @apiName bicycle.index
+ * @apiGroup bicycle
+ *
+ * @apiUse  Page
+ * @apiUse  Token
+ *
+ * @apiSuccess        {Number}    status    状态码
+ * @apiSuccess        {String}    message    状态提示
+ * @apiSuccess        {Object}    data    数据
+ *
+ * @apiSuccessExample Success:
+ *     {
+ *          "data": {
+ *              "total": 1,
+ *              "per_page": 5,
+ *              "current_page": 1,
+ *              "last_page": 1,
+ *              "data": [
+ *                  {
+ *                      "id": 7,
+ *                      "order_number": "OR201902245c7188c421b58",
+ *                      "bicycle_id": 6,
+ *                      "begin": "2019-02-24 01:54:12",
+ *                      "end": "2019-02-24 12:04:47",
+ *                      "price": "611.00",
+ *                      "status": {
+ *                          "status": 4,
+ *                          "status_info": "未支付"
+ *                      },
+ *                      "client_opretion": "{\"id\": 1, \"nick\": \"123\", \"money\": \"0.00\", \"mobile\": null, \"openid\": \"openid\", \"created\": \"2019-02-23 19:12:41\", \"deleted\": 0, \"updated\": \"2019-02-23 19:12:41\"}",
+ *                      "bicycle_opretion": "{\"id\": 6, \"status\": {\"status\": 2, \"status_info\": \"使用中\"}, \"created\": \"2019-02-23 20:58:39\", \"deleted\": 0, \"updated\": \"2019-02-23 21:04:56\", \"dailyPrice\": \"1440.00\", \"hourlyPrice\": \"60.00\", \"lock_number\": \"866160033560827\", \"bicycle_name\": \"可以随意调用接口的车\", \"bicycle_number\": \"001\"}",
+ *                      "created": "2019-02-24 01:54:12",
+ *                      "updated": "2019-02-24 01:54:12",
+ *                      "deleted": 0,
+ *                      "remark": null,
+ *                      "client_id": 1,
+ *                      "meter": 0
+ *                  }
+ *              ]
+ *          },
+ *          "status": 0,
+ *          "msg": ""
+ *     }
+ *
+ * @apiUse Error
+ *
+ */
+
+/**
+ * @api {get} /bicycle_show 订单详情
+ * @apiVersion 0.0.1
+ * @apiName bicycle.show
+ * @apiGroup bicycle
+ *
+ * @apiUse  Token
+ * @apiParam    {Integer}    id      订单id
+ *
+ * @apiSuccess        {Number}    status    状态码
+ * @apiSuccess        {String}    message    状态提示
+ * @apiSuccess        {Object}    data    数据
+ *
+ * @apiSuccessExample Success:
+ *     {
+ *          "data": {
+ *              "id": 7,
+ *              "order_number": "OR201902245c7188c421b58",
+ *              "bicycle_id": 6,
+ *              "begin": "2019-02-24 01:54:12",
+ *              "end": "2019-02-24 12:04:47",
+ *              "price": "611.00",
+ *              "status": {
+ *                  "status": 4,
+ *                  "status_info": "未支付"
+ *              },
+ *              "client_opretion": "{\"id\": 1, \"nick\": \"123\", \"money\": \"0.00\", \"mobile\": null, \"openid\": \"openid\", \"created\": \"2019-02-23 19:12:41\", \"deleted\": 0, \"updated\": \"2019-02-23 19:12:41\"}",
+ *              "bicycle_opretion": "{\"id\": 6, \"status\": {\"status\": 2, \"status_info\": \"使用中\"}, \"created\": \"2019-02-23 20:58:39\", \"deleted\": 0, \"updated\": \"2019-02-23 21:04:56\", \"dailyPrice\": \"1440.00\", \"hourlyPrice\": \"60.00\", \"lock_number\": \"866160033560827\", \"bicycle_name\": \"可以随意调用接口的车\", \"bicycle_number\": \"001\"}",
+ *              "created": "2019-02-24 01:54:12",
+ *              "updated": "2019-02-24 01:54:12",
+ *              "deleted": 0,
+ *              "remark": null,
+ *              "client_id": 1,
+ *              "meter": 0,
+ *              "location": []  //订单定位信息，用来做车辆轨迹
+ *          },
+ *          "status": 0,
+ *          "msg": ""
+ *     }
+ *
+ * @apiUse Error
+ *
+ */
+
+/**
+ * @api {post} /bicycle 创建订单
+ * @apiVersion 0.0.1
+ * @apiName bicycle.store
+ * @apiGroup bicycle
+ *
+ * @apiUse  Token
+ * @apiParam    {String}    carNumber      车号
+ *
+ * @apiSuccess        {Number}    status    状态码
+ * @apiSuccess        {String}    message    状态提示
+ * @apiSuccess        {Object}    data    数据
+ *
+ * @apiSuccessExample Success:
+ *     {
+ *          "data": {
+ *              "order_number": "OR201903045c7ce5a08f543",
+ *              "bicycle_id": 6,
+ *              "begin": "2019-03-04 16:45:20",
+ *              "status": {
+ *                  "status": 1,
+ *                  "status_info": "进行中"
+ *              },
+ *              "client_opretion": {
+ *                  "id": 1,
+ *                  "nick": "123",
+ *                  "money": "498547.00",
+ *                  "created": "2019-02-23 19:12:41",
+ *                  "updated": "2019-02-23 19:12:41",
+ *                  "deleted": 0,
+ *                  "mobile": null,
+ *                  "openid": "openid"
+ *              },
+ *              "bicycle_opretion": {
+ *                  "id": 6,
+ *                  "created": "2019-02-23 20:58:39",
+ *                  "updated": "2019-02-23 21:04:56",
+ *                  "deleted": 0,
+ *                  "lock_number": "866160033560827",
+ *                  "bicycle_number": "001",
+ *                  "status": {
+ *                      "status": 2,
+ *                      "status_info": "使用中"
+ *                  },
+ *                  "bicycle_name": "可以随意调用接口的车",
+ *                  "hourlyPrice": "60.00",
+ *                  "dailyPrice": "1440.00"
+ *              },
+ *              "client_id": 1,
+ *              "created": "2019-03-04 16:45:20",
+ *              "updated": "2019-03-04 16:45:20",
+ *              "id": "21"
+ *          },
+ *          "status": 0,
+ *          "msg": ""
+ *     }
+ *
+ * @apiUse Error
+ *
+ */
+
+/**
+ * @api {put} /bicycle 更新订单
+ * @apiVersion 0.0.1
+ * @apiName bicycle.update
+ * @apiGroup bicycle
+ *
+ * @apiUse  Token
+ * @apiParam    {Integer}    id      订单id
+ * @apiParam    {Integer}    [status]      想要更新为的状态  1 使用中; 2 取消订单(3分钟以内); 3 完成订单(付钱); 4 结束用车
+ * @apiParam    {Integer}     [location]   车辆定位，传入就定位，不传就不定位
+ * @apiParam    {String}     [remark]      车辆反馈信息
+ *
+ * @apiSuccess        {Number}    status    状态码
+ * @apiSuccess        {String}    message    状态提示
+ * @apiSuccess        {Object}    data    数据
+ *
+ * @apiSuccessExample Success:
+ *     {
+ *          "data": {
+ *              "order_number": "OR201903045c7ce5a08f543",
+ *              "bicycle_id": 6,
+ *              "begin": "2019-03-04 16:45:20",
+ *              "status": {
+ *                  "status": 1,
+ *                  "status_info": "进行中"
+ *              },
+ *              "client_opretion": {
+ *                  "id": 1,
+ *                  "nick": "123",
+ *                  "money": "498547.00",
+ *                  "created": "2019-02-23 19:12:41",
+ *                  "updated": "2019-02-23 19:12:41",
+ *                  "deleted": 0,
+ *                  "mobile": null,
+ *                  "openid": "openid"
+ *              },
+ *              "bicycle_opretion": {
+ *                  "id": 6,
+ *                  "created": "2019-02-23 20:58:39",
+ *                  "updated": "2019-02-23 21:04:56",
+ *                  "deleted": 0,
+ *                  "lock_number": "866160033560827",
+ *                  "bicycle_number": "001",
+ *                  "status": {
+ *                      "status": 2,
+ *                      "status_info": "使用中"
+ *                  },
+ *                  "bicycle_name": "可以随意调用接口的车",
+ *                  "hourlyPrice": "60.00",
+ *                  "dailyPrice": "1440.00"
+ *              },
+ *              "client_id": 1,
+ *              "created": "2019-03-04 16:45:20",
+ *              "updated": "2019-03-04 16:45:20",
+ *              "id": "21"
+ *          },
+ *          "status": 0,
+ *          "msg": ""
+ *     }
+ *
+ * @apiUse Error
+ *
+ */
+
 class Bicycle extends Base
 {
     protected $lock;
