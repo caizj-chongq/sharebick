@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50719
 File Encoding         : 65001
 
-Date: 2019-03-01 10:53:38
+Date: 2019-03-01 23:31:37
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -21,8 +21,8 @@ SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS `admin_group_navigate`;
 CREATE TABLE `admin_group_navigate` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `navigate_id` int(11) NOT NULL,
-  `group_id` int(11) NOT NULL,
+  `navigate_id` int(11) NOT NULL DEFAULT '0' COMMENT '权限id',
+  `group_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户组id',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `group_navigate` (`navigate_id`,`group_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
@@ -36,7 +36,7 @@ CREATE TABLE `admin_group_navigate` (
 -- ----------------------------
 DROP TABLE IF EXISTS `admin_groups`;
 CREATE TABLE `admin_groups` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户组id',
   `group_name` varchar(30) NOT NULL COMMENT '组名称 ',
   `desc` varchar(150) DEFAULT NULL COMMENT '简介',
   `created` int(11) DEFAULT '0' COMMENT '创建时间',
@@ -137,10 +137,10 @@ CREATE TABLE `admin_users_operations` (
   `user_id` int(11) DEFAULT NULL,
   `time` int(11) DEFAULT NULL,
   `type` int(11) DEFAULT NULL,
-  `ip` varchar(15) DEFAULT NULL,
+  `ip` varchar(15) DEFAULT NULL COMMENT '用户ip',
   `created` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Records of admin_users_operations
@@ -149,6 +149,8 @@ INSERT INTO `admin_users_operations` VALUES ('1', '1', '1551353021', '1', '192.1
 INSERT INTO `admin_users_operations` VALUES ('2', '1', '1551366693', '1', '192.168.10.1', '1551366693');
 INSERT INTO `admin_users_operations` VALUES ('3', '1', '1551369431', '1', '192.168.10.1', '1551369431');
 INSERT INTO `admin_users_operations` VALUES ('4', '1', '1551404016', '1', '192.168.10.1', '1551404016');
+INSERT INTO `admin_users_operations` VALUES ('5', '1', '1551416964', '1', '192.168.10.1', '1551416964');
+INSERT INTO `admin_users_operations` VALUES ('6', '1', '1551428036', '1', '192.168.10.1', '1551428036');
 
 -- ----------------------------
 -- Table structure for bicycle_reports
@@ -156,13 +158,15 @@ INSERT INTO `admin_users_operations` VALUES ('4', '1', '1551404016', '1', '192.1
 DROP TABLE IF EXISTS `bicycle_reports`;
 CREATE TABLE `bicycle_reports` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `bicycle_id` int(11) DEFAULT '0',
-  `remark` varchar(200) DEFAULT NULL,
+  `bicycle_id` int(11) DEFAULT '0' COMMENT '车号',
+  `remark` varchar(200) DEFAULT NULL COMMENT '车况信息',
   `created` int(11) DEFAULT '0',
   `updated` int(11) DEFAULT '0',
   `is_ok` tinyint(4) DEFAULT '0' COMMENT '是否查看维修',
-  `operator` json DEFAULT NULL COMMENT '操作人快照',
+  `operator` text COMMENT '操作人快照',
   `deleted` int(11) DEFAULT '0',
+  `client_id` int(11) DEFAULT '0' COMMENT '反馈人',
+  `order_id` int(11) DEFAULT '0' COMMENT '反馈关联订单',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -179,8 +183,8 @@ CREATE TABLE `bicycles` (
   `created` int(11) DEFAULT '0',
   `updated` int(11) DEFAULT '0',
   `deleted` int(11) DEFAULT '0',
-  `lock_number` varchar(20) DEFAULT NULL,
-  `bicycle_number` varchar(20) DEFAULT NULL,
+  `lock_number` varchar(20) DEFAULT NULL COMMENT '锁号',
+  `bicycle_number` varchar(20) DEFAULT NULL COMMENT '车号',
   `status` int(11) DEFAULT '0' COMMENT '车辆状态',
   `bicycle_name` varchar(10) DEFAULT NULL COMMENT '车辆名称',
   `hourlyPrice` decimal(18,2) DEFAULT '0.00',
@@ -199,15 +203,15 @@ INSERT INTO `bicycles` VALUES ('6', '1550926719', '1550927096', '0', '8661600335
 DROP TABLE IF EXISTS `clients`;
 CREATE TABLE `clients` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `nick` varchar(15) DEFAULT NULL,
-  `money` decimal(18,2) DEFAULT '0.00',
+  `nick` varchar(15) DEFAULT NULL COMMENT '昵称',
+  `money` decimal(18,2) DEFAULT '0.00' COMMENT '余额',
   `created` int(11) DEFAULT '0',
   `updated` int(11) DEFAULT '0',
   `deleted` int(11) DEFAULT '0',
-  `mobile` varchar(12) DEFAULT NULL,
-  `openid` varchar(32) DEFAULT NULL,
-  `token` varchar(128) NOT NULL,
-  PRIMARY KEY (`id`,`token`)
+  `mobile` varchar(12) DEFAULT NULL COMMENT '电话号码',
+  `openid` varchar(32) DEFAULT NULL COMMENT 'openid',
+  `token` varchar(128) DEFAULT NULL COMMENT '小程序与后台通讯凭证',
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
@@ -224,14 +228,15 @@ CREATE TABLE `clients_operations` (
   `client_id` int(11) DEFAULT '0',
   `time` int(11) DEFAULT '0' COMMENT '操作时间',
   `type` int(11) DEFAULT NULL COMMENT '操作类型',
-  `ip` varchar(15) DEFAULT NULL,
+  `ip` varchar(15) DEFAULT NULL COMMENT 'ip',
   `created` int(11) DEFAULT '0',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Records of clients_operations
 -- ----------------------------
+INSERT INTO `clients_operations` VALUES ('1', '1', '1551430411', '1', '192.168.10.1', '1551430411');
 
 -- ----------------------------
 -- Table structure for fence_alarm
@@ -239,11 +244,11 @@ CREATE TABLE `clients_operations` (
 DROP TABLE IF EXISTS `fence_alarm`;
 CREATE TABLE `fence_alarm` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `order_id` int(11) DEFAULT '0',
-  `out_time` int(11) DEFAULT '0',
-  `in_time` int(11) DEFAULT '0',
-  `out_gps` json DEFAULT NULL,
-  `in_gps` json DEFAULT NULL,
+  `order_id` int(11) DEFAULT '0' COMMENT '订单id',
+  `out_time` int(11) DEFAULT '0' COMMENT '出围栏时间',
+  `in_time` int(11) DEFAULT '0' COMMENT '进围栏时间',
+  `out_gps` text COMMENT '出围栏时的gps定位',
+  `in_gps` text COMMENT '进围栏时的gps定位',
   `created` int(11) DEFAULT '0',
   `updated` int(11) DEFAULT '0',
   `deleted` int(11) DEFAULT '0',
@@ -424,8 +429,8 @@ INSERT INTO `fence_alarm` VALUES ('164', '18', '1551403845', '1551403845', '{\"l
 DROP TABLE IF EXISTS `fence_bicycles`;
 CREATE TABLE `fence_bicycles` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `fence_id` int(11) DEFAULT NULL,
-  `bicycle_id` int(11) DEFAULT NULL,
+  `fence_id` int(11) DEFAULT NULL COMMENT '电子围栏id',
+  `bicycle_id` int(11) DEFAULT NULL COMMENT '车辆id',
   `created` int(255) DEFAULT '0',
   `updated` int(11) DEFAULT '0',
   `deleted` int(255) DEFAULT '0',
@@ -446,7 +451,7 @@ DROP TABLE IF EXISTS `fences`;
 CREATE TABLE `fences` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(20) DEFAULT NULL COMMENT '电子围栏名称',
-  `points` json DEFAULT NULL COMMENT '围栏顶点',
+  `points` text COMMENT '围栏顶点',
   `fence_id` int(11) DEFAULT NULL COMMENT '百度鹰眼服务端电子围栏id',
   `created` int(11) DEFAULT '0',
   `updated` int(11) DEFAULT '0',
@@ -473,22 +478,22 @@ INSERT INTO `fences` VALUES ('15', '测试电子围栏', '[{\"lat\": 29.6175, \"
 DROP TABLE IF EXISTS `orders`;
 CREATE TABLE `orders` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `order_number` varchar(25) NOT NULL,
-  `bicycle_id` int(11) DEFAULT NULL,
+  `order_number` varchar(25) NOT NULL COMMENT '订单号',
+  `bicycle_id` int(11) DEFAULT NULL COMMENT '车号',
   `begin` int(11) DEFAULT '0' COMMENT '开始时间',
   `end` int(11) DEFAULT '0' COMMENT '结束时间',
-  `price` decimal(18,2) NOT NULL DEFAULT '0.00' COMMENT '价格',
-  `status` int(11) DEFAULT NULL COMMENT '状态',
-  `client_opretion` json DEFAULT NULL COMMENT '下单人快照',
-  `bicycle_opretion` json DEFAULT NULL COMMENT '车辆快照',
+  `price` decimal(18,2) DEFAULT '0.00' COMMENT '价格',
+  `status` int(11) DEFAULT '0' COMMENT '状态',
+  `client_opretion` text COMMENT '下单人快照',
+  `bicycle_opretion` text COMMENT '车辆快照',
   `created` int(11) DEFAULT '0',
   `updated` int(11) DEFAULT '0',
   `deleted` int(11) DEFAULT '0',
   `remark` varchar(200) DEFAULT NULL COMMENT '备注',
-  `client_id` int(11) DEFAULT NULL,
+  `client_id` int(11) DEFAULT '0' COMMENT '用车人',
   `meter` int(11) DEFAULT '0' COMMENT '骑行米数',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of orders
@@ -505,6 +510,7 @@ INSERT INTO `orders` VALUES ('15', 'OR201902245c72966fa0549', '6', '1551013487',
 INSERT INTO `orders` VALUES ('16', 'OR201902245c729a2f0b9c0', '6', '1551014447', '1551017793', '0.00', '2', '{\"id\": 1, \"nick\": \"蔡正军\", \"money\": \"499506.00\", \"mobile\": null, \"openid\": \"ovJH64q6DhFNbwGVWB2OlKgkrxW8\", \"created\": \"2019-02-23 19:12:41\", \"deleted\": 0, \"updated\": \"2019-02-23 19:12:41\"}', '{\"id\": 6, \"status\": {\"status\": 2, \"status_info\": \"使用中\"}, \"created\": \"2019-02-23 20:58:39\", \"deleted\": 0, \"updated\": \"2019-02-23 21:04:56\", \"dailyPrice\": \"1440.00\", \"hourlyPrice\": \"60.00\", \"lock_number\": \"866160033560827\", \"bicycle_name\": \"可以随意调用接口的车\", \"bicycle_number\": \"001\"}', '1551014447', '1551014447', '0', '123456789', '1', '0');
 INSERT INTO `orders` VALUES ('18', 'OR201902285c77ab1ccecdb', '6', '1551346460', '1551403890', '958.00', '3', '{\"id\": 1, \"nick\": \"蔡正军\", \"money\": \"499506.00\", \"mobile\": null, \"openid\": \"ovJH64q6DhFNbwGVWB2OlKgkrxW8\", \"created\": \"2019-02-23 19:12:41\", \"deleted\": 0, \"updated\": \"2019-02-23 19:12:41\"}', '{\"id\": 6, \"status\": {\"status\": 2, \"status_info\": \"使用中\"}, \"created\": \"2019-02-23 20:58:39\", \"deleted\": 0, \"updated\": \"2019-02-23 21:04:56\", \"dailyPrice\": \"1440.00\", \"hourlyPrice\": \"60.00\", \"lock_number\": \"866160033560827\", \"bicycle_name\": \"可以随意调用接口的车\", \"bicycle_number\": \"001\"}', '1551346460', '1551346460', '0', null, '1', '0');
 INSERT INTO `orders` VALUES ('19', 'OR201903015c788b9b0b80a', '6', '1551403931', '1551403944', '1.00', '3', '{\"id\": 1, \"nick\": \"蔡正军\", \"money\": \"498548.00\", \"mobile\": null, \"openid\": \"ovJH64q6DhFNbwGVWB2OlKgkrxW8\", \"created\": \"2019-02-23 19:12:41\", \"deleted\": 0, \"updated\": \"2019-02-23 19:12:41\"}', '{\"id\": 6, \"status\": {\"status\": 2, \"status_info\": \"使用中\"}, \"created\": \"2019-02-23 20:58:39\", \"deleted\": 0, \"updated\": \"2019-02-23 21:04:56\", \"dailyPrice\": \"1440.00\", \"hourlyPrice\": \"60.00\", \"lock_number\": \"866160033560827\", \"bicycle_name\": \"可以随意调用接口的车\", \"bicycle_number\": \"001\"}', '1551403931', '1551403931', '0', null, '1', '0');
+INSERT INTO `orders` VALUES ('20', 'OR201903015c78beb38eccb', '6', '1551417011', '1551417017', '0.00', '2', '{\"id\": 1, \"nick\": \"蔡正军\", \"money\": \"498547.00\", \"mobile\": null, \"openid\": \"ovJH64q6DhFNbwGVWB2OlKgkrxW8\", \"created\": \"2019-02-23 19:12:41\", \"deleted\": 0, \"updated\": \"2019-02-23 19:12:41\"}', '{\"id\": 6, \"status\": {\"status\": 2, \"status_info\": \"使用中\"}, \"created\": \"2019-02-23 20:58:39\", \"deleted\": 0, \"updated\": \"2019-02-23 21:04:56\", \"dailyPrice\": \"1440.00\", \"hourlyPrice\": \"60.00\", \"lock_number\": \"866160033560827\", \"bicycle_name\": \"可以随意调用接口的车\", \"bicycle_number\": \"001\"}', '1551417011', '1551417011', '0', null, '1', '0');
 
 -- ----------------------------
 -- Table structure for system_info
