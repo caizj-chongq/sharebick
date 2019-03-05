@@ -13,8 +13,19 @@
     <link rel="stylesheet" href="__STATIC__/assets/css/amazeui.min.css"/>
     <link rel="stylesheet" href="__STATIC__/assets/css/admin.css">
     <link rel="stylesheet" href="__STATIC__/assets/css/my/my.css">
+
     <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
     <script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+    <!--[if lt IE 9]>
+    <script src="__STATIC__/assets/js/polyfill/rem.min.js"></script>
+    <script src="__STATIC__/assets/js/polyfill/respond.min.js"></script>
+    <script src="__STATIC__/assets/js/amazeui.legacy.js"></script>
+    <![endif]-->
+
+    <!--[if (gte IE 9)|!(IE)]><!-->
+    <script src="__STATIC__/assets/js/jquery.min.js"></script>
+    <script src="__STATIC__/assets/js/amazeui.min.js"></script>
+    <!--<![endif]-->
 </head>
 <body>
 <!--[if lte IE 9]>

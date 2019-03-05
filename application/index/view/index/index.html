@@ -1,5 +1,8 @@
 {layout name="layout" /}
 <!-- content start -->
+<script src="__STATIC__/assets/js/echarts.min.js"></script>
+<link rel="stylesheet" href="__STATIC__/assets/css/amazeui.datetimepicker.css"/>
+<script src="__STATIC__/assets/js/amazeui.datetimepicker.min.js"></script>
 <div class="admin-content">
 
     <div class="am-cf am-padding">
@@ -12,62 +15,197 @@
         <li><a href="#" class="am-text-success"><span
                 class="am-icon-btn am-icon-user-md"></span><br/>总用户<br/>{$userCount}</a></li>
         <li><a href="#" class="am-text-success"><span
-                class="am-icon-btn am-icon-user-md"></span><br/>月活跃用户<br/>{$monthActiveUser}</a></li>
-        <li><a href="#" class="am-text-success"><span
-                class="am-icon-btn am-icon-user-md"></span><br/>周活跃用户<br/>{$weekActiveUser}</a></li>
-        <li><a href="#" class="am-text-success"><span
-                class="am-icon-btn am-icon-user-md"></span><br/>今日活跃用户<br/>{$dayActiveUser}</a></li>
-        <li><a href="#" class="am-text-success"><span
-                class="am-icon-btn am-icon-user-md"></span><br/>月新增用户<br/>{$monthAddUser}</a></li>
-        <li><a href="#" class="am-text-success"><span
-                class="am-icon-btn am-icon-user-md"></span><br/>周新增用户<br/>{$weekAddUser}</a></li>
-        <li><a href="#" class="am-text-success"><span
                 class="am-icon-btn am-icon-user-md"></span><br/>今日新增用户<br/>{$dayAddUser}</a></li>
-    </ul>
-
-    <ul class="am-avg-sm-1 am-avg-md-5 am-margin am-padding am-text-center admin-content-list ">
         <li><a href="#" class="am-text-success"><span
                 class="am-icon-btn am-icon-bicycle"></span><br/>月骑行单数<br/>{$monthCyclingOrderNumber}</a></li>
         <li><a href="#" class="am-text-success"><span
-                class="am-icon-btn am-icon-bicycle"></span><br/>周骑行单数<br/>{$weekCyclingOrderNumber}</a></li>
-        <li><a href="#" class="am-text-success"><span
-                class="am-icon-btn am-icon-bicycle"></span><br/>今日骑行单数<br/>{$dayCyclingOrderNumber}</a></li>
-        <li><a href="#" class="am-text-success"><span
-                class="am-icon-btn am-icon-bicycle"></span><br/>月已支付单数<br/>{$monthPayOrderNumber}</a></li>
-        <li><a href="#" class="am-text-success"><span
-                class="am-icon-btn am-icon-bicycle"></span><br/>周已支付单数<br/>{$weekPayOrderNumber}</a></li>
-        <li><a href="#" class="am-text-success"><span
-                class="am-icon-btn am-icon-bicycle"></span><br/>今日已支付单数<br/>{$dayPayOrderNumber}</a></li>
-        <li><a href="#" class="am-text-success"><span
-                class="am-icon-btn am-icon-bicycle"></span><br/>月未支付单数<br/>{$monthNoPayOrderNumber}</a></li>
-        <li><a href="#" class="am-text-success"><span
-                class="am-icon-btn am-icon-bicycle"></span><br/>周未支付单数<br/>{$weekNoPayOrderNumber}</a></li>
-        <li><a href="#" class="am-text-success"><span
-                class="am-icon-btn am-icon-bicycle"></span><br/>今日未支付单数<br/>{$dayNoPayOrderNumber}</a></li>
-    </ul>
-
-    <ul class="am-avg-sm-1 am-avg-md-5 am-margin am-padding am-text-center admin-content-list ">
-        <li><a href="#" class="am-text-success"><span
                 class="am-icon-btn am-icon-rmb"></span><br/>月应收金额<br/>{$monthReceivableMoney}</a></li>
-        <li><a href="#" class="am-text-success"><span
-                class="am-icon-btn am-icon-rmb"></span><br/>周应收金额<br/>{$weekReceivableMoney}</a></li>
-        <li><a href="#" class="am-text-success"><span
-                class="am-icon-btn am-icon-rmb"></span><br/>今日应收金额<br/>{$dayReceivableMoney}</a></li>
         <li><a href="#" class="am-text-success"><span
                 class="am-icon-btn am-icon-rmb"></span><br/>月实收金额<br/>{$monthPaidAmount}</a></li>
         <li><a href="#" class="am-text-success"><span
-                class="am-icon-btn am-icon-rmb"></span><br/>周实收金额<br/>{$weekPaidAmount}</a></li>
-        <li><a href="#" class="am-text-success"><span
-                class="am-icon-btn am-icon-rmb"></span><br/>今日实收金额<br/>{$dayPaidAmount}</a></li>
-        <li><a href="#" class="am-text-success"><span
                 class="am-icon-btn am-icon-rmb"></span><br/>月待收金额<br/>{$monthAmountToBeReceived}</a></li>
-        <li><a href="#" class="am-text-success"><span
-                class="am-icon-btn am-icon-rmb"></span><br/>周待收金额<br/>{$weekAmountToBeReceived}</a></li>
-        <li><a href="#" class="am-text-success"><span
-                class="am-icon-btn am-icon-rmb"></span><br/>今日待收金额<br/>{$dayAmountToBeReceived}</a></li>
     </ul>
+
+    <div class="am-g" style="margin-bottom: 16px;">
+        <div class="am-u-md-6">
+            {:token('token')}
+            <div class="am-alert am-alert-danger" id="my-alert" style="display: none">
+                <p>开始日期应小于结束日期！</p>
+            </div>
+            <div class="am-g">
+                <div class="am-u-sm-6">
+                    <button type="button" class="am-btn am-btn-default am-margin-right" id="my-start">开始日期</button>
+                    <span id="my-startDate"></span>
+                </div>
+                <div class="am-u-sm-6">
+                    <button type="button" class="am-btn am-btn-default am-margin-right" id="my-end">结束日期</button>
+                    <span id="my-endDate"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="am-g">
+        <div class="am-u-md-6">
+            <div class="am-panel am-panel-default">
+                <div class="am-panel-hd am-cf" data-am-collapse="{target: '#collapse-panel-1'}">区间订单数<span
+                        class="am-icon-chevron-down am-fr"></span></div>
+                <div class="am-panel-bd am-collapse am-in" id="collapse-panel-1">
+                    <div id="order-count" style="width: 100%;height:400px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="am-u-md-6">
+            <div class="am-panel am-panel-default">
+                <div class="am-panel-hd am-cf" data-am-collapse="{target: '#collapse-panel-4'}">区间营业额<span
+                        class="am-icon-chevron-down am-fr"></span></div>
+                <div id="collapse-panel-4" class="am-panel-bd am-collapse am-in">
+                    <div id="order-turnover" style="width: 100%;height:400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </div>
 <!-- content end -->
+<script>
+    var ordersGroupByDay= JSON.parse('<?php echo $ordersGroupByDay;?>');
 
+    const submitUrl = "<?php echo url('index/index/index') ?>";
+
+    const submitFilter = function (startDate, endDate) {
+        $.ajax({
+            url: submitUrl,
+            type: 'post',
+            dataType: 'json',
+            timeout: 1000,
+            async: true,   // 是否异步
+            data: {
+                'token': $("input[name='token']").val(),
+                'start': startDate,
+                'end': endDate
+            },
+            success: function (data, status) {
+                var responseStatus = data.status;
+                if (!responseStatus) {
+                    ordersGroupByDay = data.data;
+                    orderTurnoverChartX = Object.keys(ordersGroupByDay);
+                    orderTurnoverCahrtY = [];
+                    for (var i in ordersGroupByDay) {
+                        orderTurnoverCahrtY.push(ordersGroupByDay[i].sumPrice);
+                    }
+                    render(orderTurnoverChart, orderTurnoverChartX, orderTurnoverCahrtY, '区间营业额', '营业额');
+
+                    orderCountChartX = Object.keys(ordersGroupByDay);
+                    orderCountCahrtY = [];
+                    for (var i in ordersGroupByDay) {
+                        orderCountCahrtY.push(ordersGroupByDay[i].count);
+                    }
+                    render(orderCountChart, orderCountChartX, orderCountCahrtY, '区间订单数', '订单数');
+                } else {
+                    alertErrMsg(responseStatus, data.msg);
+                }
+            },
+            fail: function (err, status) {
+                console.log(err)
+            }
+        })
+    };
+
+    const formatDate = function (date) {
+        return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
+    };
+
+    const getCurrentMonthFirst = function (){
+        var date=new Date();
+        date.setDate(1);
+        return date;
+    };
+
+    // 获取当前月的最后一天
+    const getCurrentMonthLast = function (){
+        var date=new Date();
+        var currentMonth=date.getMonth();
+        var nextMonth=++currentMonth;
+        var nextMonthFirstDay=new Date(date.getFullYear(),nextMonth,1);
+        var oneDay=1000*60*60*24;
+        return new Date(nextMonthFirstDay-oneDay);
+    };
+
+    const render = function(chart, chartX, chartY, chartTitle, chartLegendName) {
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: chartTitle
+            },
+            tooltip: {},
+            legend: {
+                data:[chartLegendName]
+            },
+            xAxis: {
+                data: chartX
+            },
+            yAxis: {},
+            series: [{
+                name: chartLegendName,
+                type: 'bar',
+                data: chartY
+            }]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        chart.setOption(option);
+    };
+
+    $(function () {
+        var startDate = getCurrentMonthFirst();
+        var endDate = getCurrentMonthLast();
+        $('#my-startDate').text(formatDate(startDate));
+        $('#my-endDate').text(formatDate(endDate));
+
+        var $alert = $('#my-alert');
+        $('#my-start').datepicker().on('changeDate.datepicker.amui', function (event) {
+            if (event.date.valueOf() > endDate.valueOf()) {
+                $alert.find('p').text('开始日期应小于结束日期！').end().show();
+            } else {
+                $alert.hide();
+                startDate = new Date(event.date);
+                $('#my-startDate').text($('#my-start').data('date'));
+                submitFilter(formatDate(startDate), formatDate(endDate));
+            }
+            $(this).datepicker('close');
+        });
+
+        $('#my-end').datepicker().on('changeDate.datepicker.amui', function (event) {
+            if (event.date.valueOf() < startDate.valueOf()) {
+                $alert.find('p').text('结束日期应大于开始日期！').end().show();
+            } else {
+                $alert.hide();
+                endDate = new Date(event.date);
+                $('#my-endDate').text($('#my-end').data('date'));
+                submitFilter(formatDate(startDate), formatDate(endDate));
+            }
+            $(this).datepicker('close');
+        });
+    });
+
+    //区间订单营业额
+    var orderTurnoverChart = echarts.init(document.getElementById('order-turnover'));
+    var orderTurnoverChartX = Object.keys(ordersGroupByDay);
+    var orderTurnoverCahrtY = [];
+    for (var i in ordersGroupByDay) {
+        orderTurnoverCahrtY.push(ordersGroupByDay[i].sumPrice);
+    }
+    render(orderTurnoverChart, orderTurnoverChartX, orderTurnoverCahrtY, '区间营业额', '营业额');
+    //区间订单数量
+    var orderCountChart = echarts.init(document.getElementById('order-count'));
+    var orderCountChartX = Object.keys(ordersGroupByDay);
+    var orderCountCahrtY = [];
+    for (var i in ordersGroupByDay) {
+        orderCountCahrtY.push(ordersGroupByDay[i].count);
+    }
+    render(orderCountChart, orderCountChartX, orderCountCahrtY, '区间订单数', '订单数');
+
+
+</script>
 
