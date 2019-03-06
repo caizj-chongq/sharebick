@@ -49,7 +49,8 @@ class Bicycle extends BaseModel
         'bicycle_number',
         'lock_number',      //imei
         'status',
-        'bicycle_name'
+        'bicycle_name',
+        'gps'
     ];
 
     /**

@@ -6,6 +6,7 @@ use app\common\CodeMap;
 use app\common\Utils;
 use think\Controller;
 use think\Db;
+use think\Env;
 use think\exception\HttpResponseException;
 use think\Request;
 use think\Response;
@@ -31,7 +32,6 @@ class Base extends Controller
             return (boolean)preg_match($mobileReg, $value);
         });
 
-
         $this->validateAjaxToken($request);
         $this->checkLogin($request);       //检测是否登录，如果没有登录就跳转到登录页面
         $this->checkPermission($request);
@@ -39,6 +39,8 @@ class Base extends Controller
         $this->codeMap = new CodeMap();
 
         parent::__construct($request);
+
+        $this->assign(['fence' => Env::get('Fence.OnlyShowFence', false)]);
     }
 
     /**

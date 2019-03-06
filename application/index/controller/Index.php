@@ -3,8 +3,11 @@
 namespace app\index\controller;
 
 use app\common\Utils;
+use app\common\Yingyan;
+use think\Env;
 use think\Request;
 use app\index\model\User as UserModel;
+use app\index\model\Fence as FenceModel;
 use app\index\model\Client\Operation as ClientOperationModel;
 use app\index\model\Client as ClientModel;
 use app\index\model\Order as OrderModel;
@@ -29,42 +32,80 @@ class Index extends Base
      */
     public function index(Request $request)
     {
-        //订单
-        $startTime = strtotime($request->param('start', date('Y-m-1 00:00:00')));   //开始时间
-        $endTime = strtotime($request->param('end', date('Y-m-t 23:59:59')));   //结束时间
-        $orders = OrderModel::where('deleted', '=', 0)
-            ->where('end', '>=', $startTime)
-            ->where('end', '<=', $endTime)
-            ->select();
-        $ordersGroupByDay = [];
-        foreach ($orders as $order) {
-            $orderTime = date('Y-m-d', strtotime($order->end));
-            $ordersGroupByDay[$orderTime]['count'] = ($ordersGroupByDay[$orderTime]['count'] ?? 0) + 1;
-            $ordersGroupByDay[$orderTime]['sumPrice'] = ($ordersGroupByDay[$orderTime]['sumPrice'] ?? 0) + $order->price;
-        }
-        if ($request->isAjax()) {
-            return Utils::ajaxReturn($ordersGroupByDay);
+        if (Env::get('Fence.OnlyShowFence', false)) {
+            //电子围栏展示
+            $yingyan = new Yingyan();
+            $fenceNames = FenceModel::where('deleted', '=', 0)->select();
+            $fenceBicycles = FenceModel\Bicycles::where('fence_bicycles.deleted', '=', 0)
+                ->join('bicycles', 'bicycles.id = fence_bicycles.bicycle_id')
+                ->field('bicycles.*, fence_bicycles.fence_id')
+                ->select();
+            $fenceBicyclesArr = [];
+            foreach ($fenceBicycles as $fenceBicycle) {
+                $fenceBicyclesArr[$fenceBicycle->fence_id][] = [
+                    'bicycle_number' => $fenceBicycle->bicycle_number,
+                    'lock_number' => $fenceBicycle->lock_number,
+                    'bicycle_name' => $fenceBicycle->bicycle_name,
+                    'hourlyPrice' => $fenceBicycle->hourlyPrice,
+                    'dailyPrice' => $fenceBicycle->dailyPrice,
+                    'gps' => json_decode($fenceBicycle->gps)
+
+                ];
+            }
+
+
+            if ($request->isAjax()) {
+                $nowFence = current(array_filter(json_decode(json_encode($fenceNames), true), function ($item) use ($request) {
+                    return $item['id'] == $request->param('fence_id', 0);
+                }));
+                $bicycles = $fenceBicyclesArr[$request->param('fence_id')] ?? 0;
+                return Utils::ajaxReturn(compact('nowFence', 'bicycles'));
+            }
+
+            $nowFence = $fenceNames[0];
+            $nowFenceBiycles = json_encode($fenceBicyclesArr[$nowFence->id] ?? []);
+            $this->assign(compact('fenceNames', 'nowFence', 'nowFenceBiycles'));
+            $this->assign(['ak' => $yingyan->getBrowerAk()]);
+            return $this->fetch('fence/home_index');
         } else {
-            $userCount = UserModel::where('deleted', '=', 0)->count();   //总用户
-            $dayAddUser = ClientModel::whereTime('created', 'today')->where('deleted', '=', 0)->count();   //当前周新增用户
+            //订单
+            $startTime = strtotime($request->param('start', date('Y-m-1 00:00:00')));   //开始时间
+            $endTime = strtotime($request->param('end', date('Y-m-t 23:59:59')));   //结束时间
+            $orders = OrderModel::where('deleted', '=', 0)
+                ->where('end', '>=', $startTime)
+                ->where('end', '<=', $endTime)
+                ->select();
+            $ordersGroupByDay = [];
+            foreach ($orders as $order) {
+                $orderTime = date('Y-m-d', strtotime($order->end));
+                $ordersGroupByDay[$orderTime]['count'] = ($ordersGroupByDay[$orderTime]['count'] ?? 0) + 1;
+                $ordersGroupByDay[$orderTime]['sumPrice'] = ($ordersGroupByDay[$orderTime]['sumPrice'] ?? 0) + $order->price;
+            }
+            if ($request->isAjax()) {
+                return Utils::ajaxReturn($ordersGroupByDay);
+            } else {
+                $userCount = UserModel::where('deleted', '=', 0)->count();   //总用户
+                $dayAddUser = ClientModel::whereTime('created', 'today')->where('deleted', '=', 0)->count();   //当前周新增用户
 
-            //当月骑行单数
-            $monthCyclingOrderNumber = OrderModel::whereTime('created', 'month')->where('deleted', '=', 0)->count();
-            //当月应收金额
-            $monthReceivableMoney = OrderModel::whereTime('end', 'month')->where(function ($query) {
-                $query->where('status', '=', 3)
-                    ->whereOr('status', '=', 4);
-            })->where('deleted', '=', 0)->sum('price');
-            //当月实收金额
-            $monthPaidAmount = OrderModel::whereTime('end', 'month')->where('status', '=', 3)->where('deleted', '=', 0)->sum('price');
-            //当月待收金额
-            $monthAmountToBeReceived = OrderModel::whereTime('end', 'month')->where('status', '=', 4)->where('deleted', '=', 0)->sum('price');
+                //当月骑行单数
+                $monthCyclingOrderNumber = OrderModel::whereTime('created', 'month')->where('deleted', '=', 0)->count();
+                //当月应收金额
+                $monthReceivableMoney = OrderModel::whereTime('end', 'month')->where(function ($query) {
+                    $query->where('status', '=', 3)
+                        ->whereOr('status', '=', 4);
+                })->where('deleted', '=', 0)->sum('price');
+                //当月实收金额
+                $monthPaidAmount = OrderModel::whereTime('end', 'month')->where('status', '=', 3)->where('deleted', '=', 0)->sum('price');
+                //当月待收金额
+                $monthAmountToBeReceived = OrderModel::whereTime('end', 'month')->where('status', '=', 4)->where('deleted', '=', 0)->sum('price');
 
 
-            $this->assign(['ordersGroupByDay' => json_encode($ordersGroupByDay)]);
-            $this->assign(compact('userCount', 'dayAddUser', 'monthAmountToBeReceived', 'monthCyclingOrderNumber', 'monthPaidAmount', 'monthReceivableMoney'));
-            return $this->fetch();
+                $this->assign(['ordersGroupByDay' => json_encode($ordersGroupByDay)]);
+                $this->assign(compact('userCount', 'dayAddUser', 'monthAmountToBeReceived', 'monthCyclingOrderNumber', 'monthPaidAmount', 'monthReceivableMoney'));
+                return $this->fetch();
+            }
         }
+
     }
 
     /**
