@@ -30,6 +30,40 @@ class Fence extends Base
         $this->yingyan = new Yingyan();
     }
 
+    public function homeIndex(Request $request) {
+        $fenceNames = FenceModel::where('deleted', '=', 0)->select();
+        $fenceBicycles = FenceModel\Bicycles::where('fence_bicycles.deleted', '=', 0)
+            ->join('bicycles', 'bicycles.id = fence_bicycles.bicycle_id')
+            ->field('bicycles.*, fence_bicycles.fence_id')
+            ->select();
+        $fenceBicyclesArr = [];
+        foreach ($fenceBicycles as $fenceBicycle) {
+            $fenceBicyclesArr[$fenceBicycle->fence_id][] = [
+                'bicycle_number' => $fenceBicycle->bicycle_number,
+                'lock_number' => $fenceBicycle->lock_number,
+                'bicycle_name' => $fenceBicycle->bicycle_name,
+                'hourlyPrice' => $fenceBicycle->hourlyPrice,
+                'dailyPrice' => $fenceBicycle->dailyPrice,
+                'gps' => json_decode($fenceBicycle->gps)
+
+            ];
+        }
+
+        if ($request->isAjax()) {
+            $nowFence = current(array_filter(json_decode(json_encode($fenceNames), true), function ($item) use ($request) {
+                return $item['id'] == $request->param('fence_id', 0);
+            }));
+            $bicycles = $fenceBicyclesArr[$request->param('fence_id')] ?? 0;
+            return Utils::ajaxReturn(compact('nowFence', 'bicycles'));
+        }
+
+        $nowFence = $fenceNames[0];
+        $nowFenceBiycles = json_encode($fenceBicyclesArr[$nowFence->id] ?? []);
+        $this->assign(compact('fenceNames', 'nowFence', 'nowFenceBiycles'));
+        $this->assign(['ak' => $this->yingyan->getBrowerAk()]);
+        return $this->fetch();
+    }
+
     /**
      * @param Request $request
      * @return mixed
