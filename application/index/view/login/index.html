@@ -52,7 +52,11 @@
             </div>
         </form>
         <hr>
-        <p>Ai Yu© 版权所有.</p>
+        {if condition="$fence eq true"}
+        <p class="am-padding-left">Li Fangbing© 版权所有.</p>
+        {else /}
+        <p class="am-padding-left">Ai Yu© 版权所有.</p>
+        {/if}
     </div>
     <!--[if lt IE 9]>
     <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
