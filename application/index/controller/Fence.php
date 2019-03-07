@@ -45,7 +45,6 @@ class Fence extends Base
                 'hourlyPrice' => $fenceBicycle->hourlyPrice,
                 'dailyPrice' => $fenceBicycle->dailyPrice,
                 'gps' => json_decode($fenceBicycle->gps)
-
             ];
         }
 
@@ -103,7 +102,25 @@ class Fence extends Base
             ->where('id', '=', $id)
             ->find();
         if ($fenceInfo) {
-            $this->assign(['ak' => $this->yingyan->getBrowerAk()]);
+            $fenceBicycles = FenceModel\Bicycles::where('fence_bicycles.deleted', '=', 0)
+                ->join('bicycles', 'bicycles.id = fence_bicycles.bicycle_id')
+                ->where('fence_bicycles.fence_id', '=', $fenceInfo->id)
+                ->field('bicycles.*, fence_bicycles.fence_id')
+                ->select();
+            $bicycles = [];
+            foreach ($fenceBicycles as $fenceBicycle) {
+                $bicycles[] = [
+                    'bicycle_number' => $fenceBicycle->bicycle_number,
+                    'lock_number' => $fenceBicycle->lock_number,
+                    'bicycle_name' => $fenceBicycle->bicycle_name,
+                    'hourlyPrice' => $fenceBicycle->hourlyPrice,
+                    'dailyPrice' => $fenceBicycle->dailyPrice,
+                    'gps' => json_decode($fenceBicycle->gps)
+                ];
+            }
+
+            $this->assign(['ak' => $this->yingyan->getBrowerAk(), 'bicycles' => json_encode($bicycles)]);
+
             $this->assign(compact('fenceInfo'));
             return $this->fetch();
         }
@@ -137,7 +154,15 @@ class Fence extends Base
                     $fences[$key]['name'] = $names[$key];
                     $fences[$key]['points'] = json_encode($point);
                 }
-                $bicycleName = \app\index\model\Bicycle::where('id', '=', $request->param('person'))->find()->bicycle_name ?? '';
+                //所有需要关联的车辆
+                $bicycles = \app\index\model\Bicycle::whereIn('id', json_decode($request->param('person'), true))->select();
+                $firstBicyleName = $bicycles[0]->bicycle_name;
+                $otherBicycleNames = [];
+                foreach ($bicycles as $key => $v) {
+                    if ($key != 0) {
+                        $otherBicycleNames[] = $v->bicycle_name;
+                    }
+                }
 
                 foreach ($fences as $key => $fence) {
                     $points = json_decode($fence['points'], true);
@@ -146,10 +171,17 @@ class Fence extends Base
                         $pointsStr .= $point['lat'] . ',' . $point['lng'] . ';';
                     }
                     $pointsStr = trim($pointsStr, ';');
-                    $response = json_decode($this->yingyan->createPolygonFence($fence['name'], $pointsStr, $bicycleName), true);
+                    $response = json_decode($this->yingyan->createPolygonFence($fence['name'], $pointsStr, $firstBicyleName), true);
                     if (!$response['status']) {
                         $fences[$key]['fence_id'] = $response['fence_id'];
                     } else {
+                        throw new \Exception($response['message']);
+                    }
+                }
+
+                if (count($otherBicycleNames)) {    //如果存在多个，需要调用单独的绑定实例接口绑定到围栏 接口文档说明 http://lbsyun.baidu.com/index.php?title=yingyan/api/v3/geofence#service-page-anchor4
+                    $response = json_decode($this->yingyan->addmonitoredperson($response['fence_id'], trim(implode(',', $otherBicycleNames), ', ')), true);
+                    if ($response['status']) {
                         throw new \Exception($response['message']);
                     }
                 }
@@ -158,10 +190,12 @@ class Fence extends Base
                 $result = $fence->saveAll($fences);
                 $fenceBicycleData = [];
                 foreach ($result as $item) {
-                    $fenceBicycleData[] = [
-                        'fence_id' => $item->id,
-                        'bicycle_id' => $request->param('person')
-                    ];
+                    foreach ($bicycles as $bicycle) {
+                        $fenceBicycleData[] = [
+                            'fence_id' => $item->id,
+                            'bicycle_id' => $bicycle->id
+                        ];
+                    }
                 }
                 $fenceBicycle = new FenceBicyclesModel();
                 $fenceBicycle->saveAll($fenceBicycleData);

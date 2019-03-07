@@ -17,7 +17,7 @@
                 </div>
                 <div class="am-u-md-4" style="text-align: left;">
                     {:token('token')}
-                    <select name="fence" id="fence" onchange="changeFence()">
+                    <select name="fence" id="fence" onchange="changeFence()" data-am-selected>
                         {volist name="fenceNames" id ="fenceName"}
                         <option value="{$fenceName.id}" {if condition="$nowFence.id eq $fenceName.id" } selected {/if}>{$fenceName.name}</option>
                         {/volist}
@@ -81,7 +81,7 @@
     const renderBicycles = function (mapObj, bicycles) {
         for (var i = 0; i < bicycles.length; i++) {
             var pt = new BMap.Point(bicycles[i].gps.lng, bicycles[i].gps.lat);
-            var myIcon = new BMap.Icon("http://www.yihengjie.cn/bicycle.png", new BMap.Size(30, 30));
+            var myIcon = new BMap.Icon("http://sharebicycle.yihengjie.cn/static/img/bicycle.png", new BMap.Size(30, 30));
             var marker = new BMap.Marker(pt, {icon: myIcon});  // 创建标注
 
             var content = "车名:" + bicycles[i].bicycle_name + "<br/>" +
@@ -89,7 +89,6 @@
                     "锁IMEI:" + bicycles[i].lock_number + "<br />" +
                     "每小时价格:" + bicycles[i].hourlyPrice + "<br />" +
                     "每天价格:" + bicycles[i].dailyPrice + "<br />" ;
-            console.log(content);
             mapObj.addOverlay(marker);               // 将标注添加到地图中
             addClickHandler(content, marker);
         }

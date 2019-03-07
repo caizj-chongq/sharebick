@@ -36,7 +36,7 @@
                             关联车辆
                         </div>
                         <div class="am-u-sm-4">
-                            <select name="person" id="person">
+                            <select name="person" id="person" data-am-selected="{searchBox: 1}" multiple>
                                 <option value="">--请选择--</option>
                                 {volist name="persons" id="person"}
                                     <option value="{$person.id}">{$person.bicycle_name}</option>
@@ -85,16 +85,6 @@
     var overlays = [];
     var fencesNames = [];
 
-    var overlaycomplete = function(e){
-        overlays.push(e.overlay);
-        var name = prompt("请为您刚刚绘制的电子围栏取个名称！");
-        if (!name) {
-            map.removeOverlay(overlays[overlays.length - 1]);   //不输入名字就不保存电子围栏
-        } else {
-            fencesNames.push(name)
-        }
-    };
-
     //实例化鼠标绘制工具
     var drawingManager = new BMapLib.DrawingManager(map, {
         isOpen: false, //是否开启绘制模式
@@ -105,6 +95,23 @@
             drawingModes: [BMAP_DRAWING_POLYGON]    //设置绘制工具栏 多边形绘制
         }
     });
+
+    var overlaycomplete = function(e){
+        if (overlays.length) {
+            alert('只能允许绘制一个电子围栏！');
+            map.removeOverlay(e.overlay);
+            return ;
+        }
+
+        overlays.push(e.overlay);
+        var name = prompt("请为您刚刚绘制的电子围栏取个名称！");
+        if (!name) {
+            map.removeOverlay(overlays[overlays.length - 1]);   //不输入名字就不保存电子围栏
+        } else {
+            fencesNames.push(name);
+            drawingManager.enableDrawingTool = false;
+        }
+    };
 
     //添加鼠标绘制工具监听事件，用于获取绘制结果
     drawingManager.addEventListener('overlaycomplete', overlaycomplete);
@@ -139,7 +146,7 @@
                 'token': $("input[name='token']").val(),
                 'data': JSON.stringify(pointData),
                 'names': JSON.stringify(fencesNames),
-                'person': $("#person").val()
+                'person': JSON.stringify($('select').val())
             },
             success: function (data, status) {
                 var responseStatus = data.status;

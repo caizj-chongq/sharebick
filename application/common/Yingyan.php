@@ -22,7 +22,8 @@ class Yingyan
         "createPolygonFence" => "/fence/createpolygonfence",  //创建电子围栏
         "deletePolygonFence" => "/fence/delete",  //删除电子围栏
         "listPolygonFence" => "/fence/list",  //电子围栏列表
-        "queryStatusByLocation" => "/fence/querystatusbylocation"   //传入坐标查看是否在围栏内外，前提是监控对象与围栏绑定
+        "queryStatusByLocation" => "/fence/querystatusbylocation" ,  //传入坐标查看是否在围栏内外，前提是监控对象与围栏绑定
+        "addmonitoredperson" => "/fence/addmonitoredperson"   //增加围栏需监控的entity
     ];
 
     /**
@@ -273,6 +274,26 @@ class Yingyan
             'monitored_person' => $person
         ];
         $requestMethod = 'GET';
+
+        return $this->send($requestUrl, $requestData, $requestMethod);
+    }
+
+    /**
+     * 增加围栏需监控的entity 针对某一个地理围栏增加entity
+     * @param $fenceId
+     * @param $monitoredPerson
+     * @return false|string
+     */
+    public function addmonitoredperson($fenceId, $monitoredPerson)
+    {
+        $requestUrl = $this->requestBaseUsl . $this->requestUrl['addmonitoredperson'];
+        $requestData = [
+            'ak' => $this->ak,
+            'service_id' => $this->serviceId,
+            'fence_id' => $fenceId,
+            'monitored_person' => $monitoredPerson  //多个entity_name使用英文逗号分隔
+        ];
+        $requestMethod = 'POST';
 
         return $this->send($requestUrl, $requestData, $requestMethod);
     }

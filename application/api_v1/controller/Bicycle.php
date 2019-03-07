@@ -505,7 +505,7 @@ class Bicycle extends Base
                                 if ($response['size']) {
                                     foreach ($response['monitored_statuses'] as $monitored_status) {
                                         if ($monitored_status['monitored_status'] == 'out') {
-//                                            $err = '当前车辆已驶出规定范围，请回到规定范围内再试！';
+                                            $err = '当前车辆已驶出规定范围，请回到规定范围内再试！';
                                             break;
                                         }
                                     }
