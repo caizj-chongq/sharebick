@@ -81,7 +81,7 @@
     const renderBicycles = function (mapObj, bicycles) {
         for (var i = 0; i < bicycles.length; i++) {
             var pt = new BMap.Point(bicycles[i].gps.lng, bicycles[i].gps.lat);
-            var myIcon = new BMap.Icon("http://sharebicycle.yihengjie.cn/static/img/bicycle.png", new BMap.Size(30, 30));
+            var myIcon = new BMap.Icon("http://sharebicycle.yihengjie.cn/static/img/bicycle.png", new BMap.Size(15, 15));
             var marker = new BMap.Marker(pt, {icon: myIcon});  // 创建标注
 
             var content = "车名:" + bicycles[i].bicycle_name + "<br/>" +
