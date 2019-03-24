@@ -2,15 +2,15 @@
 Navicat MySQL Data Transfer
 
 Source Server         : homestead
-Source Server Version : 50719
+Source Server Version : 50725
 Source Host           : 192.168.10.10:3306
 Source Database       : sharebicycle
 
 Target Server Type    : MYSQL
-Target Server Version : 50719
+Target Server Version : 50725
 File Encoding         : 65001
 
-Date: 2019-03-01 23:31:37
+Date: 2019-03-24 19:30:34
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -23,13 +23,14 @@ CREATE TABLE `admin_group_navigate` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `navigate_id` int(11) NOT NULL DEFAULT '0' COMMENT '权限id',
   `group_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户组id',
-  PRIMARY KEY (`id`) USING BTREE,
+  PRIMARY KEY (`id`),
   KEY `group_navigate` (`navigate_id`,`group_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of admin_group_navigate
 -- ----------------------------
+INSERT INTO `admin_group_navigate` VALUES ('1', '0', '1');
 
 -- ----------------------------
 -- Table structure for admin_groups
@@ -42,12 +43,13 @@ CREATE TABLE `admin_groups` (
   `created` int(11) DEFAULT '0' COMMENT '创建时间',
   `updated` int(11) DEFAULT '0' COMMENT '更新时间',
   `deleted` int(11) DEFAULT '0' COMMENT '删除时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of admin_groups
 -- ----------------------------
+INSERT INTO `admin_groups` VALUES ('1', 'aaa', '', '1551448674', '1551448674', '0');
 
 -- ----------------------------
 -- Table structure for admin_navigates
@@ -59,8 +61,8 @@ CREATE TABLE `admin_navigates` (
   `route` varchar(150) DEFAULT NULL COMMENT '规则',
   `desc` varchar(150) DEFAULT NULL COMMENT '描述',
   `parent_id` int(11) DEFAULT '0',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of admin_navigates
@@ -118,10 +120,10 @@ CREATE TABLE `admin_users` (
   `deleted` int(11) DEFAULT '0' COMMENT '删除时间',
   `created` int(11) DEFAULT '0' COMMENT '创建时间',
   `updated` int(11) DEFAULT '0' COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE,
+  PRIMARY KEY (`id`),
   KEY `group` (`group_id`) USING BTREE,
   KEY `username` (`username`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of admin_users
@@ -139,8 +141,8 @@ CREATE TABLE `admin_users_operations` (
   `type` int(11) DEFAULT NULL,
   `ip` varchar(15) DEFAULT NULL COMMENT '用户ip',
   `created` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of admin_users_operations
@@ -149,8 +151,20 @@ INSERT INTO `admin_users_operations` VALUES ('1', '1', '1551353021', '1', '192.1
 INSERT INTO `admin_users_operations` VALUES ('2', '1', '1551366693', '1', '192.168.10.1', '1551366693');
 INSERT INTO `admin_users_operations` VALUES ('3', '1', '1551369431', '1', '192.168.10.1', '1551369431');
 INSERT INTO `admin_users_operations` VALUES ('4', '1', '1551404016', '1', '192.168.10.1', '1551404016');
-INSERT INTO `admin_users_operations` VALUES ('5', '1', '1551416964', '1', '192.168.10.1', '1551416964');
-INSERT INTO `admin_users_operations` VALUES ('6', '1', '1551428036', '1', '192.168.10.1', '1551428036');
+INSERT INTO `admin_users_operations` VALUES ('5', '1', '1551417766', '1', '27.11.103.144', '1551417766');
+INSERT INTO `admin_users_operations` VALUES ('6', '1', '1551417809', '1', '123.147.248.182', '1551417809');
+INSERT INTO `admin_users_operations` VALUES ('7', '1', '1551424723', '1', '183.226.184.170', '1551424723');
+INSERT INTO `admin_users_operations` VALUES ('8', '1', '1551429356', '1', '27.11.103.144', '1551429356');
+INSERT INTO `admin_users_operations` VALUES ('9', '1', '1551439317', '1', '183.226.184.235', '1551439317');
+INSERT INTO `admin_users_operations` VALUES ('10', '1', '1551440432', '1', '183.226.184.235', '1551440432');
+INSERT INTO `admin_users_operations` VALUES ('11', '1', '1551440433', '1', '183.226.184.235', '1551440433');
+INSERT INTO `admin_users_operations` VALUES ('12', '1', '1551446173', '1', '183.226.184.235', '1551446173');
+INSERT INTO `admin_users_operations` VALUES ('13', '1', '1551446490', '1', '183.226.184.235', '1551446490');
+INSERT INTO `admin_users_operations` VALUES ('14', '1', '1551761970', '1', '27.11.102.246', '1551761970');
+INSERT INTO `admin_users_operations` VALUES ('15', '1', '1551784751', '1', '183.226.186.200', '1551784751');
+INSERT INTO `admin_users_operations` VALUES ('16', '1', '1551928769', '1', '27.11.102.246', '1551928769');
+INSERT INTO `admin_users_operations` VALUES ('17', '1', '1553395881', '1', '123.147.246.155', '1553395881');
+INSERT INTO `admin_users_operations` VALUES ('18', '1', '1553395928', '1', '183.226.184.146', '1553395928');
 
 -- ----------------------------
 -- Table structure for bicycle_reports
@@ -168,11 +182,14 @@ CREATE TABLE `bicycle_reports` (
   `client_id` int(11) DEFAULT '0' COMMENT '反馈人',
   `order_id` int(11) DEFAULT '0' COMMENT '反馈关联订单',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of bicycle_reports
 -- ----------------------------
+INSERT INTO `bicycle_reports` VALUES ('1', '6', '轮胎没气', '1551450073', '1551450073', '1', '{\"id\": 1, \"nick\": \"超级管理员\", \"created\": \"2019-01-06 15:30:37\", \"group_id\": 0, \"username\": \"admin\"}', '0', '2', '21');
+INSERT INTO `bicycle_reports` VALUES ('2', '6', '座椅损坏', '1551451242', '1551451242', '0', null, '0', '2', '21');
+INSERT INTO `bicycle_reports` VALUES ('3', '6', 'ADSAJDHJK ', '1551694421', '1551694421', '0', null, '0', '4', '4');
 
 -- ----------------------------
 -- Table structure for bicycles
@@ -189,13 +206,14 @@ CREATE TABLE `bicycles` (
   `bicycle_name` varchar(10) DEFAULT NULL COMMENT '车辆名称',
   `hourlyPrice` decimal(18,2) DEFAULT '0.00',
   `dailyPrice` decimal(18,2) DEFAULT '0.00',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+  `gps` text COMMENT 'gps定位',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of bicycles
 -- ----------------------------
-INSERT INTO `bicycles` VALUES ('6', '1550926719', '1550927096', '0', '866160033560827', '001', '2', '可以随意调用接口的车', '60.00', '1440.00');
+INSERT INTO `bicycles` VALUES ('6', '1550926719', '1550927096', '0', '866160033560827', '001', '2', '可以随意调用接口的车', '60.00', '1440.00', null);
 
 -- ----------------------------
 -- Table structure for clients
@@ -212,12 +230,15 @@ CREATE TABLE `clients` (
   `openid` varchar(32) DEFAULT NULL COMMENT 'openid',
   `token` varchar(128) DEFAULT NULL COMMENT '小程序与后台通讯凭证',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of clients
 -- ----------------------------
-INSERT INTO `clients` VALUES ('1', '蔡正军', '498547.00', '1550920361', '1550920361', '0', null, 'ovJH64q6DhFNbwGVWB2OlKgkrxW8', '824DMW00LRCYAXHXNMLVW2DVK4UGSOSRHB6WQ4JFKKJG6FTEOELTU9VK7G3H40667BAULRLADOQ5OY6GS5WP5WC1U3KVIUHFL0QOX0LJNWUAF2QQOQ5F79EMB1PMQ4TB');
+INSERT INTO `clients` VALUES ('1', '蔡正军', '498547.00', '1550920361', '1550920361', '1551447165', null, 'ovJH64q6DhFNbwGVWB2OlKgkrxW8', '824DMW00LRCYAXHXNMLVW2DVK4UGSOSRHB6WQ4JFKKJG6FTEOELTU9VK7G3H40667BAULRLADOQ5OY6GS5WP5WC1U3KVIUHFL0QOX0LJNWUAF2QQOQ5F79EMB1PMQ4TB');
+INSERT INTO `clients` VALUES ('2', 'aayyy', '49999.00', '1551447127', '1551447175', '0', '', 'ovJH64v32eMJF2h3ROas2heYdGuE', '8EI50D49VQI1O63F82X8BOYVTC6T1LHU5FS5CIOT8XWPW4H2ABO0Y2LF3FESI5BS59PPCCNBR40OWUV5HPQIKBBDE6RMT5XAA00183HPQV3S3W37FN0RA3KY6GQL5UT0');
+INSERT INTO `clients` VALUES ('3', '红日', '499999.00', '1551450724', '1551451420', '0', '', 'ovJH64gnjTjyOUk3GD7DfIYyJd1c', 'ALSPAHS1974TPORNT8COTO0WB9VXKOIK1A4A2GDLFW8Q9ALGOJ2TVOLQ9PPKPHAP6IR3NQB7KRWF6GMGWKYULUM23RWL21KPVQR87JA3G8B0IXC7AS8IIBCNEOW0YFP4');
+INSERT INTO `clients` VALUES ('4', '行之若愚', '0.00', '1551517079', '1551517079', '0', null, 'ovJH64gAnFxeR2DBEHTrR0zqc_bU', '2TEXOR1UVNJC2EQEVW4SW62POWUU6PLKX536UGY21ESH7CB9NBKYOEFU17EU6YXLOFI7VDLRO2JNXOY187DN4JWSOQVA0NAFJHFQDYJE8OFDA9LTDBODMB9SQO712HIX');
 
 -- ----------------------------
 -- Table structure for clients_operations
@@ -230,13 +251,74 @@ CREATE TABLE `clients_operations` (
   `type` int(11) DEFAULT NULL COMMENT '操作类型',
   `ip` varchar(15) DEFAULT NULL COMMENT 'ip',
   `created` int(11) DEFAULT '0',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of clients_operations
 -- ----------------------------
-INSERT INTO `clients_operations` VALUES ('1', '1', '1551430411', '1', '192.168.10.1', '1551430411');
+INSERT INTO `clients_operations` VALUES ('1', '1', '1551430641', '1', '27.11.103.144', '1551430641');
+INSERT INTO `clients_operations` VALUES ('2', '1', '1551430753', '1', '27.11.103.144', '1551430753');
+INSERT INTO `clients_operations` VALUES ('3', '1', '1551446404', '1', '183.226.184.235', '1551446404');
+INSERT INTO `clients_operations` VALUES ('4', '1', '1551446629', '1', '183.226.184.235', '1551446629');
+INSERT INTO `clients_operations` VALUES ('5', '1', '1551446645', '1', '183.226.184.235', '1551446645');
+INSERT INTO `clients_operations` VALUES ('6', '1', '1551446782', '1', '183.226.184.235', '1551446782');
+INSERT INTO `clients_operations` VALUES ('7', '1', '1551446830', '1', '183.226.184.235', '1551446830');
+INSERT INTO `clients_operations` VALUES ('8', '1', '1551446843', '1', '183.226.184.235', '1551446843');
+INSERT INTO `clients_operations` VALUES ('9', '1', '1551446915', '1', '183.226.184.235', '1551446915');
+INSERT INTO `clients_operations` VALUES ('10', '2', '1551447127', '1', '183.226.184.235', '1551447127');
+INSERT INTO `clients_operations` VALUES ('11', '1', '1551447405', '1', '183.226.184.235', '1551447405');
+INSERT INTO `clients_operations` VALUES ('12', '1', '1551447488', '1', '183.226.184.235', '1551447488');
+INSERT INTO `clients_operations` VALUES ('13', '1', '1551447542', '1', '183.226.184.235', '1551447542');
+INSERT INTO `clients_operations` VALUES ('14', '1', '1551449758', '1', '183.226.184.235', '1551449758');
+INSERT INTO `clients_operations` VALUES ('15', '1', '1551449844', '1', '183.226.184.235', '1551449844');
+INSERT INTO `clients_operations` VALUES ('16', '2', '1551449884', '1', '183.226.184.235', '1551449884');
+INSERT INTO `clients_operations` VALUES ('17', '1', '1551450698', '1', '183.226.184.235', '1551450698');
+INSERT INTO `clients_operations` VALUES ('18', '3', '1551450724', '1', '183.227.125.52', '1551450724');
+INSERT INTO `clients_operations` VALUES ('19', '1', '1551450779', '1', '183.226.184.235', '1551450779');
+INSERT INTO `clients_operations` VALUES ('20', '3', '1551450839', '1', '183.227.125.52', '1551450839');
+INSERT INTO `clients_operations` VALUES ('21', '3', '1551450857', '1', '183.227.125.52', '1551450857');
+INSERT INTO `clients_operations` VALUES ('22', '3', '1551450858', '1', '183.227.125.52', '1551450858');
+INSERT INTO `clients_operations` VALUES ('23', '1', '1551451030', '1', '183.226.184.235', '1551451030');
+INSERT INTO `clients_operations` VALUES ('24', '1', '1551451032', '1', '183.226.184.235', '1551451032');
+INSERT INTO `clients_operations` VALUES ('25', '3', '1551451168', '1', '183.227.125.52', '1551451168');
+INSERT INTO `clients_operations` VALUES ('26', '2', '1551451216', '1', '183.226.184.235', '1551451216');
+INSERT INTO `clients_operations` VALUES ('27', '3', '1551451219', '1', '183.227.125.52', '1551451219');
+INSERT INTO `clients_operations` VALUES ('28', '3', '1551451220', '1', '183.227.125.52', '1551451220');
+INSERT INTO `clients_operations` VALUES ('29', '3', '1551451512', '1', '183.227.125.52', '1551451512');
+INSERT INTO `clients_operations` VALUES ('30', '3', '1551451536', '1', '183.227.125.52', '1551451536');
+INSERT INTO `clients_operations` VALUES ('31', '3', '1551451537', '1', '183.227.125.52', '1551451537');
+INSERT INTO `clients_operations` VALUES ('32', '3', '1551451549', '1', '183.227.125.52', '1551451549');
+INSERT INTO `clients_operations` VALUES ('33', '3', '1551451550', '1', '183.227.125.52', '1551451550');
+INSERT INTO `clients_operations` VALUES ('34', '1', '1551451629', '1', '183.226.184.235', '1551451629');
+INSERT INTO `clients_operations` VALUES ('35', '1', '1551451629', '1', '183.226.184.235', '1551451629');
+INSERT INTO `clients_operations` VALUES ('36', '1', '1551451837', '1', '183.226.184.235', '1551451837');
+INSERT INTO `clients_operations` VALUES ('37', '1', '1551451894', '1', '183.226.184.235', '1551451894');
+INSERT INTO `clients_operations` VALUES ('38', '3', '1551451994', '1', '183.227.125.52', '1551451994');
+INSERT INTO `clients_operations` VALUES ('39', '3', '1551452009', '1', '183.227.125.52', '1551452009');
+INSERT INTO `clients_operations` VALUES ('40', '1', '1551452097', '1', '183.226.184.235', '1551452097');
+INSERT INTO `clients_operations` VALUES ('41', '3', '1551452189', '1', '183.226.184.235', '1551452189');
+INSERT INTO `clients_operations` VALUES ('42', '3', '1551452208', '1', '183.226.184.235', '1551452208');
+INSERT INTO `clients_operations` VALUES ('43', '3', '1551452234', '1', '183.226.184.235', '1551452234');
+INSERT INTO `clients_operations` VALUES ('44', '3', '1551452254', '1', '183.226.184.235', '1551452254');
+INSERT INTO `clients_operations` VALUES ('45', '3', '1551452270', '1', '183.226.184.235', '1551452270');
+INSERT INTO `clients_operations` VALUES ('46', '3', '1551452294', '1', '183.226.184.235', '1551452294');
+INSERT INTO `clients_operations` VALUES ('47', '4', '1551517079', '1', '123.147.248.182', '1551517079');
+INSERT INTO `clients_operations` VALUES ('48', '2', '1551614898', '1', '183.226.187.64', '1551614898');
+INSERT INTO `clients_operations` VALUES ('49', '2', '1551614953', '1', '183.226.187.64', '1551614953');
+INSERT INTO `clients_operations` VALUES ('50', '2', '1551615021', '1', '183.226.187.64', '1551615021');
+INSERT INTO `clients_operations` VALUES ('51', '2', '1551615023', '1', '183.226.187.64', '1551615023');
+INSERT INTO `clients_operations` VALUES ('52', '2', '1551615162', '1', '183.226.187.64', '1551615162');
+INSERT INTO `clients_operations` VALUES ('53', '3', '1551678961', '1', '223.104.251.19', '1551678961');
+INSERT INTO `clients_operations` VALUES ('54', '3', '1551678962', '1', '223.104.251.19', '1551678962');
+INSERT INTO `clients_operations` VALUES ('55', '4', '1551679571', '1', '123.147.246.118', '1551679571');
+INSERT INTO `clients_operations` VALUES ('56', '3', '1551679809', '1', '223.104.251.19', '1551679809');
+INSERT INTO `clients_operations` VALUES ('57', '3', '1551679847', '1', '223.104.251.19', '1551679847');
+INSERT INTO `clients_operations` VALUES ('58', '1', '1551687861', '1', '27.11.102.246', '1551687861');
+INSERT INTO `clients_operations` VALUES ('59', '1', '1551687904', '1', '27.11.102.246', '1551687904');
+INSERT INTO `clients_operations` VALUES ('60', '4', '1551694390', '1', '123.147.246.118', '1551694390');
+INSERT INTO `clients_operations` VALUES ('61', '3', '1552532495', '1', '183.227.125.73', '1552532495');
+INSERT INTO `clients_operations` VALUES ('62', '3', '1552554080', '1', '183.227.125.73', '1552554080');
 
 -- ----------------------------
 -- Table structure for fence_alarm
@@ -253,7 +335,7 @@ CREATE TABLE `fence_alarm` (
   `updated` int(11) DEFAULT '0',
   `deleted` int(11) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=165 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=186 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of fence_alarm
@@ -422,6 +504,27 @@ INSERT INTO `fence_alarm` VALUES ('161', '18', '1551371417', '1551371417', '{\"l
 INSERT INTO `fence_alarm` VALUES ('162', '18', '1551371477', '1551371477', '{\"lat\": \"27.737505\", \"lng\": \"100.823202\"}', '{\"lat\": \"27.737505\", \"lng\": \"100.823202\"}', '1551371477', '1551371477', '0');
 INSERT INTO `fence_alarm` VALUES ('163', '18', '1551371537', '1551371537', '{\"lat\": \"27.737521\", \"lng\": \"100.823175\"}', '{\"lat\": \"27.737521\", \"lng\": \"100.823175\"}', '1551371537', '1551371537', '0');
 INSERT INTO `fence_alarm` VALUES ('164', '18', '1551403845', '1551403845', '{\"lat\": \"27.737621\", \"lng\": \"100.823181\"}', '{\"lat\": \"27.737621\", \"lng\": \"100.823181\"}', '1551403845', '1551403845', '0');
+INSERT INTO `fence_alarm` VALUES ('165', '21', '1551449982', '1551449982', '{\"lat\": \"27.737558\", \"lng\": \"100.823073\"}', '{\"lat\": \"27.737558\", \"lng\": \"100.823073\"}', '1551449982', '1551449982', '0');
+INSERT INTO `fence_alarm` VALUES ('166', '21', '1551450004', '1551450004', '{\"lat\": \"27.737570\", \"lng\": \"100.823074\"}', '{\"lat\": \"27.737570\", \"lng\": \"100.823074\"}', '1551450004', '1551450004', '0');
+INSERT INTO `fence_alarm` VALUES ('167', '21', '1551450005', '1551450005', '{\"lat\": \"27.737570\", \"lng\": \"100.823074\"}', '{\"lat\": \"27.737570\", \"lng\": \"100.823074\"}', '1551450005', '1551450005', '0');
+INSERT INTO `fence_alarm` VALUES ('168', '21', '1551450038', '1551450038', '{\"lat\": \"27.737481\", \"lng\": \"100.823174\"}', '{\"lat\": \"27.737481\", \"lng\": \"100.823174\"}', '1551450038', '1551450038', '0');
+INSERT INTO `fence_alarm` VALUES ('169', '21', '1551450038', '1551450038', '{\"lat\": \"27.737481\", \"lng\": \"100.823174\"}', '{\"lat\": \"27.737481\", \"lng\": \"100.823174\"}', '1551450038', '1551450038', '0');
+INSERT INTO `fence_alarm` VALUES ('170', '21', '1551450049', '1551450049', '{\"lat\": \"27.737430\", \"lng\": \"100.823284\"}', '{\"lat\": \"27.737430\", \"lng\": \"100.823284\"}', '1551450049', '1551450049', '0');
+INSERT INTO `fence_alarm` VALUES ('171', '21', '1551450067', '1551450067', '{\"lat\": \"27.737482\", \"lng\": \"100.823248\"}', '{\"lat\": \"27.737482\", \"lng\": \"100.823248\"}', '1551450067', '1551450067', '0');
+INSERT INTO `fence_alarm` VALUES ('172', '21', '1551450068', '1551450068', '{\"lat\": \"27.737482\", \"lng\": \"100.823248\"}', '{\"lat\": \"27.737482\", \"lng\": \"100.823248\"}', '1551450068', '1551450068', '0');
+INSERT INTO `fence_alarm` VALUES ('173', '21', '1551450098', '1551450098', '{\"lat\": \"27.737491\", \"lng\": \"100.823048\"}', '{\"lat\": \"27.737491\", \"lng\": \"100.823048\"}', '1551450098', '1551450098', '0');
+INSERT INTO `fence_alarm` VALUES ('174', '21', '1551450098', '1551450098', '{\"lat\": \"27.737491\", \"lng\": \"100.823048\"}', '{\"lat\": \"27.737491\", \"lng\": \"100.823048\"}', '1551450098', '1551450098', '0');
+INSERT INTO `fence_alarm` VALUES ('175', '21', '1551450111', '1551450111', '{\"lat\": \"27.737495\", \"lng\": \"100.823076\"}', '{\"lat\": \"27.737495\", \"lng\": \"100.823076\"}', '1551450111', '1551450111', '0');
+INSERT INTO `fence_alarm` VALUES ('176', '21', '1551450125', '1551450125', '{\"lat\": \"27.737491\", \"lng\": \"100.823145\"}', '{\"lat\": \"27.737491\", \"lng\": \"100.823145\"}', '1551450125', '1551450125', '0');
+INSERT INTO `fence_alarm` VALUES ('177', '21', '1551450127', '1551450127', '{\"lat\": \"27.737491\", \"lng\": \"100.823145\"}', '{\"lat\": \"27.737491\", \"lng\": \"100.823145\"}', '1551450127', '1551450127', '0');
+INSERT INTO `fence_alarm` VALUES ('178', '21', '1551450127', '1551450127', '{\"lat\": \"27.737491\", \"lng\": \"100.823145\"}', '{\"lat\": \"27.737491\", \"lng\": \"100.823145\"}', '1551450127', '1551450127', '0');
+INSERT INTO `fence_alarm` VALUES ('179', '21', '1551450137', '1551450137', '{\"lat\": \"27.737403\", \"lng\": \"100.823114\"}', '{\"lat\": \"27.737403\", \"lng\": \"100.823114\"}', '1551450137', '1551450137', '0');
+INSERT INTO `fence_alarm` VALUES ('180', '21', '1551450164', '1551450164', '{\"lat\": \"27.737695\", \"lng\": \"100.823197\"}', '{\"lat\": \"27.737695\", \"lng\": \"100.823197\"}', '1551450164', '1551450164', '0');
+INSERT INTO `fence_alarm` VALUES ('181', '21', '1551450165', '1551450165', '{\"lat\": \"27.737695\", \"lng\": \"100.823197\"}', '{\"lat\": \"27.737695\", \"lng\": \"100.823197\"}', '1551450165', '1551450165', '0');
+INSERT INTO `fence_alarm` VALUES ('182', '21', '1551450187', '1551450187', '{\"lat\": \"27.737489\", \"lng\": \"100.823125\"}', '{\"lat\": \"27.737489\", \"lng\": \"100.823125\"}', '1551450187', '1551450187', '0');
+INSERT INTO `fence_alarm` VALUES ('183', '21', '1551450188', '1551450188', '{\"lat\": \"27.737489\", \"lng\": \"100.823125\"}', '{\"lat\": \"27.737489\", \"lng\": \"100.823125\"}', '1551450188', '1551450188', '0');
+INSERT INTO `fence_alarm` VALUES ('184', '21', '1551450200', '1551450200', '{\"lat\": \"27.737523\", \"lng\": \"100.823130\"}', '{\"lat\": \"27.737523\", \"lng\": \"100.823130\"}', '1551450200', '1551450200', '0');
+INSERT INTO `fence_alarm` VALUES ('185', '21', '1551450201', '1551450201', '{\"lat\": \"27.737523\", \"lng\": \"100.823130\"}', '{\"lat\": \"27.737523\", \"lng\": \"100.823130\"}', '1551450201', '1551450201', '0');
 
 -- ----------------------------
 -- Table structure for fence_bicycles
@@ -434,8 +537,8 @@ CREATE TABLE `fence_bicycles` (
   `created` int(255) DEFAULT '0',
   `updated` int(11) DEFAULT '0',
   `deleted` int(255) DEFAULT '0',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of fence_bicycles
@@ -456,8 +559,8 @@ CREATE TABLE `fences` (
   `created` int(11) DEFAULT '0',
   `updated` int(11) DEFAULT '0',
   `deleted` int(11) DEFAULT '0',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of fences
@@ -493,24 +596,15 @@ CREATE TABLE `orders` (
   `client_id` int(11) DEFAULT '0' COMMENT '用车人',
   `meter` int(11) DEFAULT '0' COMMENT '骑行米数',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of orders
 -- ----------------------------
-INSERT INTO `orders` VALUES ('1', 'OR201902245c7181ce9e3b6', '6', '1550942670', '1550942737', '1.12', '4', '{\"id\": 1, \"nick\": \"蔡正军\", \"money\": \"0.00\", \"token\": \"824DMW00LRCYAXHXNMLVW2DVK4UGSOSRHB6WQ4JFKKJG6FTEOELTU9VK7G3H40667BAULRLADOQ5OY6GS5WP5WC1U3KVIUHFL0QOX0LJNWUAF2QQOQ5F79EMB1PMQ4TB\", \"mobile\": null, \"openid\": \"ovJH64q6DhFNbwGVWB2OlKgkrxW8\", \"created\": \"2019-02-23 19:12:41\", \"deleted\": 0, \"updated\": \"2019-02-23 19:12:41\"}', '{\"id\": 6, \"status\": {\"status\": 2, \"status_info\": \"使用中\"}, \"created\": \"2019-02-23 20:58:39\", \"deleted\": 0, \"updated\": \"2019-02-23 21:04:56\", \"dailyPrice\": \"1440.00\", \"hourlyPrice\": \"60.00\", \"lock_number\": \"866160033560827\", \"bicycle_name\": \"可以随意调用接口的车\", \"bicycle_number\": \"001\"}', '1550942670', '1550942670', '0', null, '1', '0');
-INSERT INTO `orders` VALUES ('2', 'OR201902245c7182b2a6ffc', '6', '1550942898', '1550943132', '4.00', '4', '{\"id\": 1, \"nick\": \"蔡正军\", \"money\": \"0.00\", \"token\": \"824DMW00LRCYAXHXNMLVW2DVK4UGSOSRHB6WQ4JFKKJG6FTEOELTU9VK7G3H40667BAULRLADOQ5OY6GS5WP5WC1U3KVIUHFL0QOX0LJNWUAF2QQOQ5F79EMB1PMQ4TB\", \"mobile\": null, \"openid\": \"ovJH64q6DhFNbwGVWB2OlKgkrxW8\", \"created\": \"2019-02-23 19:12:41\", \"deleted\": 0, \"updated\": \"2019-02-23 19:12:41\"}', '{\"id\": 6, \"status\": {\"status\": 2, \"status_info\": \"使用中\"}, \"created\": \"2019-02-23 20:58:39\", \"deleted\": 0, \"updated\": \"2019-02-23 21:04:56\", \"dailyPrice\": \"1440.00\", \"hourlyPrice\": \"60.00\", \"lock_number\": \"866160033560827\", \"bicycle_name\": \"可以随意调用接口的车\", \"bicycle_number\": \"001\"}', '1550942898', '1550942898', '0', null, '1', '0');
-INSERT INTO `orders` VALUES ('7', 'OR201902245c7188c421b58', '6', '1550944452', '1550981087', '611.00', '4', '{\"id\": 1, \"nick\": \"蔡正军\", \"money\": \"0.00\", \"mobile\": null, \"openid\": \"ovJH64q6DhFNbwGVWB2OlKgkrxW8\", \"created\": \"2019-02-23 19:12:41\", \"deleted\": 0, \"updated\": \"2019-02-23 19:12:41\"}', '{\"id\": 6, \"status\": {\"status\": 2, \"status_info\": \"使用中\"}, \"created\": \"2019-02-23 20:58:39\", \"deleted\": 0, \"updated\": \"2019-02-23 21:04:56\", \"dailyPrice\": \"1440.00\", \"hourlyPrice\": \"60.00\", \"lock_number\": \"866160033560827\", \"bicycle_name\": \"可以随意调用接口的车\", \"bicycle_number\": \"001\"}', '1550944452', '1550944452', '0', null, '1', '0');
-INSERT INTO `orders` VALUES ('8', 'OR201902245c7217f938388', '6', '1550981113', '1550990784', '162.00', '3', '{\"id\": 1, \"nick\": \"蔡正军\", \"money\": \"0.00\", \"mobile\": null, \"openid\": \"ovJH64q6DhFNbwGVWB2OlKgkrxW8\", \"created\": \"2019-02-23 19:12:41\", \"deleted\": 0, \"updated\": \"2019-02-23 19:12:41\"}', '{\"id\": 6, \"status\": {\"status\": 2, \"status_info\": \"使用中\"}, \"created\": \"2019-02-23 20:58:39\", \"deleted\": 0, \"updated\": \"2019-02-23 21:04:56\", \"dailyPrice\": \"1440.00\", \"hourlyPrice\": \"60.00\", \"lock_number\": \"866160033560827\", \"bicycle_name\": \"可以随意调用接口的车\", \"bicycle_number\": \"001\"}', '1550981113', '1550981113', '0', null, '1', '641');
-INSERT INTO `orders` VALUES ('11', 'OR201902245c723d97ef457', '6', '1550990743', '1550990907', '3.00', '3', '{\"id\": 1, \"nick\": \"蔡正军\", \"money\": \"0.00\", \"mobile\": null, \"openid\": \"ovJH64q6DhFNbwGVWB2OlKgkrxW8\", \"created\": \"2019-02-23 19:12:41\", \"deleted\": 0, \"updated\": \"2019-02-23 19:12:41\"}', '{\"id\": 6, \"status\": {\"status\": 2, \"status_info\": \"使用中\"}, \"created\": \"2019-02-23 20:58:39\", \"deleted\": 0, \"updated\": \"2019-02-23 21:04:56\", \"dailyPrice\": \"1440.00\", \"hourlyPrice\": \"60.00\", \"lock_number\": \"866160033560827\", \"bicycle_name\": \"可以随意调用接口的车\", \"bicycle_number\": \"001\"}', '1550990743', '1550990743', '0', null, '1', '0');
-INSERT INTO `orders` VALUES ('12', 'OR201902245c723ead3d650', '6', '1550991021', '1551010598', '327.00', '3', '{\"id\": 1, \"nick\": \"蔡正军\", \"money\": \"0.00\", \"mobile\": null, \"openid\": \"ovJH64q6DhFNbwGVWB2OlKgkrxW8\", \"created\": \"2019-02-23 19:12:41\", \"deleted\": 0, \"updated\": \"2019-02-23 19:12:41\"}', '{\"id\": 6, \"status\": {\"status\": 2, \"status_info\": \"使用中\"}, \"created\": \"2019-02-23 20:58:39\", \"deleted\": 0, \"updated\": \"2019-02-23 21:04:56\", \"dailyPrice\": \"1440.00\", \"hourlyPrice\": \"60.00\", \"lock_number\": \"866160033560827\", \"bicycle_name\": \"可以随意调用接口的车\", \"bicycle_number\": \"001\"}', '1550991021', '1550991021', '0', null, '1', '0');
-INSERT INTO `orders` VALUES ('13', 'OR201902245c728b50578ae', '6', '1551010640', '1551010689', '1.00', '3', '{\"id\": 1, \"nick\": \"蔡正军\", \"money\": \"0.00\", \"mobile\": null, \"openid\": \"ovJH64q6DhFNbwGVWB2OlKgkrxW8\", \"created\": \"2019-02-23 19:12:41\", \"deleted\": 0, \"updated\": \"2019-02-23 19:12:41\"}', '{\"id\": 6, \"status\": {\"status\": 2, \"status_info\": \"使用中\"}, \"created\": \"2019-02-23 20:58:39\", \"deleted\": 0, \"updated\": \"2019-02-23 21:04:56\", \"dailyPrice\": \"1440.00\", \"hourlyPrice\": \"60.00\", \"lock_number\": \"866160033560827\", \"bicycle_name\": \"可以随意调用接口的车\", \"bicycle_number\": \"001\"}', '1551010640', '1551010640', '0', null, '1', '0');
-INSERT INTO `orders` VALUES ('14', 'OR201902245c729619a1934', '6', '1551013401', '1551013417', '1.00', '4', '{\"id\": 1, \"nick\": \"蔡正军\", \"money\": \"499669.00\", \"mobile\": null, \"openid\": \"ovJH64q6DhFNbwGVWB2OlKgkrxW8\", \"created\": \"2019-02-23 19:12:41\", \"deleted\": 0, \"updated\": \"2019-02-23 19:12:41\"}', '{\"id\": 6, \"status\": {\"status\": 2, \"status_info\": \"使用中\"}, \"created\": \"2019-02-23 20:58:39\", \"deleted\": 0, \"updated\": \"2019-02-23 21:04:56\", \"dailyPrice\": \"1440.00\", \"hourlyPrice\": \"60.00\", \"lock_number\": \"866160033560827\", \"bicycle_name\": \"可以随意调用接口的车\", \"bicycle_number\": \"001\"}', '1551013401', '1551013401', '0', null, '1', '0');
-INSERT INTO `orders` VALUES ('15', 'OR201902245c72966fa0549', '6', '1551013487', '1551013490', '1.00', '3', '{\"id\": 1, \"nick\": \"蔡正军\", \"money\": \"499669.00\", \"mobile\": null, \"openid\": \"ovJH64q6DhFNbwGVWB2OlKgkrxW8\", \"created\": \"2019-02-23 19:12:41\", \"deleted\": 0, \"updated\": \"2019-02-23 19:12:41\"}', '{\"id\": 6, \"status\": {\"status\": 2, \"status_info\": \"使用中\"}, \"created\": \"2019-02-23 20:58:39\", \"deleted\": 0, \"updated\": \"2019-02-23 21:04:56\", \"dailyPrice\": \"1440.00\", \"hourlyPrice\": \"60.00\", \"lock_number\": \"866160033560827\", \"bicycle_name\": \"可以随意调用接口的车\", \"bicycle_number\": \"001\"}', '1551013487', '1551013487', '0', null, '1', '0');
-INSERT INTO `orders` VALUES ('16', 'OR201902245c729a2f0b9c0', '6', '1551014447', '1551017793', '0.00', '2', '{\"id\": 1, \"nick\": \"蔡正军\", \"money\": \"499506.00\", \"mobile\": null, \"openid\": \"ovJH64q6DhFNbwGVWB2OlKgkrxW8\", \"created\": \"2019-02-23 19:12:41\", \"deleted\": 0, \"updated\": \"2019-02-23 19:12:41\"}', '{\"id\": 6, \"status\": {\"status\": 2, \"status_info\": \"使用中\"}, \"created\": \"2019-02-23 20:58:39\", \"deleted\": 0, \"updated\": \"2019-02-23 21:04:56\", \"dailyPrice\": \"1440.00\", \"hourlyPrice\": \"60.00\", \"lock_number\": \"866160033560827\", \"bicycle_name\": \"可以随意调用接口的车\", \"bicycle_number\": \"001\"}', '1551014447', '1551014447', '0', '123456789', '1', '0');
-INSERT INTO `orders` VALUES ('18', 'OR201902285c77ab1ccecdb', '6', '1551346460', '1551403890', '958.00', '3', '{\"id\": 1, \"nick\": \"蔡正军\", \"money\": \"499506.00\", \"mobile\": null, \"openid\": \"ovJH64q6DhFNbwGVWB2OlKgkrxW8\", \"created\": \"2019-02-23 19:12:41\", \"deleted\": 0, \"updated\": \"2019-02-23 19:12:41\"}', '{\"id\": 6, \"status\": {\"status\": 2, \"status_info\": \"使用中\"}, \"created\": \"2019-02-23 20:58:39\", \"deleted\": 0, \"updated\": \"2019-02-23 21:04:56\", \"dailyPrice\": \"1440.00\", \"hourlyPrice\": \"60.00\", \"lock_number\": \"866160033560827\", \"bicycle_name\": \"可以随意调用接口的车\", \"bicycle_number\": \"001\"}', '1551346460', '1551346460', '0', null, '1', '0');
-INSERT INTO `orders` VALUES ('19', 'OR201903015c788b9b0b80a', '6', '1551403931', '1551403944', '1.00', '3', '{\"id\": 1, \"nick\": \"蔡正军\", \"money\": \"498548.00\", \"mobile\": null, \"openid\": \"ovJH64q6DhFNbwGVWB2OlKgkrxW8\", \"created\": \"2019-02-23 19:12:41\", \"deleted\": 0, \"updated\": \"2019-02-23 19:12:41\"}', '{\"id\": 6, \"status\": {\"status\": 2, \"status_info\": \"使用中\"}, \"created\": \"2019-02-23 20:58:39\", \"deleted\": 0, \"updated\": \"2019-02-23 21:04:56\", \"dailyPrice\": \"1440.00\", \"hourlyPrice\": \"60.00\", \"lock_number\": \"866160033560827\", \"bicycle_name\": \"可以随意调用接口的车\", \"bicycle_number\": \"001\"}', '1551403931', '1551403931', '0', null, '1', '0');
-INSERT INTO `orders` VALUES ('20', 'OR201903015c78beb38eccb', '6', '1551417011', '1551417017', '0.00', '2', '{\"id\": 1, \"nick\": \"蔡正军\", \"money\": \"498547.00\", \"mobile\": null, \"openid\": \"ovJH64q6DhFNbwGVWB2OlKgkrxW8\", \"created\": \"2019-02-23 19:12:41\", \"deleted\": 0, \"updated\": \"2019-02-23 19:12:41\"}', '{\"id\": 6, \"status\": {\"status\": 2, \"status_info\": \"使用中\"}, \"created\": \"2019-02-23 20:58:39\", \"deleted\": 0, \"updated\": \"2019-02-23 21:04:56\", \"dailyPrice\": \"1440.00\", \"hourlyPrice\": \"60.00\", \"lock_number\": \"866160033560827\", \"bicycle_name\": \"可以随意调用接口的车\", \"bicycle_number\": \"001\"}', '1551417011', '1551417011', '0', null, '1', '0');
+INSERT INTO `orders` VALUES ('1', 'OR201903035c7bc567a922c', '6', '1551615335', '1551615366', '1.00', '3', '{\"id\": 2, \"nick\": \"aayyy\", \"money\": \"50000.00\", \"mobile\": \"\", \"openid\": \"ovJH64v32eMJF2h3ROas2heYdGuE\", \"created\": \"2019-03-01 21:32:07\", \"deleted\": 0, \"updated\": \"2019-03-01 21:32:55\"}', '{\"id\": 6, \"status\": {\"status\": 2, \"status_info\": \"使用中\"}, \"created\": \"2019-02-23 20:58:39\", \"deleted\": 0, \"updated\": \"2019-02-23 21:04:56\", \"dailyPrice\": \"1440.00\", \"hourlyPrice\": \"60.00\", \"lock_number\": \"866160033560827\", \"bicycle_name\": \"可以随意调用接口的车\", \"bicycle_number\": \"001\"}', '1551615335', '1551615335', '0', null, '2', '0');
+INSERT INTO `orders` VALUES ('2', 'OR201903045c7cbdfbbb642', '6', '1551678971', '1551678997', '1.00', '4', '{\"id\": 3, \"nick\": \"红日\", \"money\": \"500000.00\", \"mobile\": \"\", \"openid\": \"ovJH64gnjTjyOUk3GD7DfIYyJd1c\", \"created\": \"2019-03-01 22:32:04\", \"deleted\": 0, \"updated\": \"2019-03-01 22:43:40\"}', '{\"id\": 6, \"status\": {\"status\": 2, \"status_info\": \"使用中\"}, \"created\": \"2019-02-23 20:58:39\", \"deleted\": 0, \"updated\": \"2019-02-23 21:04:56\", \"dailyPrice\": \"1440.00\", \"hourlyPrice\": \"60.00\", \"lock_number\": \"866160033560827\", \"bicycle_name\": \"可以随意调用接口的车\", \"bicycle_number\": \"001\"}', '1551678971', '1551678971', '0', null, '3', '0');
+INSERT INTO `orders` VALUES ('3', 'OR201903045c7cc14a20b08', '6', '1551679818', '1551679874', '1.00', '3', '{\"id\": 3, \"nick\": \"红日\", \"money\": \"500000.00\", \"mobile\": \"\", \"openid\": \"ovJH64gnjTjyOUk3GD7DfIYyJd1c\", \"created\": \"2019-03-01 22:32:04\", \"deleted\": 0, \"updated\": \"2019-03-01 22:43:40\"}', '{\"id\": 6, \"status\": {\"status\": 2, \"status_info\": \"使用中\"}, \"created\": \"2019-02-23 20:58:39\", \"deleted\": 0, \"updated\": \"2019-02-23 21:04:56\", \"dailyPrice\": \"1440.00\", \"hourlyPrice\": \"60.00\", \"lock_number\": \"866160033560827\", \"bicycle_name\": \"可以随意调用接口的车\", \"bicycle_number\": \"001\"}', '1551679818', '1551679818', '0', null, '3', '0');
+INSERT INTO `orders` VALUES ('4', 'OR201903045c7cfa4b16a85', '6', '1551694411', '1551694440', '1.00', '4', '{\"id\": 4, \"nick\": \"行之若愚\", \"money\": \"0.00\", \"mobile\": null, \"openid\": \"ovJH64gAnFxeR2DBEHTrR0zqc_bU\", \"created\": \"2019-03-02 16:57:59\", \"deleted\": 0, \"updated\": \"2019-03-02 16:57:59\"}', '{\"id\": 6, \"status\": {\"status\": 2, \"status_info\": \"使用中\"}, \"created\": \"2019-02-23 20:58:39\", \"deleted\": 0, \"updated\": \"2019-02-23 21:04:56\", \"dailyPrice\": \"1440.00\", \"hourlyPrice\": \"60.00\", \"lock_number\": \"866160033560827\", \"bicycle_name\": \"可以随意调用接口的车\", \"bicycle_number\": \"001\"}', '1551694411', '1551694411', '0', 'ADSAJDHJK ', '4', '0');
 
 -- ----------------------------
 -- Table structure for system_info
@@ -524,7 +618,7 @@ CREATE TABLE `system_info` (
   `wx_appsecret` varchar(128) DEFAULT NULL,
   `lock_token` varchar(128) DEFAULT NULL,
   `tencent_map_key` varchar(128) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of system_info
