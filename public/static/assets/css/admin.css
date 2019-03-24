@@ -21,6 +21,7 @@ ul {
 
 .admin-main {
     background: #f3f3f3;
+    min-height: 550px;
 }
 
 .admin-sidebar {
