@@ -476,7 +476,7 @@ class Bicycle extends Base
                         }
 
                         $lockInfo = null;
-                        for ($i = 0; $i < 5; $i++) {    //轮询获取定位
+                        for ($i = 0; $i < 10; $i++) {    //轮询获取定位
                             $lockInfo = LockModel::where('imei', '=', $carImei)
                                 ->where('pos_gtime', '>=', date('Y-m-d H:i:s', $locationTime))
                                 ->find();
@@ -485,7 +485,7 @@ class Bicycle extends Base
                             }
                             sleep(1);
                         }
-                        if ($i >= 5) {
+                        if ($i >= 10) {
                             return Utils::throw400('定位失败！');
                         }
 
@@ -616,7 +616,7 @@ class Bicycle extends Base
                 }
 
                 $lockInfo = null;
-                for ($i = 0; $i < 5; $i++) {    //轮询查看开锁没有
+                for ($i = 0; $i < 10; $i++) {    //轮询查看开锁没有
                     $lockInfo = LockModel::where('imei', '=', $carImei)
                         ->where('pos_gtime', '>=', date('Y-m-d H:i:s', $locationTime))
                         ->find();
@@ -625,7 +625,7 @@ class Bicycle extends Base
                     }
                     sleep(1);
                 }
-                if ($i >= 5) {
+                if ($i >= 10) {
                     return Utils::throw400('定位失败！');
                 }
                 //把位置信息放入文件
