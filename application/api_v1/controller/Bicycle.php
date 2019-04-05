@@ -476,14 +476,14 @@ class Bicycle extends Base
                         }
 
                         $lockInfo = null;
-                        for ($i = 0; $i < 20; $i++) {    //轮询获取定位
+                        for ($i = 0; $i < 10; $i++) {    //轮询获取定位
                             $lockInfo = LockModel::where('imei', '=', $carImei)
                                 ->where('pos_gtime', '>=', date('Y-m-d H:i:s', $locationTime))
                                 ->find();
                             if ($lockInfo) {
                                 break;
                             }
-                            sleep(3);
+                            sleep(1);
                         }
                         if ($i >= 10) {
                             return Utils::throw400('定位失败！');
@@ -668,7 +668,7 @@ class Bicycle extends Base
                                         $alarm->save();
                                     }
 
-//                                    $err = '当前车辆已驶出规定范围，请尽快回到规定范围内！';
+                                    $err = '当前车辆已驶出规定范围，请尽快回到规定范围内！';
                                     break;
                                 }
                             }
