@@ -334,7 +334,7 @@ class Bicycle extends Base
 //            }
 
 //            $lockInfo = null;
-//            for ($i = 0; $i < 10 ; $i++) {    //轮询查看开锁没有
+//            for ($i = 0; $i < 5 ; $i++) {    //轮询查看开锁没有
 //                $lockInfo = LockModel::where('imei', '=', $car->lock_number)
 //                    ->where('lock_status', '=', 1)
 //                    ->where('lock_time', '>=', date('Y-m-d H:i:s', $unLockTime))
@@ -344,7 +344,7 @@ class Bicycle extends Base
 //                }
 //                sleep(1);
 //            }
-//            if ($i >= 10) {
+//            if ($i >= 5) {
 //                return Utils::throw400('开锁失败，请更换车辆再试！');
 //            }
 
@@ -391,7 +391,7 @@ class Bicycle extends Base
                         $locTime = time();
                         // 查询关锁状态
 //                        $lockInfo = null;
-//                        for ($i = 0; $i < 10; $i++) {    //轮询查看关锁没有
+//                        for ($i = 0; $i < 5; $i++) {    //轮询查看关锁没有
 //                            $lockInfo = LockModel::where('imei', '=', json_decode($order->bicycle_opretion, true)['bicycle_number'])
 //                                ->where('lock_status', '=', 0)
 //                                ->where('lock_time', '>=', date('Y-m-d H:i:s', $locTime))
@@ -401,7 +401,7 @@ class Bicycle extends Base
 //                            }
 //                            sleep(1);
 //                        }
-//                        if ($i >= 10) {
+//                        if ($i >= 5) {
 //                            return Utils::throw400('服务器繁忙，请稍后再试！');
 //                        }
 
@@ -452,7 +452,7 @@ class Bicycle extends Base
                         $locTime = time();
                         // 查询关锁状态
 //                        $lockInfo = null;
-//                        for ($i = 0; $i < 10; $i++) {    //轮询查看关锁没有
+//                        for ($i = 0; $i < 5; $i++) {    //轮询查看关锁没有
 //                            $lockInfo = LockModel::where('imei', '=', json_decode($order->bicycle_opretion, true)['bicycle_number'])
 //                                ->where('lock_status', '=', 0)
 //                                ->where('lock_time', '>=', date('Y-m-d H:i:s', $locTime))
@@ -462,7 +462,7 @@ class Bicycle extends Base
 //                            }
 //                            sleep(1);
 //                        }
-//                        if ($i >= 10) {
+//                        if ($i >= 5) {
 //                            return Utils::throw400('服务器繁忙，请稍后再试！');
 //                        }
 
@@ -476,7 +476,7 @@ class Bicycle extends Base
                         }
 
                         $lockInfo = null;
-                        for ($i = 0; $i < 10; $i++) {    //轮询获取定位
+                        for ($i = 0; $i < 5; $i++) {    //轮询获取定位
                             $lockInfo = LockModel::where('imei', '=', $carImei)
                                 ->where('pos_gtime', '>=', date('Y-m-d H:i:s', $locationTime))
                                 ->find();
@@ -485,7 +485,7 @@ class Bicycle extends Base
                             }
                             sleep(1);
                         }
-                        if ($i >= 10) {
+                        if ($i >= 5) {
                             return Utils::throw400('定位失败！');
                         }
 
@@ -616,16 +616,16 @@ class Bicycle extends Base
                 }
 
                 $lockInfo = null;
-                for ($i = 0; $i < 20; $i++) {    //轮询查看开锁没有
+                for ($i = 0; $i < 5; $i++) {    //轮询查看开锁没有
                     $lockInfo = LockModel::where('imei', '=', $carImei)
                         ->where('pos_gtime', '>=', date('Y-m-d H:i:s', $locationTime))
                         ->find();
                     if ($lockInfo) {
                         break;
                     }
-                    sleep(3);
+                    sleep(1);
                 }
-                if ($i >= 10) {
+                if ($i >= 5) {
                     return Utils::throw400('定位失败！');
                 }
                 //把位置信息放入文件
