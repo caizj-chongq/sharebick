@@ -668,7 +668,7 @@ class Bicycle extends Base
                                         $alarm->save();
                                     }
 
-                                    $err = '当前车辆已驶出规定范围，请尽快回到规定范围内！';
+//                                    $err = '当前车辆已驶出规定范围，请尽快回到规定范围内！';
                                     break;
                                 }
                             }
