@@ -468,53 +468,53 @@ class Bicycle extends Base
 
                         //判断当前锁位置是否在围栏外,如果在围栏外面，就不允许停车
                         //车辆位置
-                        $locationTime = time();
-                        $carImei = json_decode($order->bicycle_opretion, true)['lock_number'];
-                        $response = json_decode($this->lock->getLocation($carImei, $locationTime), true);
-                        if ($response['code'] != 1) {
-                            return Utils::throw400('定位失败！');
-                        }
-
-                        $lockInfo = null;
-                        for ($i = 0; $i < 10; $i++) {    //轮询获取定位
-                            $lockInfo = LockModel::where('imei', '=', $carImei)
-                                ->where('pos_gtime', '>=', date('Y-m-d H:i:s', $locationTime))
-                                ->find();
-                            if ($lockInfo) {
-                                break;
-                            }
-                            sleep(1);
-                        }
-                        if ($i >= 10) {
-                            return Utils::throw400('定位失败！');
-                        }
-
-
-                        if ($lockInfo) {
-                            //保存数据到车表中，更新车的位置
-                            $saveBicycleData['gps'] = json_encode([
-                                'lng' => $lockInfo->pos_lng,
-                                'lat' => $lockInfo->pos_lat
-                            ]);
-                            //判断当前锁位置是否在围栏外
-                            $yingyan = new Yingyan();
-                            $response = json_decode($yingyan->queryStatusByLocation($lockInfo->pos_lng, $lockInfo->pos_lat, json_decode($order->bicycle_opretion, true)['bicycle_name'], 'wgs84'), true);
-
-                            if (!$response['status']) {
-                                $err = '';
-                                if ($response['size']) {
-                                    foreach ($response['monitored_statuses'] as $monitored_status) {
-                                        if ($monitored_status['monitored_status'] == 'out') {
-                                            $err = '当前车辆已驶出规定范围，请回到规定范围内再试！';
-                                            break;
-                                        }
-                                    }
-                                }
-                                if (strlen($err)) {
-                                    return Utils::ajaxReturn(null, 3, $err);
-                                }
-                            }
-                        }
+//                        $locationTime = time();
+//                        $carImei = json_decode($order->bicycle_opretion, true)['lock_number'];
+//                        $response = json_decode($this->lock->getLocation($carImei, $locationTime), true);
+//                        if ($response['code'] != 1) {
+//                            return Utils::throw400('定位失败！');
+//                        }
+//
+//                        $lockInfo = null;
+//                        for ($i = 0; $i < 10; $i++) {    //轮询获取定位
+//                            $lockInfo = LockModel::where('imei', '=', $carImei)
+//                                ->where('pos_gtime', '>=', date('Y-m-d H:i:s', $locationTime))
+//                                ->find();
+//                            if ($lockInfo) {
+//                                break;
+//                            }
+//                            sleep(1);
+//                        }
+//                        if ($i >= 10) {
+//                            return Utils::throw400('定位失败！');
+//                        }
+//
+//
+//                        if ($lockInfo) {
+//                            //保存数据到车表中，更新车的位置
+//                            $saveBicycleData['gps'] = json_encode([
+//                                'lng' => $lockInfo->pos_lng,
+//                                'lat' => $lockInfo->pos_lat
+//                            ]);
+//                            //判断当前锁位置是否在围栏外
+//                            $yingyan = new Yingyan();
+//                            $response = json_decode($yingyan->queryStatusByLocation($lockInfo->pos_lng, $lockInfo->pos_lat, json_decode($order->bicycle_opretion, true)['bicycle_name'], 'wgs84'), true);
+//
+//                            if (!$response['status']) {
+//                                $err = '';
+//                                if ($response['size']) {
+//                                    foreach ($response['monitored_statuses'] as $monitored_status) {
+//                                        if ($monitored_status['monitored_status'] == 'out') {
+//                                            $err = '当前车辆已驶出规定范围，请回到规定范围内再试！';
+//                                            break;
+//                                        }
+//                                    }
+//                                }
+//                                if (strlen($err)) {
+//                                    return Utils::ajaxReturn(null, 3, $err);
+//                                }
+//                            }
+//                        }
 
                         //计算保存数据
                         $endTime = time();
