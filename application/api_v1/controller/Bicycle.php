@@ -327,14 +327,14 @@ class Bicycle extends Base
             }
 
             $lock = new Lock();
-            $unLockTime = time();
+            $unLockTime = time() - 120;
             $response = json_decode($lock->unLock($car->lock_number, $unLockTime), true);
             if ($response['code'] != 1) {
                 return Utils::throw400('车辆当前不可用，请更换车辆进行使用');
             }
 
             $lockInfo = null;
-            for ($i = 0; $i < 10 ; $i++) {    //轮询查看开锁没有
+            for ($i = 0; $i < 5 ; $i++) {    //轮询查看开锁没有
                 $lockInfo = LockModel::where('imei', '=', $car->lock_number)
                     ->where('lock_status', '=', 1)
                     ->where('lock_time', '>=', date('Y-m-d H:i:s', $unLockTime))
@@ -344,7 +344,7 @@ class Bicycle extends Base
                 }
                 sleep(1);
             }
-            if ($i >= 10) {
+            if ($i >= 5) {
                 return Utils::throw400('开锁失败，请更换车辆再试！');
             }
 
@@ -390,20 +390,20 @@ class Bicycle extends Base
                         }
                         $locTime = time();
                         // 查询关锁状态
-//                        $lockInfo = null;
-//                        for ($i = 0; $i < 5; $i++) {    //轮询查看关锁没有
-//                            $lockInfo = LockModel::where('imei', '=', json_decode($order->bicycle_opretion, true)['bicycle_number'])
-//                                ->where('lock_status', '=', 0)
-//                                ->where('lock_time', '>=', date('Y-m-d H:i:s', $locTime))
-//                                ->find();
-//                            if ($lockInfo) {
-//                                break;
-//                            }
-//                            sleep(1);
-//                        }
-//                        if ($i >= 5) {
-//                            return Utils::throw400('服务器繁忙，请稍后再试！');
-//                        }
+                        $lockInfo = null;
+                        for ($i = 0; $i < 5; $i++) {    //轮询查看关锁没有
+                            $lockInfo = LockModel::where('imei', '=', json_decode($order->bicycle_opretion, true)['bicycle_number'])
+                                ->where('lock_status', '=', 0)
+                                ->where('lock_time', '>=', date('Y-m-d H:i:s', $locTime - 120))
+                                ->find();
+                            if ($lockInfo) {
+                                break;
+                            }
+                            sleep(1);
+                        }
+                        if ($i >= 5) {
+                            return Utils::throw400('服务器繁忙，请稍后再试！');
+                        }
 
                         //车辆位置
                         $locationTime = time();
@@ -414,16 +414,16 @@ class Bicycle extends Base
                         }
 
                         $lockInfo = null;
-                        for ($i = 0; $i < 20; $i++) {    //轮询获取定位
+                        for ($i = 0; $i < 5; $i++) {    //轮询获取定位
                             $lockInfo = LockModel::where('imei', '=', $carImei)
-                                ->where('pos_gtime', '>=', date('Y-m-d H:i:s', $locationTime))
+                                ->where('pos_gtime', '>=', date('Y-m-d H:i:s', $locationTime - 120))
                                 ->find();
                             if ($lockInfo) {
                                 break;
                             }
-                            sleep(3);
+                            sleep(1);
                         }
-                        if ($i >= 10) {
+                        if ($i >= 5) {
                             return Utils::throw400('定位失败！');
                         }
 
@@ -451,51 +451,51 @@ class Bicycle extends Base
                     case 4: //结束用车
                         $locTime = time();
                         // 查询关锁状态
-//                        $lockInfo = null;
-//                        for ($i = 0; $i < 5; $i++) {    //轮询查看关锁没有
-//                            $lockInfo = LockModel::where('imei', '=', json_decode($order->bicycle_opretion, true)['bicycle_number'])
-//                                ->where('lock_status', '=', 0)
-//                                ->where('lock_time', '>=', date('Y-m-d H:i:s', $locTime))
-//                                ->find();
-//                            if ($lockInfo) {
-//                                break;
-//                            }
-//                            sleep(1);
-//                        }
-//                        if ($i >= 5) {
-//                            return Utils::throw400('服务器繁忙，请稍后再试！');
-//                        }
+                        $lockInfo = null;
+                        for ($i = 0; $i < 5; $i++) {    //轮询查看关锁没有
+                            $lockInfo = LockModel::where('imei', '=', json_decode($order->bicycle_opretion, true)['bicycle_number'])
+                                ->where('lock_status', '=', 0)
+                                ->where('lock_time', '>=', date('Y-m-d H:i:s', $locTime - 120))
+                                ->find();
+                            if ($lockInfo) {
+                                break;
+                            }
+                            sleep(1);
+                        }
+                        if ($i >= 5) {
+                            return Utils::throw400('服务器繁忙，请稍后再试！');
+                        }
 
                         //判断当前锁位置是否在围栏外,如果在围栏外面，就不允许停车
                         //车辆位置
-//                        $locationTime = time();
-//                        $carImei = json_decode($order->bicycle_opretion, true)['lock_number'];
-//                        $response = json_decode($this->lock->getLocation($carImei, $locationTime), true);
-//                        if ($response['code'] != 1) {
-//                            return Utils::throw400('定位失败！');
-//                        }
+                        $locationTime = time();
+                        $carImei = json_decode($order->bicycle_opretion, true)['lock_number'];
+                        $response = json_decode($this->lock->getLocation($carImei, $locationTime), true);
+                        if ($response['code'] != 1) {
+                            return Utils::throw400('定位失败！');
+                        }
+
+                        $lockInfo = null;
+                        for ($i = 0; $i < 5; $i++) {    //轮询获取定位
+                            $lockInfo = LockModel::where('imei', '=', $carImei)
+                                ->where('pos_gtime', '>=', date('Y-m-d H:i:s', $locationTime))
+                                ->find();
+                            if ($lockInfo) {
+                                break;
+                            }
+                            sleep(1);
+                        }
+                        if ($i >= 5) {
+                            return Utils::throw400('定位失败！');
+                        }
 //
-//                        $lockInfo = null;
-//                        for ($i = 0; $i < 10; $i++) {    //轮询获取定位
-//                            $lockInfo = LockModel::where('imei', '=', $carImei)
-//                                ->where('pos_gtime', '>=', date('Y-m-d H:i:s', $locationTime))
-//                                ->find();
-//                            if ($lockInfo) {
-//                                break;
-//                            }
-//                            sleep(1);
-//                        }
-//                        if ($i >= 10) {
-//                            return Utils::throw400('定位失败！');
-//                        }
 //
-//
-//                        if ($lockInfo) {
-//                            //保存数据到车表中，更新车的位置
-//                            $saveBicycleData['gps'] = json_encode([
-//                                'lng' => $lockInfo->pos_lng,
-//                                'lat' => $lockInfo->pos_lat
-//                            ]);
+                        if ($lockInfo) {
+                            //保存数据到车表中，更新车的位置
+                            $saveBicycleData['gps'] = json_encode([
+                                'lng' => $lockInfo->pos_lng,
+                                'lat' => $lockInfo->pos_lat
+                            ]);
 //                            //判断当前锁位置是否在围栏外
 //                            $yingyan = new Yingyan();
 //                            $response = json_decode($yingyan->queryStatusByLocation($lockInfo->pos_lng, $lockInfo->pos_lat, json_decode($order->bicycle_opretion, true)['bicycle_name'], 'wgs84'), true);
@@ -514,7 +514,7 @@ class Bicycle extends Base
 //                                    return Utils::ajaxReturn(null, 3, $err);
 //                                }
 //                            }
-//                        }
+                        }
 
                         //计算保存数据
                         $endTime = time();
@@ -618,7 +618,7 @@ class Bicycle extends Base
                 $lockInfo = null;
                 for ($i = 0; $i < 10; $i++) {    //轮询查看开锁没有
                     $lockInfo = LockModel::where('imei', '=', $carImei)
-                        ->where('pos_gtime', '>=', date('Y-m-d H:i:s', $locationTime))
+                        ->where('pos_gtime', '>=', date('Y-m-d H:i:s', $locationTime - 120))
                         ->find();
                     if ($lockInfo) {
                         break;
