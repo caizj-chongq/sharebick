@@ -326,27 +326,27 @@ class Bicycle extends Base
                 return Utils::throw400('车辆当前不可用，请更换车辆进行使用');
             }
 
-//            $lock = new Lock();
+            $lock = new Lock();
             $unLockTime = time();
-//            $response = json_decode($lock->unLock($car->lock_number, $unLockTime), true);
-//            if ($response['code'] != 1) {
-//                return Utils::throw400('车辆当前不可用，请更换车辆进行使用');
-//            }
+            $response = json_decode($lock->unLock($car->lock_number, $unLockTime), true);
+            if ($response['code'] != 1) {
+                return Utils::throw400('车辆当前不可用，请更换车辆进行使用');
+            }
 
-//            $lockInfo = null;
-//            for ($i = 0; $i < 5 ; $i++) {    //轮询查看开锁没有
-//                $lockInfo = LockModel::where('imei', '=', $car->lock_number)
-//                    ->where('lock_status', '=', 1)
-//                    ->where('lock_time', '>=', date('Y-m-d H:i:s', $unLockTime))
-//                    ->find();
-//                if ($lockInfo) {
-//                    break;
-//                }
-//                sleep(1);
-//            }
-//            if ($i >= 5) {
-//                return Utils::throw400('开锁失败，请更换车辆再试！');
-//            }
+            $lockInfo = null;
+            for ($i = 0; $i < 10 ; $i++) {    //轮询查看开锁没有
+                $lockInfo = LockModel::where('imei', '=', $car->lock_number)
+                    ->where('lock_status', '=', 1)
+                    ->where('lock_time', '>=', date('Y-m-d H:i:s', $unLockTime))
+                    ->find();
+                if ($lockInfo) {
+                    break;
+                }
+                sleep(1);
+            }
+            if ($i >= 10) {
+                return Utils::throw400('开锁失败，请更换车辆再试！');
+            }
 
             //开锁后生产订单信息
             $order = new OrderModel();
