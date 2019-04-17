@@ -381,20 +381,19 @@ class Bicycle extends Base
             if (!$order) {
                 return Utils::throw400('订单不存在！');
             }
-            $startTime = is_numeric($order->begin) ? $order->begin : strtotime($order->begin);
+            $startTime = is_numeric($order->begin) ? $order->begin : strtotime($order->begin) - 120;
             if (strlen($request->param('status', ''))) { //传入status
                 switch ($request->param('status')) {
                     case 2: //取消订单
                         if (ceil(($startTime - time()) / 60) > 3) {    //前3分钟可以取消订单
                             return Utils::throw400('骑行时间已超过3分钟，不允许再取消订单！');
                         }
-                        $locTime = time();
                         // 查询关锁状态
                         $lockInfo = null;
                         for ($i = 0; $i < 5; $i++) {    //轮询查看关锁没有
                             $lockInfo = LockModel::where('imei', '=', json_decode($order->bicycle_opretion, true)['bicycle_number'])
                                 ->where('lock_status', '=', 0)
-                                ->where('lock_time', '>=', date('Y-m-d H:i:s', $locTime - 120))
+                                ->where('lock_time', '>=', date('Y-m-d H:i:s', $startTime))
                                 ->find();
                             if ($lockInfo) {
                                 break;
@@ -449,13 +448,12 @@ class Bicycle extends Base
                         $saveData['status'] = 3;
                         break;
                     case 4: //结束用车
-                        $locTime = time();
                         // 查询关锁状态
                         $lockInfo = null;
                         for ($i = 0; $i < 5; $i++) {    //轮询查看关锁没有
                             $lockInfo = LockModel::where('imei', '=', json_decode($order->bicycle_opretion, true)['bicycle_number'])
                                 ->where('lock_status', '=', 0)
-                                ->where('lock_time', '>=', date('Y-m-d H:i:s', $locTime - 120))
+                                ->where('lock_time', '>=', date('Y-m-d H:i:s', $startTime))
                                 ->find();
                             if ($lockInfo) {
                                 break;
@@ -468,7 +466,7 @@ class Bicycle extends Base
 
                         //判断当前锁位置是否在围栏外,如果在围栏外面，就不允许停车
                         //车辆位置
-                        $locationTime = time();
+                        $locationTime = time() - 120;
                         $carImei = json_decode($order->bicycle_opretion, true)['lock_number'];
                         $response = json_decode($this->lock->getLocation($carImei, $locationTime), true);
                         if ($response['code'] != 1) {
@@ -521,7 +519,7 @@ class Bicycle extends Base
                         $saveData['status'] = 4;
                         $saveData['end'] = $endTime;
                         //计算价格
-                        $diffTime = $endTime - $startTime; //相差时间戳
+                        $diffTime = $endTime - $startTime + 120; //相差时间戳
                         //计算有几天、几小时
                         $day = 60 * 60 * 24;
                         $days = floor($diffTime / $day);
@@ -608,7 +606,7 @@ class Bicycle extends Base
 
             if (strlen($request->param('location', ''))) {
                 //更新订单 车辆位置
-                $locationTime = time();
+                $locationTime = time() - 120;
                 $carImei = json_decode($order->bicycle_opretion, true)['lock_number'];
                 $response = json_decode($this->lock->getLocation($carImei, $locationTime), true);
                 if ($response['code'] != 1) {
@@ -618,7 +616,7 @@ class Bicycle extends Base
                 $lockInfo = null;
                 for ($i = 0; $i < 10; $i++) {    //轮询查看开锁没有
                     $lockInfo = LockModel::where('imei', '=', $carImei)
-                        ->where('pos_gtime', '>=', date('Y-m-d H:i:s', $locationTime - 120))
+                        ->where('pos_gtime', '>=', date('Y-m-d H:i:s', $locationTime))
                         ->find();
                     if ($lockInfo) {
                         break;
