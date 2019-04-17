@@ -391,6 +391,7 @@ class Bicycle extends Base
                         // 查询关锁状态
                         $lockInfo = null;
                         for ($i = 0; $i < 5; $i++) {    //轮询查看关锁没有
+                            dd(date('Y-m-d H:i:s', $startTime));
                             $lockInfo = LockModel::where('imei', '=', json_decode($order->bicycle_opretion, true)['bicycle_number'])
                                 ->where('lock_status', '=', 0)
                                 ->where('lock_time', '>=', date('Y-m-d H:i:s', $startTime))
