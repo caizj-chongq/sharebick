@@ -381,7 +381,7 @@ class Bicycle extends Base
             if (!$order) {
                 return Utils::throw400('订单不存在！');
             }
-            $startTime = is_numeric($order->begin) ? $order->begin : strtotime($order->begin) - 120;
+            $startTime = (is_numeric($order->begin) ? $order->begin : strtotime($order->begin)) - 120;
             if (strlen($request->param('status', ''))) { //传入status
                 switch ($request->param('status')) {
                     case 2: //取消订单
@@ -451,7 +451,7 @@ class Bicycle extends Base
                         // 查询关锁状态
                         $lockInfo = null;
                         for ($i = 0; $i < 5; $i++) {    //轮询查看关锁没有
-                            $lockInfo = LockModel::where('imei', '=', json_decode($order->bicycle_opretion, true)['bicycle_number'])
+                            $lockInfo = LockModel::where('imei', '=', json_decode($order->bicycle_opretion, true)['lock_number'])
                                 ->where('lock_status', '=', 0)
                                 ->where('lock_time', '>=', date('Y-m-d H:i:s', $startTime))
                                 ->find();
