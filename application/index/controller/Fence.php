@@ -220,9 +220,6 @@ class Fence extends Base
      */
     public function destroy(Request $request, $id)
     {
-        if ($request->isAjax() && $request->isDelete()) {
-            Utils::throw405();
-        }
         //删除电子围栏
         $fence = FenceModel::where('deleted', '=', 0)
             ->where('id', '=', $id)
@@ -236,7 +233,7 @@ class Fence extends Base
                 if ($response['status']) {
                     throw new \Exception($response['message']);
                 }
-                Db::rollback();
+                Db::commit();
             } catch (\Exception $exception) {
                 Db::rollback();
                 return Utils::throw400($exception->getMessage());

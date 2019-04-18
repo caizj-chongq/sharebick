@@ -190,7 +190,7 @@ class Yingyan
             $requestData = [
                 'ak' => $this->ak,
                 'service_id' => $this->serviceId,
-                'fence_ids' => $fenceIds
+                'fence_ids' => is_array($fenceIds) ? implode(',', $fenceIds) : $fenceIds
             ];
         }
 
