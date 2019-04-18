@@ -488,12 +488,12 @@ class Bicycle extends Base
                         }
 //
 //
-//                        if ($lockInfo) {
-//                            //保存数据到车表中，更新车的位置
-//                            $saveBicycleData['gps'] = json_encode([
-//                                'lng' => $lockInfo->pos_lng,
-//                                'lat' => $lockInfo->pos_lat
-//                            ]);
+                        if ($lockInfo) {
+                            //保存数据到车表中，更新车的位置
+                            $saveBicycleData['gps'] = json_encode([
+                                'lng' => $lockInfo->pos_lng,
+                                'lat' => $lockInfo->pos_lat
+                            ]);
 //                            //判断当前锁位置是否在围栏外
 //                            $yingyan = new Yingyan();
 //                            $response = json_decode($yingyan->queryStatusByLocation($lockInfo->pos_lng, $lockInfo->pos_lat, json_decode($order->bicycle_opretion, true)['bicycle_name'], 'wgs84'), true);
@@ -512,7 +512,7 @@ class Bicycle extends Base
 //                                    return Utils::ajaxReturn(null, 3, $err);
 //                                }
 //                            }
-//                        }
+                        }
 
                         //计算保存数据
                         $endTime = time();
