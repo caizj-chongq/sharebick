@@ -640,59 +640,59 @@ class Bicycle extends Base
                     file_put_contents($filename, json_encode($oldData));
 
                     //判断位置是否在电子围栏内
-                    $yingyan = new Yingyan();
-                    $response = json_decode($yingyan->queryStatusByLocation($lockInfo->pos_lng, $lockInfo->pos_lat, json_decode($order->bicycle_opretion, true)['bicycle_name'], 'wgs84'), true);
-
-                    if (!$response['status']) {
-                        $err = '';
-                        if ($response['size']) {
-                            foreach ($response['monitored_statuses'] as $monitored_status) {
-                                if ($monitored_status['monitored_status'] == 'out') {
-                                    //围栏外,保存数据到围栏报警数据表
-                                    $alarm = Alarm::where('order_id', '=', $order->id)
-                                        ->where('out_time', '<>', 0)
-                                        ->where('in_time', '=', 0)
-                                        ->find();   //存在出去了还没有进来的数据
-                                    if (!$alarm) {
-                                        $alarm = new Alarm();
-                                        $alarm->data([
-                                            'out_gps' => json_encode([
-                                                'lng' => $lockInfo->pos_lng,
-                                                'lat' => $lockInfo->pos_lat
-                                            ]),
-                                            "out_time" => time(),
-                                            "order_id" => $order->id
-                                        ]);
-                                        $alarm->save();
-                                    }
-
-                                    $err = '当前车辆已驶出规定范围，请尽快回到规定范围内！';
-                                    break;
-                                }
-                            }
-
-                            //电子围栏报警更新进入电子围栏信息
-                            if (!strlen($err)) {
-                                $alarm = Alarm::where('order_id', '=', $order->id)
-                                    ->where('out_time', '<>', 0)
-                                    ->where('in_time', '=', 0)
-                                    ->find();   //存在出去了还没有进来的数据
-                                if ($alarm) {
-                                    $alarm->data([
-                                        'in_gps' => json_encode([
-                                            'lng' => $lockInfo->pos_lng,
-                                            'lat' => $lockInfo->pos_lat
-                                        ]),
-                                        "in_time" => time()
-                                    ]);
-                                    $alarm->save();
-                                }
-                            }
-                        }
-                        if (strlen($err)) {
-                            return Utils::ajaxReturn(null, 3, $err);
-                        }
-                    }
+//                    $yingyan = new Yingyan();
+//                    $response = json_decode($yingyan->queryStatusByLocation($lockInfo->pos_lng, $lockInfo->pos_lat, json_decode($order->bicycle_opretion, true)['bicycle_name'], 'wgs84'), true);
+//
+//                    if (!$response['status']) {
+//                        $err = '';
+//                        if ($response['size']) {
+//                            foreach ($response['monitored_statuses'] as $monitored_status) {
+//                                if ($monitored_status['monitored_status'] == 'out') {
+//                                    //围栏外,保存数据到围栏报警数据表
+//                                    $alarm = Alarm::where('order_id', '=', $order->id)
+//                                        ->where('out_time', '<>', 0)
+//                                        ->where('in_time', '=', 0)
+//                                        ->find();   //存在出去了还没有进来的数据
+//                                    if (!$alarm) {
+//                                        $alarm = new Alarm();
+//                                        $alarm->data([
+//                                            'out_gps' => json_encode([
+//                                                'lng' => $lockInfo->pos_lng,
+//                                                'lat' => $lockInfo->pos_lat
+//                                            ]),
+//                                            "out_time" => time(),
+//                                            "order_id" => $order->id
+//                                        ]);
+//                                        $alarm->save();
+//                                    }
+//
+//                                    $err = '当前车辆已驶出规定范围，请尽快回到规定范围内！';
+//                                    break;
+//                                }
+//                            }
+//
+//                            //电子围栏报警更新进入电子围栏信息
+//                            if (!strlen($err)) {
+//                                $alarm = Alarm::where('order_id', '=', $order->id)
+//                                    ->where('out_time', '<>', 0)
+//                                    ->where('in_time', '=', 0)
+//                                    ->find();   //存在出去了还没有进来的数据
+//                                if ($alarm) {
+//                                    $alarm->data([
+//                                        'in_gps' => json_encode([
+//                                            'lng' => $lockInfo->pos_lng,
+//                                            'lat' => $lockInfo->pos_lat
+//                                        ]),
+//                                        "in_time" => time()
+//                                    ]);
+//                                    $alarm->save();
+//                                }
+//                            }
+//                        }
+//                        if (strlen($err)) {
+//                            return Utils::ajaxReturn(null, 3, $err);
+//                        }
+//                    }
                 }
             }
 
