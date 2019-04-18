@@ -23,7 +23,8 @@ class Yingyan
         "deletePolygonFence" => "/fence/delete",  //删除电子围栏
         "listPolygonFence" => "/fence/list",  //电子围栏列表
         "queryStatusByLocation" => "/fence/querystatusbylocation" ,  //传入坐标查看是否在围栏内外，前提是监控对象与围栏绑定
-        "addmonitoredperson" => "/fence/addmonitoredperson"   //增加围栏需监控的entity
+        "addmonitoredperson" => "/fence/addmonitoredperson",   //增加围栏需监控的entity
+        "geoconv" => "http://api.map.baidu.com/geoconv/v1/"   //坐标转换
     ];
 
     /**
@@ -296,6 +297,25 @@ class Yingyan
         $requestMethod = 'POST';
 
         return $this->send($requestUrl, $requestData, $requestMethod);
+    }
+
+    /**
+     * 坐标转换为百度地图坐标
+     * @param $coords
+     * @return false|string
+     */
+    public function geoconv($coords)
+    {
+        $requestUrl = $this->requestUrl['geoconv'];
+        $requestData = [
+            'ak' => $this->ak,
+            'coords' => $coords,
+            'from' => 3,
+            'to' => 5,
+            'output' => 'json'
+        ];
+
+        return $this->send($requestUrl, $requestData);
     }
 
     /**

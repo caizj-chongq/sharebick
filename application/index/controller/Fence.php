@@ -44,7 +44,7 @@ class Fence extends Base
                 'bicycle_name' => $fenceBicycle->bicycle_name,
                 'hourlyPrice' => $fenceBicycle->hourlyPrice,
                 'dailyPrice' => $fenceBicycle->dailyPrice,
-                'gps' => json_decode($fenceBicycle->gps)
+                'gps' => json_decode($fenceBicycle->gps, true)
             ];
         }
 
@@ -57,7 +57,19 @@ class Fence extends Base
         }
 
         $nowFence = $fenceNames[0];
-        $nowFenceBiycles = json_encode($fenceBicyclesArr[$nowFence->id] ?? []);
+        $nowFenceBiycles = $fenceBicyclesArr[$nowFence->id] ?? [];
+        foreach ($nowFenceBiycles as $key => $nowFenceBiycle) {
+            $response = json_decode($this->yingyan->geoconv($nowFenceBiycle['gps']['lng'] . ',' . $nowFenceBiycle['gps']['lat']), true);
+            if (!$response['status']) {
+                $nowFenceBiycles[$key]['gps'] = [
+                    'lng' => $response['result'][0]['x'],
+                    'lat' => $response['result'][0]['y']
+                ];
+            }
+        }
+
+        $nowFenceBiycles = json_encode($nowFenceBiycles);
+
         $this->assign(compact('fenceNames', 'nowFence', 'nowFenceBiycles'));
         $this->assign(['ak' => $this->yingyan->getBrowerAk()]);
         return $this->fetch();

@@ -93,11 +93,11 @@
             addClickHandler(content, marker);
         }
     };
+
     //init first
     renderPolygon(map, JSON.parse('<?php echo $nowFence->points; ?>'));
 
     renderBicycles(map, JSON.parse('<?php echo $nowFenceBiycles ?>'));
-
 
     const changeFence = function () {
         $.ajax({

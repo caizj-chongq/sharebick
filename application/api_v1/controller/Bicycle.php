@@ -243,7 +243,6 @@ use think\Request;
  * @apiUse Error
  *
  */
-
 class Bicycle extends Base
 {
     protected $lock;
@@ -287,11 +286,12 @@ class Bicycle extends Base
         $locations = [];
         if (is_file($locationFile)) {
             $locationData = json_decode(file_get_contents($locationFile), true);
-            $tencentLocations = (new TencentMap())->conversionCoordinates($locationData);
-            if ($tencentLocations['code']) {
-                return Utils::throw400($tencentLocations['msg']);
-            }
-            $locations = $tencentLocations['data'];
+//            $tencentLocations = (new TencentMap())->conversionCoordinates($locationData);
+//            if ($tencentLocations['code']) {
+//                return Utils::throw400($tencentLocations['msg']);
+//            }
+//            $locations = $tencentLocations['data'];
+            $locations = $locationData;
         }
 
         $order->location = $locations;
@@ -334,7 +334,7 @@ class Bicycle extends Base
             }
 
             $lockInfo = null;
-            for ($i = 0; $i < 5 ; $i++) {    //轮询查看开锁没有
+            for ($i = 0; $i < 5; $i++) {    //轮询查看开锁没有
                 $lockInfo = LockModel::where('imei', '=', $car->lock_number)
                     ->where('lock_status', '=', 1)
                     ->where('lock_time', '>=', date('Y-m-d H:i:s', $unLockTime))
@@ -429,9 +429,9 @@ class Bicycle extends Base
                         if ($lockInfo) {
                             //保存数据到车表中，更新车的位置
                             $saveBicycleData['gps'] = json_encode([
-                                    'lng' => $lockInfo->pos_lng,
-                                    'lat' => $lockInfo->pos_lat
-                                ]);
+                                'lng' => $lockInfo->pos_lng,
+                                'lat' => $lockInfo->pos_lat
+                            ]);
                         }
 
                         $saveData['status'] = 2;
@@ -486,32 +486,37 @@ class Bicycle extends Base
                         if ($i >= 10) {
                             return Utils::throw400('定位失败！');
                         }
-//
-//
+
+
                         if ($lockInfo) {
                             //保存数据到车表中，更新车的位置
                             $saveBicycleData['gps'] = json_encode([
                                 'lng' => $lockInfo->pos_lng,
                                 'lat' => $lockInfo->pos_lat
                             ]);
-//                            //判断当前锁位置是否在围栏外
-//                            $yingyan = new Yingyan();
-//                            $response = json_decode($yingyan->queryStatusByLocation($lockInfo->pos_lng, $lockInfo->pos_lat, json_decode($order->bicycle_opretion, true)['bicycle_name'], 'wgs84'), true);
-//
-//                            if (!$response['status']) {
-//                                $err = '';
-//                                if ($response['size']) {
-//                                    foreach ($response['monitored_statuses'] as $monitored_status) {
-//                                        if ($monitored_status['monitored_status'] == 'out') {
-//                                            $err = '当前车辆已驶出规定范围，请回到规定范围内再试！';
-//                                            break;
-//                                        }
-//                                    }
-//                                }
-//                                if (strlen($err)) {
-//                                    return Utils::ajaxReturn(null, 3, $err);
-//                                }
-//                            }
+                            //判断当前锁位置是否在围栏外
+                            $yingyan = new Yingyan();
+                            $response = json_decode($yingyan->geoconv($lockInfo->pos_lng . ',' . $lockInfo->pos_lat), true);
+                            if (!$response['status']) {
+                                //   坐标转换为百度地图坐标
+                                $response = json_decode($yingyan->queryStatusByLocation($response['result'][0]['x'], $response['result'][0]['y'], json_decode($order->bicycle_opretion, true)['bicycle_name'], 'bd09ll'), true);
+                                if (!$response['status']) {
+                                    $err = '';
+                                    if ($response['size']) {
+                                        foreach ($response['monitored_statuses'] as $monitored_status) {
+                                            if ($monitored_status['monitored_status'] == 'out') {
+                                                $err = '当前车辆已驶出规定范围，请回到规定范围内再试！';
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if (strlen($err)) {
+                                        return Utils::ajaxReturn(null, 3, $err);
+                                    }
+                                }
+                            } else {
+                                return Utils::ajaxReturn(null, 2, '系统繁忙，请稍后再试！');
+                            }
                         }
 
                         //计算保存数据
@@ -538,11 +543,12 @@ class Bicycle extends Base
                         $tencnetMap = new TencentMap();
                         //转换坐标为腾讯坐标
                         $locationData = json_decode(file_get_contents($filename), true);
-                        $tencentLocations = $tencnetMap->conversionCoordinates($locationData);
-                        if ($tencentLocations['code']) {
-                            return Utils::throw400($tencentLocations['msg']);
-                        }
-                        $needComputedLocationArr = $tencentLocations['data'];
+//                        $tencentLocations = $tencnetMap->conversionCoordinates($locationData);
+//                        if ($tencentLocations['code']) {
+//                            return Utils::throw400($tencentLocations['msg']);
+//                        }
+//                        $needComputedLocationArr = $tencentLocations['data'];
+                        $needComputedLocationArr = $locationData;
 
                         $startArr = [];
                         $endArr = [];
@@ -573,7 +579,7 @@ class Bicycle extends Base
 
                             for ($k = 0; $k < $eles; $k++) {
                                 $startStr .= $startArr[$k + $rounds * 20]['lat'] . ',' . $startArr[$k + $rounds * 20]['lng'] . ';';
-                                $endStr .=  $endArr[$k + $rounds * 20]['lat'] . ',' . $endArr[$k + $rounds * 20]['lng'] . ';';
+                                $endStr .= $endArr[$k + $rounds * 20]['lat'] . ',' . $endArr[$k + $rounds * 20]['lng'] . ';';
                             }
                             $response = json_decode($tencnetMap->parametersDistance('bicycling', trim($startStr, ';'), trim($endStr, ';')), true);
                             $result = [];
@@ -626,7 +632,7 @@ class Bicycle extends Base
                 if ($i >= 10) {
                     return Utils::throw400('定位失败！');
                 }
-                //把位置信息放入文件
+//                //把位置信息放入文件
                 if ($lockInfo) {
                     $filename = ORDER_LOCATION_PATH . 'location_' . $order->order_number . '.log';
                     $oldData = [];
@@ -640,60 +646,68 @@ class Bicycle extends Base
                     file_put_contents($filename, json_encode($oldData));
 
                     //判断位置是否在电子围栏内
-//                    $yingyan = new Yingyan();
-//                    $response = json_decode($yingyan->queryStatusByLocation($lockInfo->pos_lng, $lockInfo->pos_lat, json_decode($order->bicycle_opretion, true)['bicycle_name'], 'wgs84'), true);
-//
-//                    if (!$response['status']) {
-//                        $err = '';
-//                        if ($response['size']) {
-//                            foreach ($response['monitored_statuses'] as $monitored_status) {
-//                                if ($monitored_status['monitored_status'] == 'out') {
-//                                    //围栏外,保存数据到围栏报警数据表
-//                                    $alarm = Alarm::where('order_id', '=', $order->id)
-//                                        ->where('out_time', '<>', 0)
-//                                        ->where('in_time', '=', 0)
-//                                        ->find();   //存在出去了还没有进来的数据
-//                                    if (!$alarm) {
-//                                        $alarm = new Alarm();
-//                                        $alarm->data([
-//                                            'out_gps' => json_encode([
-//                                                'lng' => $lockInfo->pos_lng,
-//                                                'lat' => $lockInfo->pos_lat
-//                                            ]),
-//                                            "out_time" => time(),
-//                                            "order_id" => $order->id
-//                                        ]);
-//                                        $alarm->save();
-//                                    }
-//
-//                                    $err = '当前车辆已驶出规定范围，请尽快回到规定范围内！';
-//                                    break;
-//                                }
-//                            }
-//
-//                            //电子围栏报警更新进入电子围栏信息
-//                            if (!strlen($err)) {
-//                                $alarm = Alarm::where('order_id', '=', $order->id)
-//                                    ->where('out_time', '<>', 0)
-//                                    ->where('in_time', '=', 0)
-//                                    ->find();   //存在出去了还没有进来的数据
-//                                if ($alarm) {
-//                                    $alarm->data([
-//                                        'in_gps' => json_encode([
-//                                            'lng' => $lockInfo->pos_lng,
-//                                            'lat' => $lockInfo->pos_lat
-//                                        ]),
-//                                        "in_time" => time()
-//                                    ]);
-//                                    $alarm->save();
-//                                }
-//                            }
-//                        }
-//                        if (strlen($err)) {
-//                            return Utils::ajaxReturn(null, 3, $err);
-//                        }
-//                    }
+                    $yingyan = new Yingyan();
+
+                    $response = json_decode($yingyan->geoconv($lockInfo->pos_lng . ',' . $lockInfo->pos_lat), true);
+                    if (!$response['status']) {
+                        //   坐标转换为百度地图坐标
+                        $response = json_decode($yingyan->queryStatusByLocation($response['result'][0]['x'], $response['result'][0]['y'], json_decode($order->bicycle_opretion, true)['bicycle_name'], 'bd09ll'), true);
+                        if (!$response['status']) {
+                            $err = '';
+                            if ($response['size']) {
+                                foreach ($response['monitored_statuses'] as $monitored_status) {
+                                    if ($monitored_status['monitored_status'] == 'out') {
+                                        //围栏外,保存数据到围栏报警数据表
+                                        $alarm = Alarm::where('order_id', '=', $order->id)
+                                            ->where('out_time', '<>', 0)
+                                            ->where('in_time', '=', 0)
+                                            ->find();   //存在出去了还没有进来的数据
+                                        if (!$alarm) {
+                                            $alarm = new Alarm();
+                                            $alarm->data([
+                                                'out_gps' => json_encode([
+                                                    'lng' => $lockInfo->pos_lng,
+                                                    'lat' => $lockInfo->pos_lat
+                                                ]),
+                                                "out_time" => time(),
+                                                "order_id" => $order->id
+                                            ]);
+                                            $alarm->save();
+                                        }
+
+                                        $err = '当前车辆已驶出规定范围，请尽快回到规定范围内！';
+                                        break;
+                                    }
+                                }
+
+                                //电子围栏报警更新进入电子围栏信息
+                                if (!strlen($err)) {
+                                    $alarm = Alarm::where('order_id', '=', $order->id)
+                                        ->where('out_time', '<>', 0)
+                                        ->where('in_time', '=', 0)
+                                        ->find();   //存在出去了还没有进来的数据
+                                    if ($alarm) {
+                                        $alarm->data([
+                                            'in_gps' => json_encode([
+                                                'lng' => $lockInfo->pos_lng,
+                                                'lat' => $lockInfo->pos_lat
+                                            ]),
+                                            "in_time" => time()
+                                        ]);
+                                        $alarm->save();
+                                    }
+                                }
+                            }
+                            if (strlen($err)) {
+                                return Utils::ajaxReturn(null, 3, $err);
+                            }
+                        }
+                    } else {
+                        return Utils::ajaxReturn(null, 2, '系统繁忙，请稍后再试！');
+                    }
                 }
+
+
             }
 
             try {

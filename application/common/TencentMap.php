@@ -73,7 +73,7 @@ class TencentMap
             //批量转换坐标为腾讯地图坐标系，并为下面计算距离预计算出坐标串
             $tencentMapLocationResponse = json_decode($this->translateCoord(trim($locationDataStr, ';'), 1), true);
             if (!$tencentMapLocationResponse['status']) {
-                $returnData['data'] = $tencentMapLocationResponse['locations'];
+                $returnData['data'] = array_merge($returnData['data'], $tencentMapLocationResponse['locations']);
             } else {
                 $returnData['code'] = 1;
                 $returnData['msg'] = $tencentMapLocationResponse['message'];
