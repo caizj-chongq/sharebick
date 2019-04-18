@@ -494,24 +494,24 @@ class Bicycle extends Base
                                 'lng' => $lockInfo->pos_lng,
                                 'lat' => $lockInfo->pos_lat
                             ]);
-//                            //判断当前锁位置是否在围栏外
-//                            $yingyan = new Yingyan();
-//                            $response = json_decode($yingyan->queryStatusByLocation($lockInfo->pos_lng, $lockInfo->pos_lat, json_decode($order->bicycle_opretion, true)['bicycle_name'], 'wgs84'), true);
-//
-//                            if (!$response['status']) {
-//                                $err = '';
-//                                if ($response['size']) {
-//                                    foreach ($response['monitored_statuses'] as $monitored_status) {
-//                                        if ($monitored_status['monitored_status'] == 'out') {
-//                                            $err = '当前车辆已驶出规定范围，请回到规定范围内再试！';
-//                                            break;
-//                                        }
-//                                    }
-//                                }
-//                                if (strlen($err)) {
-//                                    return Utils::ajaxReturn(null, 3, $err);
-//                                }
-//                            }
+                            //判断当前锁位置是否在围栏外
+                            $yingyan = new Yingyan();
+                            $response = json_decode($yingyan->queryStatusByLocation($lockInfo->pos_lng, $lockInfo->pos_lat, json_decode($order->bicycle_opretion, true)['bicycle_name'], 'wgs84'), true);
+
+                            if (!$response['status']) {
+                                $err = '';
+                                if ($response['size']) {
+                                    foreach ($response['monitored_statuses'] as $monitored_status) {
+                                        if ($monitored_status['monitored_status'] == 'out') {
+                                            $err = '当前车辆已驶出规定范围，请回到规定范围内再试！';
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (strlen($err)) {
+                                    return Utils::ajaxReturn(null, 3, $err);
+                                }
+                            }
                         }
 
                         //计算保存数据
@@ -666,7 +666,7 @@ class Bicycle extends Base
                                         $alarm->save();
                                     }
 
-//                                    $err = '当前车辆已驶出规定范围，请尽快回到规定范围内！';
+                                    $err = '当前车辆已驶出规定范围，请尽快回到规定范围内！';
                                     break;
                                 }
                             }
