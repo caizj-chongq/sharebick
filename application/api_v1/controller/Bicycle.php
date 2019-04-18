@@ -327,7 +327,7 @@ class Bicycle extends Base
             }
 
             $lock = new Lock();
-            $unLockTime = time() - 120;
+            $unLockTime = time();
             $response = json_decode($lock->unLock($car->lock_number, $unLockTime), true);
             if ($response['code'] != 1) {
                 return Utils::throw400('车辆当前不可用，请更换车辆进行使用');
@@ -415,7 +415,7 @@ class Bicycle extends Base
                         $lockInfo = null;
                         for ($i = 0; $i < 10; $i++) {    //轮询获取定位
                             $lockInfo = LockModel::where('imei', '=', $carImei)
-                                ->where('pos_gtime', '>=', date('Y-m-d H:i:s', $locationTime - 120))
+                                ->where('pos_gtime', '>=', date('Y-m-d H:i:s', $locationTime))
                                 ->find();
                             if ($lockInfo) {
                                 break;
@@ -466,7 +466,7 @@ class Bicycle extends Base
 
                         //判断当前锁位置是否在围栏外,如果在围栏外面，就不允许停车
                         //车辆位置
-                        $locationTime = time() - 120;
+                        $locationTime = time();
                         $carImei = json_decode($order->bicycle_opretion, true)['lock_number'];
                         $response = json_decode($this->lock->getLocation($carImei, $locationTime), true);
                         if ($response['code'] != 1) {
@@ -519,7 +519,7 @@ class Bicycle extends Base
                         $saveData['status'] = 4;
                         $saveData['end'] = $endTime;
                         //计算价格
-                        $diffTime = $endTime - $startTime + 120; //相差时间戳
+                        $diffTime = $endTime - $startTime; //相差时间戳
                         //计算有几天、几小时
                         $day = 60 * 60 * 24;
                         $days = floor($diffTime / $day);
@@ -606,7 +606,7 @@ class Bicycle extends Base
 
             if (strlen($request->param('location', ''))) {
                 //更新订单 车辆位置
-                $locationTime = time() - 120;
+                $locationTime = time();
                 $carImei = json_decode($order->bicycle_opretion, true)['lock_number'];
                 $response = json_decode($this->lock->getLocation($carImei, $locationTime), true);
                 if ($response['code'] != 1) {
