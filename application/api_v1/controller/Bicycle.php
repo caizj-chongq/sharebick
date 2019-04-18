@@ -473,27 +473,27 @@ class Bicycle extends Base
                             return Utils::throw400('定位失败！');
                         }
 
-//                        $lockInfo = null;
-//                        for ($i = 0; $i < 5; $i++) {    //轮询获取定位
-//                            $lockInfo = LockModel::where('imei', '=', $carImei)
-//                                ->where('pos_gtime', '>=', date('Y-m-d H:i:s', $locationTime))
-//                                ->find();
-//                            if ($lockInfo) {
-//                                break;
-//                            }
-//                            sleep(1);
-//                        }
-//                        if ($i >= 5) {
-//                            return Utils::throw400('定位失败！');
-//                        }
+                        $lockInfo = null;
+                        for ($i = 0; $i < 5; $i++) {    //轮询获取定位
+                            $lockInfo = LockModel::where('imei', '=', $carImei)
+                                ->where('pos_gtime', '>=', date('Y-m-d H:i:s', $locationTime))
+                                ->find();
+                            if ($lockInfo) {
+                                break;
+                            }
+                            sleep(1);
+                        }
+                        if ($i >= 5) {
+                            return Utils::throw400('定位失败！');
+                        }
 //
 //
-//                        if ($lockInfo) {
-//                            //保存数据到车表中，更新车的位置
-//                            $saveBicycleData['gps'] = json_encode([
-//                                'lng' => $lockInfo->pos_lng,
-//                                'lat' => $lockInfo->pos_lat
-//                            ]);
+                        if ($lockInfo) {
+                            //保存数据到车表中，更新车的位置
+                            $saveBicycleData['gps'] = json_encode([
+                                'lng' => $lockInfo->pos_lng,
+                                'lat' => $lockInfo->pos_lat
+                            ]);
 //                            //判断当前锁位置是否在围栏外
 //                            $yingyan = new Yingyan();
 //                            $response = json_decode($yingyan->queryStatusByLocation($lockInfo->pos_lng, $lockInfo->pos_lat, json_decode($order->bicycle_opretion, true)['bicycle_name'], 'wgs84'), true);
@@ -512,7 +512,7 @@ class Bicycle extends Base
 //                                    return Utils::ajaxReturn(null, 3, $err);
 //                                }
 //                            }
-//                        }
+                        }
 
                         //计算保存数据
                         $endTime = time();
