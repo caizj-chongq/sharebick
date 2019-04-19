@@ -494,29 +494,29 @@ class Bicycle extends Base
                                 'lng' => $lockInfo->pos_lng,
                                 'lat' => $lockInfo->pos_lat
                             ]);
-                            //判断当前锁位置是否在围栏外
-                            $yingyan = new Yingyan();
-                            $response = json_decode($yingyan->geoconv($lockInfo->pos_lng . ',' . $lockInfo->pos_lat), true);
-                            if (!$response['status']) {
-                                //   坐标转换为百度地图坐标
-                                $response = json_decode($yingyan->queryStatusByLocation($response['result'][0]['x'], $response['result'][0]['y'], json_decode($order->bicycle_opretion, true)['bicycle_name'], 'bd09ll'), true);
-                                if (!$response['status']) {
-                                    $err = '';
-                                    if ($response['size']) {
-                                        foreach ($response['monitored_statuses'] as $monitored_status) {
-                                            if ($monitored_status['monitored_status'] == 'out') {
-                                                $err = '当前车辆已驶出规定范围，请回到规定范围内再试！';
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    if (strlen($err)) {
-                                        return Utils::ajaxReturn(null, 3, $err);
-                                    }
-                                }
-                            } else {
-                                return Utils::ajaxReturn(null, 2, '系统繁忙，请稍后再试！');
-                            }
+//                            //判断当前锁位置是否在围栏外
+//                            $yingyan = new Yingyan();
+//                            $response = json_decode($yingyan->geoconv($lockInfo->pos_lng . ',' . $lockInfo->pos_lat), true);
+//                            if (!$response['status']) {
+//                                //   坐标转换为百度地图坐标
+//                                $response = json_decode($yingyan->queryStatusByLocation($response['result'][0]['x'], $response['result'][0]['y'], json_decode($order->bicycle_opretion, true)['bicycle_name'], 'bd09ll'), true);
+//                                if (!$response['status']) {
+//                                    $err = '';
+//                                    if ($response['size']) {
+//                                        foreach ($response['monitored_statuses'] as $monitored_status) {
+//                                            if ($monitored_status['monitored_status'] == 'out') {
+//                                                $err = '当前车辆已驶出规定范围，请回到规定范围内再试！';
+//                                                break;
+//                                            }
+//                                        }
+//                                    }
+//                                    if (strlen($err)) {
+//                                        return Utils::ajaxReturn(null, 3, $err);
+//                                    }
+//                                }
+//                            } else {
+//                                return Utils::ajaxReturn(null, 2, '系统繁忙，请稍后再试！');
+//                            }
                         }
 
                         //计算保存数据
@@ -632,7 +632,7 @@ class Bicycle extends Base
                 if ($i >= 10) {
                     return Utils::throw400('定位失败！');
                 }
-//                //把位置信息放入文件
+                //把位置信息放入文件
                 if ($lockInfo) {
                     $filename = ORDER_LOCATION_PATH . 'location_' . $order->order_number . '.log';
                     $oldData = [];
