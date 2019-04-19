@@ -348,10 +348,43 @@ class Bicycle extends Base
                 return Utils::throw400('开锁失败，请更换车辆再试！');
             }
 
+            $response = json_decode($this->lock->getLocation($car->lock_number, $unLockTime), true);
+            if ($response['code'] != 1) {
+                return Utils::throw400('定位失败！');
+            }
+
+            $lockInfo = null;
+            for ($i = 0; $i < 10; $i++) {    //轮询获取定位
+                $lockInfo = LockModel::where('imei', '=', $car->lock_number)
+                    ->where('pos_gtime', '>=', date('Y-m-d H:i:s', $unLockTime))
+                    ->find();
+                if ($lockInfo) {
+                    break;
+                }
+                sleep(1);
+            }
+            $orderNumber = 'OR' . date('Ymd') . uniqid();
+            //把位置信息放入文件
+            if ($lockInfo) {
+                $filename = ORDER_LOCATION_PATH . 'location_' . $orderNumber . '.log';
+                $oldData = [];
+                if (is_file($filename)) {
+                    $oldData = json_decode(file_get_contents($filename), true);
+                }
+                $oldData[] = [
+                    'lat' => $lockInfo->pos_lat,
+                    'lng' => $lockInfo->pos_lng
+                ];
+                file_put_contents($filename, json_encode($oldData));
+            }
+            if ($i >= 10) {
+                return Utils::throw400('定位失败！');
+            }
+
             //开锁后生产订单信息
             $order = new OrderModel();
             $order->data([
-                'order_number' => 'OR' . date('Ymd') . uniqid(),
+                'order_number' => $orderNumber,
                 'bicycle_id' => $car->id,
                 'begin' => $unLockTime,
                 'status' => 1,
@@ -432,6 +465,17 @@ class Bicycle extends Base
                                 'lng' => $lockInfo->pos_lng,
                                 'lat' => $lockInfo->pos_lat
                             ]);
+
+                            $filename = ORDER_LOCATION_PATH . 'location_' . $order->order_number . '.log';
+                            $oldData = [];
+                            if (is_file($filename)) {
+                                $oldData = json_decode(file_get_contents($filename), true);
+                            }
+                            $oldData[] = [
+                                'lat' => $lockInfo->pos_lat,
+                                'lng' => $lockInfo->pos_lng
+                            ];
+                            file_put_contents($filename, json_encode($oldData));
                         }
 
                         $saveData['status'] = 2;
@@ -494,6 +538,17 @@ class Bicycle extends Base
                                 'lng' => $lockInfo->pos_lng,
                                 'lat' => $lockInfo->pos_lat
                             ]);
+                            $filename = ORDER_LOCATION_PATH . 'location_' . $order->order_number . '.log';
+                            $oldData = [];
+                            if (is_file($filename)) {
+                                $oldData = json_decode(file_get_contents($filename), true);
+                            }
+                            $oldData[] = [
+                                'lat' => $lockInfo->pos_lat,
+                                'lng' => $lockInfo->pos_lng
+                            ];
+                            file_put_contents($filename, json_encode($oldData));
+
 //                            //判断当前锁位置是否在围栏外
 //                            $yingyan = new Yingyan();
 //                            $response = json_decode($yingyan->geoconv($lockInfo->pos_lng . ',' . $lockInfo->pos_lat), true);
