@@ -334,7 +334,7 @@ class Bicycle extends Base
             }
 
             $lockInfo = null;
-            for ($i = 0; $i < 5; $i++) {    //轮询查看开锁没有
+            for ($i = 0; $i < 10; $i++) {    //轮询查看开锁没有
                 $lockInfo = LockModel::where('imei', '=', $car->lock_number)
                     ->where('lock_status', '=', 1)
                     ->where('lock_time', '>=', date('Y-m-d H:i:s', $unLockTime))
@@ -344,7 +344,7 @@ class Bicycle extends Base
                 }
                 sleep(1);
             }
-            if ($i >= 5) {
+            if ($i >= 10) {
                 return Utils::throw400('开锁失败，请更换车辆再试！');
             }
 
@@ -730,7 +730,7 @@ class Bicycle extends Base
                                             $alarm->save();
                                         }
 
-                                        $err = '当前车辆已驶出规定范围，请尽快回到规定范围内！';
+//                                        $err = '当前车辆已驶出规定范围，请尽快回到规定范围内！';
                                         break;
                                     }
                                 }
